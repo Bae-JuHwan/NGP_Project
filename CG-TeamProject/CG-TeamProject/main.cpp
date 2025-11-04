@@ -9,6 +9,13 @@
 #include"stdafx.h"
 #include "헤더.h"
 
+struct character {
+    glm::vec3 position;           // 캐릭터의 위치정보를 담음
+    glm::vec3 direction;          //캐릭터의 방향정보를 담음
+    GLfloat ArmLegSwingAngle;     //캐릭터 팔다리 회전 정보
+    bool isCollision;             //캐릭터의 충돌 유무
+};
+
 struct AABB {
     glm::vec3 min; // 충돌박스의 최소 좌표 (x, y, z)
     glm::vec3 max; // 충돌박스의 최대 좌표 (x, y, z)
@@ -1910,7 +1917,7 @@ GLvoid drawScene() {
     glUseProgram(shaderProgramID);
 
     // **뷰포트 1: 왼쪽 (캐릭터 1의 카메라)**
-    glViewport(0, 0, window_Width / 2, window_Height); // 왼쪽 절반
+    glViewport(0, 0, window_Width , window_Height); //전체화면
     glm::vec3 camera1Position = character1Position + glm::vec3(0.0f, 10.0f, 15.0f);
     glm::vec3 camera1Target = character1Position;
 
@@ -1933,7 +1940,7 @@ GLvoid drawScene() {
     glUniformMatrix4fv(projMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix1));
 
     GLint modelMatrixLocation = glGetUniformLocation(shaderProgramID, "modelTransform");
-    DrawMap(shaderProgramID, modelMatrixLocation);
+   /* DrawMap(shaderProgramID, modelMatrixLocation);
     DrawObstacleBong(shaderProgramID, modelMatrixLocation);
     DrawCharacter1(shaderProgramID, modelMatrixLocation);
     DrawCharacter2(shaderProgramID, modelMatrixLocation);
@@ -1941,35 +1948,35 @@ GLvoid drawScene() {
     DrawObstacleHorizontalFan(shaderProgramID, modelMatrixLocation);
     DrawObstacleVerticalFan(shaderProgramID, modelMatrixLocation);
     DrawObstacleJumpbar(shaderProgramID, modelMatrixLocation);
-    DrawObstacleDoor(shaderProgramID, modelMatrixLocation);
+    DrawObstacleDoor(shaderProgramID, modelMatrixLocation);*/
 
-    // **뷰포트 2: 오른쪽 (캐릭터 2의 카메라)**
-    glViewport(window_Width / 2, 0, window_Width / 2, window_Height); // 오른쪽 절반
-    glm::vec3 camera2Position = character2Position + glm::vec3(0.0f, 10.0f, 15.0f);
-    glm::vec3 camera2Target = character2Position;
+    //// **뷰포트 2: 오른쪽 (캐릭터 2의 카메라)**
+    //glViewport(window_Width / 2, 0, window_Width / 2, window_Height); // 오른쪽 절반
+    //glm::vec3 camera2Position = character2Position + glm::vec3(0.0f, 10.0f, 15.0f);
+    //glm::vec3 camera2Target = character2Position;
 
-    glm::mat4 viewMatrix2 = glm::lookAt(
-        camera2Position,  // 카메라 2 위치
-        camera2Target,    // 카메라 2 바라보는 지점
-        glm::vec3(0.0f, 1.0f, 0.0f) // 상향 벡터
-    );
+    //glm::mat4 viewMatrix2 = glm::lookAt(
+    //    camera2Position,  // 카메라 2 위치
+    //    camera2Target,    // 카메라 2 바라보는 지점
+    //    glm::vec3(0.0f, 1.0f, 0.0f) // 상향 벡터
+    //);
 
-    glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix2));
+   /* glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix2));*/
 
-    glm::mat4 projectionMatrix2 = glm::perspective(
-        glm::radians(45.0f),
-        (float)(window_Width / 2) / (float)window_Height, // 좌우 절반의 종횡비
-        0.1f,
-        10000.0f
-    );
-    glUniformMatrix4fv(projMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix2));
+    //glm::mat4 projectionMatrix2 = glm::perspective(
+    //    glm::radians(45.0f),
+    //    (float)(window_Width / 2) / (float)window_Height, // 좌우 절반의 종횡비
+    //    0.1f,
+    //    10000.0f
+    //);
+    //glUniformMatrix4fv(projMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix2));
     if (character1Position.y < -75.0f) {
         character1Position = initialCharacter1Position;
     }
 
-    if (character2Position.y < -75.0f) {
+   /* if (character2Position.y < -75.0f) {
         character2Position = initialCharacter2Position;
-    }
+    }*/
     DrawMap(shaderProgramID, modelMatrixLocation);
     DrawObstacleBong(shaderProgramID, modelMatrixLocation);
     DrawCharacter1(shaderProgramID, modelMatrixLocation);
