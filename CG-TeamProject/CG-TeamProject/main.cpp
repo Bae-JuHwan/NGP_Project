@@ -4,7 +4,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <iostream>
-#include <vector>
+//#include <vector>
 #include <set>
 #include "Charactor.h"
 #include "헤더.h"
@@ -93,7 +93,7 @@ GLuint shaderProgramID;
 GLuint vertexShader;
 GLuint fragmentShader;
 
-//움직임 스피드
+//움직임 스피드 -
 GLfloat moveSpeed = 0.2f;
 //팔다리 움직임 각도
 GLfloat character1RotationAngle = 0.0f;
