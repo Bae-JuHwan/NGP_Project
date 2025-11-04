@@ -15,7 +15,9 @@ public:
 private:
 	GLfloat MSpeed{ 0.2f };	//Move Speed
 	GLfloat JSpeed{ 0.3f };	//Jump Speed
-
-
+	//팔다리 움직임 각도
+	GLfloat CRotationAngle{ 0.0f };
+	GLfloat CArmLegSwingAngle{ 0.0f };
+	GLfloat MaxSwingAngle{ 30.0f };
 };
 
