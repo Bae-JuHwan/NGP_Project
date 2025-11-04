@@ -6,12 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <set>
-#include <gl/glew.h>
-#include <gl/freeglut.h>
-#include <gl/freeglut_ext.h>
-#include <gl/glm/glm.hpp>
-#include <gl/glm/ext.hpp>
-#include <gl/glm/gtc/matrix_transform.hpp>
+#include "Charactor.h"
 #include "헤더.h"
 
 struct AABB {
@@ -98,7 +93,9 @@ GLuint shaderProgramID;
 GLuint vertexShader;
 GLuint fragmentShader;
 
+//움직임 스피드
 GLfloat moveSpeed = 0.2f;
+//팔다리 움직임 각도
 GLfloat character1RotationAngle = 0.0f;
 GLfloat character2RotationAngle = 0.0f;
 GLfloat character3RotationAngle = 0.0f;
@@ -106,6 +103,7 @@ GLfloat character1ArmLegSwingAngle = 0.0f;
 GLfloat character2ArmLegSwingAngle = 0.0f;
 GLfloat character3ArmLegSwingAngle = 0.0f;
 GLfloat maxSwingAngle = 30.0f;
+//캐릭터 점프 스피드
 GLfloat character1JumpSpeed = 0.3f;
 GLfloat character2JumpSpeed = 0.3f;
 GLfloat character3JumpSpeed = 0.3f;
