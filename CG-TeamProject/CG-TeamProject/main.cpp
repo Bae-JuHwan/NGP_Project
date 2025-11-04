@@ -223,6 +223,7 @@ void InitCharacter2CheckBox();
 void InitCharacter3CheckBox();
 
 // 캐릭터2
+void InitCharacter2();
 void InitCharacter2Acc();
 void InitCharacter2Body();
 void InitCharacter2Clothes();
@@ -607,6 +608,17 @@ AABB verticalFan5 = {
 };
 
 // 캐릭터1
+void InitCharacter1() {
+    InitCharacter1Body();
+    InitCharacter1BackPattern();
+    InitCharacter1Blusher();
+    InitCharacter1Eye();
+    InitCharacter1Face();
+    InitCharacter1LeftArm();
+    InitCharacter1RightArm();
+    InitCharacter1LeftLeg();
+    InitCharacter1RightLeg();
+}
 void InitCharacter1Body() {
     InitPart("Character1/body.obj", modelCharacter1Body, vaoCharacter1Body, vboCharacter1Body, glm::vec3(1.0f, 1.0f, 0.0f));
 }
@@ -695,6 +707,18 @@ AABB character1 = {
 };
 
 // 캐릭터2
+void InitCharacter2() {
+    InitCharacter2Acc();
+    InitCharacter2Body();
+	InitCharacter2Clothes();
+    InitCharacter2Hair();
+    InitCharacter2LeftLeg();
+    InitCharacter2LeftArm();
+    InitCharacter2RightLeg();
+    InitCharacter2RightArm();
+    InitCharacter2Eye();
+	InitCharacter2Face();
+}
 void InitCharacter2Acc() {
     InitPart("Character2/accessories.obj", modelCharacter2Acc, vaoCharacter2Acc, vboCharacter2Acc, glm::vec3(1.0f, 0.078f, 0.576f));
 }
@@ -784,6 +808,15 @@ AABB character2 = {
 };
 
 // 캐릭터3
+void InitCharacter3() {
+    InitCharacter3Body();
+    InitCharacter3Face();
+    InitCharacter3Eyes();
+    InitCharacter3LeftArm();
+    InitCharacter3RightArm();
+    InitCharacter3LeftFoot();
+    InitCharacter3RightFoot();
+}
 void InitCharacter3Body() {
     InitPart("Character3/body.obj", modelCharacter3Body, vaoCharacter3Body, vboCharacter3Body, glm::vec3(1.0f, 0.0f, 0.0f));
 }
@@ -1776,47 +1809,26 @@ void main(int argc, char** argv) {
     make_shaderProgram();
 
     // 맵
+	std::cout << "맵 초기화중.." << std::endl;
     InitBottom();
     InitArrowAndPillar();
     InitEndPoint();
     InitPoint();
 
     // 캐릭터1
-    InitCharacter1Body();
-    InitCharacter1BackPattern();
-    InitCharacter1Blusher();
-    InitCharacter1Eye();
-    InitCharacter1Face();
-    InitCharacter1LeftArm();
-    InitCharacter1RightArm();
-    InitCharacter1LeftLeg();
-    InitCharacter1RightLeg();
-    InitCharacter1CheckBox();
+    std::cout << "캐릭1 초기화중.." << std::endl;
+    InitCharacter1();
 
     // 캐릭터2
-    InitCharacter2Acc();
-    InitCharacter2Body();
-    InitCharacter2Clothes();
-    InitCharacter2Hair();
-    InitCharacter2LeftLeg();
-    InitCharacter2LeftArm();
-    InitCharacter2RightLeg();
-    InitCharacter2RightArm();
-    InitCharacter2Eye();
-    InitCharacter2Face();
-    InitCharacter2CheckBox();
+    std::cout << "캐릭2 초기화중.." << std::endl;
+    InitCharacter2();
 
     // 캐릭터3
-    InitCharacter3Body();
-    InitCharacter3LeftFoot();
-    InitCharacter3LeftArm();
-    InitCharacter3RightFoot();
-    InitCharacter3RightArm();
-    InitCharacter3Eyes();
-    InitCharacter3Face();
-    InitCharacter3CheckBox();
+    std::cout << "캐릭3 초기화중.." << std::endl;
+    InitCharacter3();
 
-    //mapcheckbox
+
+    std::cout << "체크박스 초기화중.." << std::endl;
     InitCheckBoxMap1();
     InitCheckBoxMap2();
     InitCheckBoxMap3();
@@ -1844,7 +1856,6 @@ void main(int argc, char** argv) {
     glutDisplayFunc(drawScene);
     glutReshapeFunc(Reshape);
     glutKeyboardFunc(Keyboard);
-    glutKeyboardUpFunc(KeyboardUp);
     glutKeyboardUpFunc(KeyboardUp);
     glutSpecialFunc(SpecialKey);
     glutSpecialUpFunc(SpecialKeyUp);
@@ -1931,52 +1942,19 @@ GLvoid drawScene() {
     glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix1));
 
     glm::mat4 projectionMatrix1 = glm::perspective(
-        glm::radians(45.0f),
-        (float)(window_Width / 2) / (float)window_Height, // 좌우 절반의 종횡비
-        0.1f,
-        10000.0f
-    );
+    glm::radians(45.0f),
+    (float)window_Width / (float)window_Height,  // 전체 화면 종횡비!
+    0.1f,
+    10000.0f
+);
     GLint projMatrixLocation = glGetUniformLocation(shaderProgramID, "projectionTransform");
     glUniformMatrix4fv(projMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix1));
 
     GLint modelMatrixLocation = glGetUniformLocation(shaderProgramID, "modelTransform");
-   /* DrawMap(shaderProgramID, modelMatrixLocation);
-    DrawObstacleBong(shaderProgramID, modelMatrixLocation);
-    DrawCharacter1(shaderProgramID, modelMatrixLocation);
-    DrawCharacter2(shaderProgramID, modelMatrixLocation);
-    DrawCharacter3(shaderProgramID, modelMatrixLocation);
-    DrawObstacleHorizontalFan(shaderProgramID, modelMatrixLocation);
-    DrawObstacleVerticalFan(shaderProgramID, modelMatrixLocation);
-    DrawObstacleJumpbar(shaderProgramID, modelMatrixLocation);
-    DrawObstacleDoor(shaderProgramID, modelMatrixLocation);*/
-
-    //// **뷰포트 2: 오른쪽 (캐릭터 2의 카메라)**
-    //glViewport(window_Width / 2, 0, window_Width / 2, window_Height); // 오른쪽 절반
-    //glm::vec3 camera2Position = character2Position + glm::vec3(0.0f, 10.0f, 15.0f);
-    //glm::vec3 camera2Target = character2Position;
-
-    //glm::mat4 viewMatrix2 = glm::lookAt(
-    //    camera2Position,  // 카메라 2 위치
-    //    camera2Target,    // 카메라 2 바라보는 지점
-    //    glm::vec3(0.0f, 1.0f, 0.0f) // 상향 벡터
-    //);
-
-   /* glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix2));*/
-
-    //glm::mat4 projectionMatrix2 = glm::perspective(
-    //    glm::radians(45.0f),
-    //    (float)(window_Width / 2) / (float)window_Height, // 좌우 절반의 종횡비
-    //    0.1f,
-    //    10000.0f
-    //);
-    //glUniformMatrix4fv(projMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix2));
     if (character1Position.y < -75.0f) {
         character1Position = initialCharacter1Position;
     }
 
-   /* if (character2Position.y < -75.0f) {
-        character2Position = initialCharacter2Position;
-    }*/
     DrawMap(shaderProgramID, modelMatrixLocation);
     DrawObstacleBong(shaderProgramID, modelMatrixLocation);
     DrawCharacter1(shaderProgramID, modelMatrixLocation);
