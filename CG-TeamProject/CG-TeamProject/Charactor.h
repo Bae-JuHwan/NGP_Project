@@ -44,6 +44,7 @@ private:
 public:
 	//GLvoid SetDirection(glm::vec3 dir);
 	//GLvoid SetInitialPosition(glm::vec3 dir);
+	const GLfloat ArmLegSwingAngle() { return ArmLegSwingAngle; }
 
 };
 
@@ -58,7 +59,19 @@ private:
 	GLuint vboCharacter1Body[2], vboCharacter1BackPattern[2], vboCharacter1Blusher[2], vboCharacter1Eye[2], vboCharacter1Face[2], vboCharacter1LeftArm[2], vboCharacter1RightArm[2], vboCharacter1LeftLeg[2],
 		vboCharacter1RightLeg[2], vboCharacter2[2];
 	Model modelCharacter1Body, modelCharacter1BackPattern, modelCharacter1Blusher, modelCharacter1Eye, modelCharacter1Face, modelCharacter1LeftArm, modelCharacter1RightArm, modelCharacter1LeftLeg, modelCharacter1RightLeg;
+	GLuint VaoCheckBox, VboCheckBox[2];
 
+	glm::mat4 ModelMatrix = glm::mat4(1.0f);
+	glm::vec3 character1Direction = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 Position = glm::vec3(-5.0f, 0.0f, -5.0f);
+	glm::vec3 character1InitialPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+
+public:
+	void Draw(GLuint shaderProgramID, GLint modelMatrixLocation);
+	glm::vec3 Position() { return Position; }
+	void Position(glm::vec3 NPosition) {  Position=NPosition; }
+
+	void p1ModelMatrix(glm::mat4 NMatrix) {ModelMatrix = NMatrix;}
 };
 
 class Player2 : public Charactor

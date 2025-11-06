@@ -1765,6 +1765,8 @@ void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) 
     verticalFan5.update(verticalFan5Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
 }
 
+Player1 P1;
+
 void main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -1793,7 +1795,7 @@ void main(int argc, char** argv) {
     InitCharacter1RightArm();
     InitCharacter1LeftLeg();
     InitCharacter1RightLeg();*/
-    InitCharacter1CheckBox();
+    //InitCharacter1CheckBox();
 
     // 캐릭터2
     InitCharacter2Acc();
@@ -2135,7 +2137,7 @@ GLvoid Timer(int value) {
     }
 
     // 캐릭터1 모델 매트릭스 업데이트
-    character1ModelMatrix = glm::translate(glm::mat4(1.0f), character1Position);
+    P1.p1ModelMatrix(glm::translate(glm::mat4(1.0f), P1.Position()));
     character1ModelMatrix = glm::rotate(character1ModelMatrix, glm::radians(character1RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
 
     // AABB 업데이트

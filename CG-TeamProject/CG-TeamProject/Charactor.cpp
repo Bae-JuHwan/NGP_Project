@@ -53,6 +53,7 @@ void InitPart(const std::string& filePath, Model& model, GLuint& vao, GLuint* vb
     InitBuffer(vao, vbo, expandedVertices, indices);
 }
 
+//---------------------------------------------------------------------------------
 std::vector<float> CheckBox = {
     // Bottom
  -0.47f, 0.f, 0.42f,
@@ -92,7 +93,6 @@ std::vector<float> CheckBox = {
 
 };
 
-
 Player1::Player1()
 {
 	InitPart("Character1/body.obj", modelCharacter1Body, vaoCharacter1Body, vboCharacter1Body, glm::vec3(1.0f, 1.0f, 0.0f));
@@ -121,7 +121,7 @@ Player1::Player1()
 };
 
 void Player1:: Draw(GLuint shaderProgramID, GLint modelMatrixLocation) {
-    glm::mat4 finalCharacter1ModelMatrix = character1ModelMatrix;
+    glm::mat4 finalCharacter1ModelMatrix = ModelMatrix;
 
     // ¸ö
     glm::mat4 Character1BodyModelMatrix = finalCharacter1ModelMatrix;
@@ -203,3 +203,4 @@ Player1::~Player1()
 {
 
 };
+//---------------------------------------------------------------------------------
