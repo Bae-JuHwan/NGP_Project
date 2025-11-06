@@ -14,16 +14,13 @@ public:
 	~Charactor();
 
 private:
-	
+
 	//Model CharModel;	//이건 와르르 넣어야할 거 ㅅ갗은데... 그냥 ㄹ배열마냥 ㅜ 벡터 써서 핤싸
 
+public:
 	//스피드
 	GLfloat MSpeed{ 0.2f };	//Move Speed
 	GLfloat JSpeed{ 0.3f };	//Jump Speed
-	//팔다리 움직임 각도
-	GLfloat RotationAngle{ 0.0f };
-	GLfloat ArmLegSwingAngle{ 0.0f };
-	GLfloat MaxSwingAngle{ 30.0f };
 	//중력
 	GLfloat gravity{ 0.015f };
 	GLfloat realGravity{ 0.7f };
@@ -35,13 +32,18 @@ private:
 
 	glm::vec3 InitialPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 
+
+	int SwingDirection{ 1 };
+
+	//팔다리 움직임 각도
+	GLfloat RotationAngle{ 0.0f };
+	GLfloat ArmLegSwingAngle{ 0.0f };
+	GLfloat MaxSwingAngle{ 30.0f };
+
 	bool IsSwing{ false };
 	bool IsJumping{ false };
 	bool IsOnMap{ false };
 
-	int SwingDirection{ 1 };
-
-public:
 	//GLvoid SetDirection(glm::vec3 dir);
 	//GLvoid SetInitialPosition(glm::vec3 dir);
 	const GLfloat ArmLegSwingAngle() { return ArmLegSwingAngle; }
@@ -69,9 +71,10 @@ private:
 public:
 	void Draw(GLuint shaderProgramID, GLint modelMatrixLocation);
 	glm::vec3 Position() { return Position; }
-	void Position(glm::vec3 NPosition) {  Position=NPosition; }
+	void Position(glm::vec3 NPosition) { Position += NPosition; }
 
-	void p1ModelMatrix(glm::mat4 NMatrix) {ModelMatrix = NMatrix;}
+	void p1ModelMatrix(glm::mat4 NMatrix) { ModelMatrix += NMatrix; }
+	//glm::mat4 ModelMatrix() { return ModelMatrix; }
 };
 
 class Player2 : public Charactor

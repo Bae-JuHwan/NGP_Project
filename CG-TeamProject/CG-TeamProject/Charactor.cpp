@@ -53,7 +53,6 @@ void InitPart(const std::string& filePath, Model& model, GLuint& vao, GLuint* vb
     InitBuffer(vao, vbo, expandedVertices, indices);
 }
 
-//---------------------------------------------------------------------------------
 std::vector<float> CheckBox = {
     // Bottom
  -0.47f, 0.f, 0.42f,
@@ -92,6 +91,7 @@ std::vector<float> CheckBox = {
  0.47f, 1.84f, 0.42f,
 
 };
+
 
 Player1::Player1()
 {
@@ -203,4 +203,3 @@ Player1::~Player1()
 {
 
 };
-//---------------------------------------------------------------------------------
