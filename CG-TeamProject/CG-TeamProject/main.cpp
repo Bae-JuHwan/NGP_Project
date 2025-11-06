@@ -7,7 +7,7 @@
 //#include <vector>
 #include <set>
 #include "Charactor.h"
-#include "헤더.h"
+
 
 struct AABB {
     glm::vec3 min; // 충돌박스의 최소 좌표 (x, y, z)
