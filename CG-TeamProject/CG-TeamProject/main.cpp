@@ -122,19 +122,19 @@ GLfloat jumpBarRotationAngle = 0.0f;
 //glm::vec3 character1Position = glm::vec3(-5.0f, 0.0f, -5.0f);
 //glm::vec3 character1InitialPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 
-glm::mat4 character2ModelMatrix = glm::mat4(1.0f);
-glm::vec3 character2Direction = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::vec3 character2Position = glm::vec3(5.0f, 0.0f, -5.0f);
-glm::vec3 character2InitialPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-
-glm::mat4 character3ModelMatrix = glm::mat4(1.0f);
-glm::vec3 character3Direction = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::vec3 character3Position = glm::vec3(10.0f, 0.0f, -5.0f);
-glm::vec3 character3InitialPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-
-glm::vec3 initialCharacter1Position = glm::vec3(0.0f, 0.0f, 0.0f); // 캐릭터 1 초기 위치
-glm::vec3 initialCharacter2Position = glm::vec3(5.0f, 0.0f, 0.0f); // 캐릭터 2 초기 위치
-glm::vec3 initialCharacter3Position = glm::vec3(10.0f, 0.0f, 0.0f); // 캐릭터 3 초기 위치
+//glm::mat4 character2ModelMatrix = glm::mat4(1.0f);
+//glm::vec3 character2Direction = glm::vec3(0.0f, 0.0f, 0.0f);
+//glm::vec3 character2Position = glm::vec3(5.0f, 0.0f, -5.0f);
+//glm::vec3 character2InitialPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+//
+//glm::mat4 character3ModelMatrix = glm::mat4(1.0f);
+//glm::vec3 character3Direction = glm::vec3(0.0f, 0.0f, 0.0f);
+//glm::vec3 character3Position = glm::vec3(10.0f, 0.0f, -5.0f);
+////glm::vec3 character3InitialPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+//
+//glm::vec3 initialCharacter1Position = glm::vec3(0.0f, 0.0f, 0.0f); // 캐릭터 1 초기 위치
+//glm::vec3 initialCharacter2Position = glm::vec3(5.0f, 0.0f, 0.0f); // 캐릭터 2 초기 위치
+//glm::vec3 initialCharacter3Position = glm::vec3(10.0f, 0.0f, 0.0f); // 캐릭터 3 초기 위치
 
 
 glm::mat4 bong1ModelMatrix = glm::mat4(1.0f);
@@ -151,17 +151,17 @@ glm::vec3 LeftdoorGroupDirection = glm::vec3(-1.0f, 0.0f, 0.0f); // 초기 이동 방
 glm::vec3 RightdoorGroupPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 RightdoorGroupDirection = glm::vec3(1.0f, 0.0f, 0.0f);
 
-//--------------------------------------------------
-bool isCharacter1Swing = false;
-bool isCharacter2Swing = false;
-bool isCharacter3Swing = false;
-bool isCharacter1Jumping = false;
-bool isCharacter2Jumping = false;
-bool isCharacter3Jumping = false;
-bool isCharacter1OnMap = false;
-bool isCharacter2OnMap = false;
-bool isCharacter3OnMap = false;
-//--------------------------------------------------
+////--------------------------------------------------
+//bool isCharacter1Swing = false;
+//bool isCharacter2Swing = false;
+//bool isCharacter3Swing = false;
+//bool isCharacter1Jumping = false;
+//bool isCharacter2Jumping = false;
+//bool isCharacter3Jumping = false;
+//bool isCharacter1OnMap = false;
+//bool isCharacter2OnMap = false;
+//bool isCharacter3OnMap = false;
+////--------------------------------------------------
 
 
 bool moveKeyStates[256] = { false }; // 이동 키 상태
@@ -636,234 +636,234 @@ AABB verticalFan5 = {
 //    InitPart("Character1/rightLeg.obj", modelCharacter1RightLeg, vaoCharacter1RightLeg, vboCharacter1RightLeg, glm::vec3(1.0f, 1.0f, 0.0f));
 //}
 
-//체크박스
-std::vector<float> Character1CheckBox = {
-	// Bottom
- -0.47f, 0.f, 0.42f,
- -0.47f, 0.f, -0.48f,
- 0.47f, 0.f, -0.48f,
- 0.47f, 0.f, 0.42f,
-
- // Top
- -0.47f, 1.84f, 0.42f,
- -0.47f, 1.84f, -0.48f,
- 0.47f, 1.84f, -0.48f,
- 0.47f, 1.84f, 0.42f,
-
- // Front
- -0.47f, 0.f, -0.48f,
- -0.47f, 1.84f, -0.48f,
- 0.47f, 1.84f, -0.48f,
- 0.47f, 0.f, -0.48f,
-
- // Back face
- -0.47f, 0.f, 0.42f,
- -0.47f, 1.84f, 0.42f,
- 0.47f, 1.84f, 0.42f,
- 0.47f, 0.f, 0.42f,
-
- // Left face
- -0.47f, 0.f, 0.42f,
- -0.47f, 0.f, -0.48f,
- -0.47f, 1.84f, -0.48f,
- -0.47f, 1.84f, 0.42f,
-
- // Right face
- 0.47f, 0.f, 0.42f,
- 0.47f, 0.f, -0.48f,
- 0.47f, 1.84f, -0.48f,
- 0.47f, 1.84f, 0.42f,
-
-};
-void InitCharacter1CheckBox() {
-	glGenVertexArrays(1, &vaoCharacter1CheckBox);
-	glBindVertexArray(vaoCharacter1CheckBox);
-
-	glGenBuffers(1, vboCharacter1CheckBox);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vboCharacter1CheckBox[0]);
-	glBufferData(GL_ARRAY_BUFFER, Character1CheckBox.size() * sizeof(float), Character1CheckBox.data(), GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindVertexArray(0);
-}
+////체크박스
+//std::vector<float> Character1CheckBox = {
+//	// Bottom
+// -0.47f, 0.f, 0.42f,
+// -0.47f, 0.f, -0.48f,
+// 0.47f, 0.f, -0.48f,
+// 0.47f, 0.f, 0.42f,
+//
+// // Top
+// -0.47f, 1.84f, 0.42f,
+// -0.47f, 1.84f, -0.48f,
+// 0.47f, 1.84f, -0.48f,
+// 0.47f, 1.84f, 0.42f,
+//
+// // Front
+// -0.47f, 0.f, -0.48f,
+// -0.47f, 1.84f, -0.48f,
+// 0.47f, 1.84f, -0.48f,
+// 0.47f, 0.f, -0.48f,
+//
+// // Back face
+// -0.47f, 0.f, 0.42f,
+// -0.47f, 1.84f, 0.42f,
+// 0.47f, 1.84f, 0.42f,
+// 0.47f, 0.f, 0.42f,
+//
+// // Left face
+// -0.47f, 0.f, 0.42f,
+// -0.47f, 0.f, -0.48f,
+// -0.47f, 1.84f, -0.48f,
+// -0.47f, 1.84f, 0.42f,
+//
+// // Right face
+// 0.47f, 0.f, 0.42f,
+// 0.47f, 0.f, -0.48f,
+// 0.47f, 1.84f, -0.48f,
+// 0.47f, 1.84f, 0.42f,
+//
+//};
+//void InitCharacter1CheckBox() {
+//	glGenVertexArrays(1, &vaoCharacter1CheckBox);
+//	glBindVertexArray(vaoCharacter1CheckBox);
+//
+//	glGenBuffers(1, vboCharacter1CheckBox);
+//
+//	glBindBuffer(GL_ARRAY_BUFFER, vboCharacter1CheckBox[0]);
+//	glBufferData(GL_ARRAY_BUFFER, Character1CheckBox.size() * sizeof(float), Character1CheckBox.data(), GL_STATIC_DRAW);
+//
+//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+//	glEnableVertexAttribArray(0);
+//
+//	glBindVertexArray(0);
+//}
 // 캐릭터
 AABB character1 = {
-	character1Position + glm::vec3(-0.70f, 0.0f, -0.72f),
-	character1Position + glm::vec3(0.70f, 1.84f, 0.63f)
+	P1.Position() + glm::vec3(-0.70f, 0.0f, -0.72f),
+	P1.Position() + glm::vec3(0.70f, 1.84f, 0.63f)
 };
 
-// 캐릭터2
-void InitCharacter2Acc() {
-	InitPart("Character2/accessories.obj", modelCharacter2Acc, vaoCharacter2Acc, vboCharacter2Acc, glm::vec3(1.0f, 0.078f, 0.576f));
-}
-void InitCharacter2Body() {
-	InitPart("Character2/body.obj", modelCharacter2Body, vaoCharacter2Body, vboCharacter2Body, glm::vec3(1.0f, 0.714f, 0.757f));
-}
-void InitCharacter2Clothes() {
-	InitPart("Character2/clothes.obj", modelCharacter2Clothes, vaoCharacter2Clothes, vboCharacter2Clothes, glm::vec3(0.0f, 0.0f, 0.0f));
-}
-void InitCharacter2Hair() {
-	InitPart("Character2/hair.obj", modelCharacter2Hair, vaoCharacter2Hair, vboCharacter2Hair, glm::vec3(1.0f, 1.0f, 0.4f));
-}
-void InitCharacter2LeftLeg() {
-	InitPart("Character2/leftLeg.obj", modelCharacter2LeftLeg, vaoCharacter2LeftLeg, vboCharacter2LeftLeg, glm::vec3(1.0f, 0.714f, 0.757f));
-}
-void InitCharacter2LeftArm() {
-	InitPart("Character2/leftArm.obj", modelCharacter2LeftArm, vaoCharacter2LeftArm, vboCharacter2LeftArm, glm::vec3(1.0f, 0.714f, 0.757f));
-}
-void InitCharacter2RightLeg() {
-	InitPart("Character2/rightLeg.obj", modelCharacter2RightLeg, vaoCharacter2RightLeg, vboCharacter2RightLeg, glm::vec3(1.0f, 0.714f, 0.757f));
-}
-void InitCharacter2RightArm() {
-	InitPart("Character2/rightArm.obj", modelCharacter2RightArm, vaoCharacter2RightArm, vboCharacter2RightArm, glm::vec3(1.0f, 0.714f, 0.757f));
-}
-void InitCharacter2Eye() {
-	InitPart("Character2/eye.obj", modelCharacter2Eye, vaoCharacter2Eye, vboCharacter2Eye, glm::vec3(0.0f, 0.0f, 0.0f));
-}
-void InitCharacter2Face() {
-	InitPart("Character2/face.obj", modelCharacter2Face, vaoCharacter2Face, vboCharacter2Face, glm::vec3(1.0f, 1.0, 0.941f));
-}
+//// 캐릭터2
+//void InitCharacter2Acc() {
+//	InitPart("Character2/accessories.obj", modelCharacter2Acc, vaoCharacter2Acc, vboCharacter2Acc, glm::vec3(1.0f, 0.078f, 0.576f));
+//}
+//void InitCharacter2Body() {
+//	InitPart("Character2/body.obj", modelCharacter2Body, vaoCharacter2Body, vboCharacter2Body, glm::vec3(1.0f, 0.714f, 0.757f));
+//}
+//void InitCharacter2Clothes() {
+//	InitPart("Character2/clothes.obj", modelCharacter2Clothes, vaoCharacter2Clothes, vboCharacter2Clothes, glm::vec3(0.0f, 0.0f, 0.0f));
+//}
+//void InitCharacter2Hair() {
+//	InitPart("Character2/hair.obj", modelCharacter2Hair, vaoCharacter2Hair, vboCharacter2Hair, glm::vec3(1.0f, 1.0f, 0.4f));
+//}
+//void InitCharacter2LeftLeg() {
+//	InitPart("Character2/leftLeg.obj", modelCharacter2LeftLeg, vaoCharacter2LeftLeg, vboCharacter2LeftLeg, glm::vec3(1.0f, 0.714f, 0.757f));
+//}
+//void InitCharacter2LeftArm() {
+//	InitPart("Character2/leftArm.obj", modelCharacter2LeftArm, vaoCharacter2LeftArm, vboCharacter2LeftArm, glm::vec3(1.0f, 0.714f, 0.757f));
+//}
+//void InitCharacter2RightLeg() {
+//	InitPart("Character2/rightLeg.obj", modelCharacter2RightLeg, vaoCharacter2RightLeg, vboCharacter2RightLeg, glm::vec3(1.0f, 0.714f, 0.757f));
+//}
+//void InitCharacter2RightArm() {
+//	InitPart("Character2/rightArm.obj", modelCharacter2RightArm, vaoCharacter2RightArm, vboCharacter2RightArm, glm::vec3(1.0f, 0.714f, 0.757f));
+//}
+//void InitCharacter2Eye() {
+//	InitPart("Character2/eye.obj", modelCharacter2Eye, vaoCharacter2Eye, vboCharacter2Eye, glm::vec3(0.0f, 0.0f, 0.0f));
+//}
+//void InitCharacter2Face() {
+//	InitPart("Character2/face.obj", modelCharacter2Face, vaoCharacter2Face, vboCharacter2Face, glm::vec3(1.0f, 1.0, 0.941f));
+//}
+
+////체크박스
+//std::vector<float> Character2CheckBox = {
+//	// Bottom
+//-0.47f, 0.f, 0.42f,
+//-0.47f, 0.f, -0.48f,
+//0.47f, 0.f, -0.48f,
+//0.47f, 0.f, 0.42f,
+//
+//// Top
+//-0.47f, 1.84f, 0.42f,
+//-0.47f, 1.84f, -0.48f,
+//0.47f, 1.84f, -0.48f,
+//0.47f, 1.84f, 0.42f,
+//
+//// Front
+//-0.47f, 0.f, -0.48f,
+//-0.47f, 1.84f, -0.48f,
+//0.47f, 1.84f, -0.48f,
+//0.47f, 0.f, -0.48f,
+//
+//// Back face
+//-0.47f, 0.f, 0.42f,
+//-0.47f, 1.84f, 0.42f,
+//0.47f, 1.84f, 0.42f,
+//0.47f, 0.f, 0.42f,
+//
+//// Left face
+//-0.47f, 0.f, 0.42f,
+//-0.47f, 0.f, -0.48f,
+//-0.47f, 1.84f, -0.48f,
+//-0.47f, 1.84f, 0.42f,
+//
+//// Right face
+//0.47f, 0.f, 0.42f,
+//0.47f, 0.f, -0.48f,
+//0.47f, 1.84f, -0.48f,
+//0.47f, 1.84f, 0.42f,
+//};
+//void InitCharacter2CheckBox() {
+//	glGenVertexArrays(1, &vaoCharacter2CheckBox);
+//	glBindVertexArray(vaoCharacter2CheckBox);
+//
+//	glGenBuffers(1, vboCharacter2CheckBox);
+//
+//	glBindBuffer(GL_ARRAY_BUFFER, vboCharacter2CheckBox[0]);
+//	glBufferData(GL_ARRAY_BUFFER, Character2CheckBox.size() * sizeof(float), Character2CheckBox.data(), GL_STATIC_DRAW);
+//
+//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+//	glEnableVertexAttribArray(0);
+//
+//	glBindVertexArray(0);
+//}
+//AABB character2 = {
+//	character2Position + glm::vec3(-0.70f, 0.0f, -0.72f),
+//	character2Position + glm::vec3(0.70f, 1.84f, 0.63f)
+//};
+//
+//// 캐릭터3
+//void InitCharacter3Body() {
+//	InitPart("Character3/body.obj", modelCharacter3Body, vaoCharacter3Body, vboCharacter3Body, glm::vec3(1.0f, 0.0f, 0.0f));
+//}
+//void InitCharacter3Face() {
+//	InitPart("Character3/face.obj", modelCharacter3Face, vaoCharacter3Face, vboCharacter3Face, glm::vec3(1.0f, 1.0f, 1.0f));
+//}
+//void InitCharacter3Eyes() {
+//	InitPart("Character3/eyes.obj", modelCharacter3Eyes, vaoCharacter3Eyes, vboCharacter3Eyes, glm::vec3(0.0f, 0.0f, 0.0f));
+//}
+//void InitCharacter3LeftArm() {
+//	InitPart("Character3/leftArm.obj", modelCharacter3LeftArm, vaoCharacter3LeftArm, vboCharacter3LeftArm, glm::vec3(1.0f, 0.0f, 0.0f));
+//}
+//void InitCharacter3RightArm() {
+//	InitPart("Character3/rightArm.obj", modelCharacter3RightArm, vaoCharacter3RightArm, vboCharacter3RightArm, glm::vec3(1.0f, 0.0f, 0.0f));
+//}
+//void InitCharacter3LeftFoot() {
+//	InitPart("Character3/leftFoot.obj", modelCharacter3LeftFoot, vaoCharacter3LeftFoot, vboCharacter3LeftFoot, glm::vec3(1.0f, 0.0f, 0.0f));
+//}
+//void InitCharacter3RightFoot() {
+//	InitPart("Character3/rightFoot.obj", modelCharacter3RightFoot, vaoCharacter3RightFoot, vboCharacter3RightFoot, glm::vec3(1.0f, 0.0f, 0.0f));
+//}
 
 //체크박스
-std::vector<float> Character2CheckBox = {
-	// Bottom
--0.47f, 0.f, 0.42f,
--0.47f, 0.f, -0.48f,
-0.47f, 0.f, -0.48f,
-0.47f, 0.f, 0.42f,
+//std::vector<float> Character3CheckBox = {
+//	// Bottom
+//-0.47f, 0.f, 0.42f,
+//-0.47f, 0.f, -0.48f,
+//0.47f, 0.f, -0.48f,
+//0.47f, 0.f, 0.42f,
+//
+//// Top
+//-0.47f, 1.84f, 0.42f,
+//-0.47f, 1.84f, -0.48f,
+//0.47f, 1.84f, -0.48f,
+//0.47f, 1.84f, 0.42f,
+//
+//// Front
+//-0.47f, 0.f, -0.48f,
+//-0.47f, 1.84f, -0.48f,
+//0.47f, 1.84f, -0.48f,
+//0.47f, 0.f, -0.48f,
+//
+//// Back face
+//-0.47f, 0.f, 0.42f,
+//-0.47f, 1.84f, 0.42f,
+//0.47f, 1.84f, 0.42f,
+//0.47f, 0.f, 0.42f,
+//
+//// Left face
+//-0.47f, 0.f, 0.42f,
+//-0.47f, 0.f, -0.48f,
+//-0.47f, 1.84f, -0.48f,
+//-0.47f, 1.84f, 0.42f,
+//
+//// Right face
+//0.47f, 0.f, 0.42f,
+//0.47f, 0.f, -0.48f,
+//0.47f, 1.84f, -0.48f,
+//0.47f, 1.84f, 0.42f,
+//};
 
-// Top
--0.47f, 1.84f, 0.42f,
--0.47f, 1.84f, -0.48f,
-0.47f, 1.84f, -0.48f,
-0.47f, 1.84f, 0.42f,
-
-// Front
--0.47f, 0.f, -0.48f,
--0.47f, 1.84f, -0.48f,
-0.47f, 1.84f, -0.48f,
-0.47f, 0.f, -0.48f,
-
-// Back face
--0.47f, 0.f, 0.42f,
--0.47f, 1.84f, 0.42f,
-0.47f, 1.84f, 0.42f,
-0.47f, 0.f, 0.42f,
-
-// Left face
--0.47f, 0.f, 0.42f,
--0.47f, 0.f, -0.48f,
--0.47f, 1.84f, -0.48f,
--0.47f, 1.84f, 0.42f,
-
-// Right face
-0.47f, 0.f, 0.42f,
-0.47f, 0.f, -0.48f,
-0.47f, 1.84f, -0.48f,
-0.47f, 1.84f, 0.42f,
-};
-void InitCharacter2CheckBox() {
-	glGenVertexArrays(1, &vaoCharacter2CheckBox);
-	glBindVertexArray(vaoCharacter2CheckBox);
-
-	glGenBuffers(1, vboCharacter2CheckBox);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vboCharacter2CheckBox[0]);
-	glBufferData(GL_ARRAY_BUFFER, Character2CheckBox.size() * sizeof(float), Character2CheckBox.data(), GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindVertexArray(0);
-}
-AABB character2 = {
-	character2Position + glm::vec3(-0.70f, 0.0f, -0.72f),
-	character2Position + glm::vec3(0.70f, 1.84f, 0.63f)
-};
-
-// 캐릭터3
-void InitCharacter3Body() {
-	InitPart("Character3/body.obj", modelCharacter3Body, vaoCharacter3Body, vboCharacter3Body, glm::vec3(1.0f, 0.0f, 0.0f));
-}
-void InitCharacter3Face() {
-	InitPart("Character3/face.obj", modelCharacter3Face, vaoCharacter3Face, vboCharacter3Face, glm::vec3(1.0f, 1.0f, 1.0f));
-}
-void InitCharacter3Eyes() {
-	InitPart("Character3/eyes.obj", modelCharacter3Eyes, vaoCharacter3Eyes, vboCharacter3Eyes, glm::vec3(0.0f, 0.0f, 0.0f));
-}
-void InitCharacter3LeftArm() {
-	InitPart("Character3/leftArm.obj", modelCharacter3LeftArm, vaoCharacter3LeftArm, vboCharacter3LeftArm, glm::vec3(1.0f, 0.0f, 0.0f));
-}
-void InitCharacter3RightArm() {
-	InitPart("Character3/rightArm.obj", modelCharacter3RightArm, vaoCharacter3RightArm, vboCharacter3RightArm, glm::vec3(1.0f, 0.0f, 0.0f));
-}
-void InitCharacter3LeftFoot() {
-	InitPart("Character3/leftFoot.obj", modelCharacter3LeftFoot, vaoCharacter3LeftFoot, vboCharacter3LeftFoot, glm::vec3(1.0f, 0.0f, 0.0f));
-}
-void InitCharacter3RightFoot() {
-	InitPart("Character3/rightFoot.obj", modelCharacter3RightFoot, vaoCharacter3RightFoot, vboCharacter3RightFoot, glm::vec3(1.0f, 0.0f, 0.0f));
-}
-
-//체크박스
-std::vector<float> Character3CheckBox = {
-	// Bottom
--0.47f, 0.f, 0.42f,
--0.47f, 0.f, -0.48f,
-0.47f, 0.f, -0.48f,
-0.47f, 0.f, 0.42f,
-
-// Top
--0.47f, 1.84f, 0.42f,
--0.47f, 1.84f, -0.48f,
-0.47f, 1.84f, -0.48f,
-0.47f, 1.84f, 0.42f,
-
-// Front
--0.47f, 0.f, -0.48f,
--0.47f, 1.84f, -0.48f,
-0.47f, 1.84f, -0.48f,
-0.47f, 0.f, -0.48f,
-
-// Back face
--0.47f, 0.f, 0.42f,
--0.47f, 1.84f, 0.42f,
-0.47f, 1.84f, 0.42f,
-0.47f, 0.f, 0.42f,
-
-// Left face
--0.47f, 0.f, 0.42f,
--0.47f, 0.f, -0.48f,
--0.47f, 1.84f, -0.48f,
--0.47f, 1.84f, 0.42f,
-
-// Right face
-0.47f, 0.f, 0.42f,
-0.47f, 0.f, -0.48f,
-0.47f, 1.84f, -0.48f,
-0.47f, 1.84f, 0.42f,
-};
-
-void InitCharacter3CheckBox() {
-	glGenVertexArrays(1, &vaoCharacter3CheckBox);
-	glBindVertexArray(vaoCharacter3CheckBox);
-
-	glGenBuffers(1, vboCharacter3CheckBox);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vboCharacter3CheckBox[0]);
-	glBufferData(GL_ARRAY_BUFFER, Character3CheckBox.size() * sizeof(float), Character3CheckBox.data(), GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindVertexArray(0);
-}
-AABB character3 = {
-	character3Position + glm::vec3(-0.70f, 0.0f, -0.72f),
-	character3Position + glm::vec3(0.70f, 1.84f, 0.63f)
-};
+//void InitCharacter3CheckBox() {
+//	glGenVertexArrays(1, &vaoCharacter3CheckBox);
+//	glBindVertexArray(vaoCharacter3CheckBox);
+//
+//	glGenBuffers(1, vboCharacter3CheckBox);
+//
+//	glBindBuffer(GL_ARRAY_BUFFER, vboCharacter3CheckBox[0]);
+//	glBufferData(GL_ARRAY_BUFFER, Character3CheckBox.size() * sizeof(float), Character3CheckBox.data(), GL_STATIC_DRAW);
+//
+//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+//	glEnableVertexAttribArray(0);
+//
+//	glBindVertexArray(0);
+//}
+//AABB character3 = {
+//	character3Position + glm::vec3(-0.70f, 0.0f, -0.72f),
+//	character3Position + glm::vec3(0.70f, 1.84f, 0.63f)
+//};
 
 // 맵 충돌박스
 std::vector<float> CheckBoxVerticesMap1 = {
@@ -1238,158 +1238,158 @@ void DrawMap(GLuint shaderPRogramID, GLint modelMatrixLocation) {
 //    glBindVertexArray(0);
 //}
 
-// 캐릭터2 그리기
-void DrawCharacter2(GLuint shaderProgramID, GLint modelMatrixLocation) {
-	glm::mat4 finalCharacter2ModelMatrix = character2ModelMatrix;
-
-	//acc
-	glm::mat4 Character2AccModelMatrix = finalCharacter2ModelMatrix;
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2AccModelMatrix));
-	glBindVertexArray(vaoCharacter2Acc);
-	glDrawElements(GL_TRIANGLES, modelCharacter2Acc.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	//body
-	glm::mat4 Character2BodyModelMatrix = finalCharacter2ModelMatrix;
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2BodyModelMatrix));
-	glBindVertexArray(vaoCharacter2Body);
-	glDrawElements(GL_TRIANGLES, modelCharacter2Body.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	//hair
-	glm::mat4 Character2HairModelMatrix = finalCharacter2ModelMatrix;
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2HairModelMatrix));
-	glBindVertexArray(vaoCharacter2Hair);
-	glDrawElements(GL_TRIANGLES, modelCharacter2Hair.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	//leftLeg
-	glm::mat4 Character2LeftLegModelMatrix = finalCharacter2ModelMatrix;
-	Character2LeftLegModelMatrix = glm::translate(Character2LeftLegModelMatrix, glm::vec3(0.0f, 0.5f, 0.0f));
-	Character2LeftLegModelMatrix = glm::rotate(Character2LeftLegModelMatrix, glm::radians(-character2ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
-	Character2LeftLegModelMatrix = glm::translate(Character2LeftLegModelMatrix, glm::vec3(0.0f, -0.5f, 0.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2LeftLegModelMatrix));
-	glBindVertexArray(vaoCharacter2LeftLeg);
-	glDrawElements(GL_TRIANGLES, modelCharacter2LeftLeg.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	//leftArm
-	glm::mat4 Character2LeftArmModelMatrix = finalCharacter2ModelMatrix;
-	Character2LeftArmModelMatrix = glm::translate(Character2LeftArmModelMatrix, glm::vec3(0.0f, 1.0f, 0.0f));
-	Character2LeftArmModelMatrix = glm::rotate(Character2LeftArmModelMatrix, glm::radians(character2ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
-	Character2LeftArmModelMatrix = glm::translate(Character2LeftArmModelMatrix, glm::vec3(0.0f, -1.0f, 0.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2LeftArmModelMatrix));
-	glBindVertexArray(vaoCharacter2LeftArm);
-	glDrawElements(GL_TRIANGLES, modelCharacter2LeftArm.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	//RightLeg
-	glm::mat4 Character2RightLegModelMatrix = finalCharacter2ModelMatrix;
-	Character2RightLegModelMatrix = glm::translate(Character2RightLegModelMatrix, glm::vec3(0.0f, 0.5f, 0.0f));
-	Character2RightLegModelMatrix = glm::rotate(Character2RightLegModelMatrix, glm::radians(character2ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
-	Character2RightLegModelMatrix = glm::translate(Character2RightLegModelMatrix, glm::vec3(0.0f, -0.5f, 0.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2RightLegModelMatrix));
-	glBindVertexArray(vaoCharacter2RightLeg);
-	glDrawElements(GL_TRIANGLES, modelCharacter2RightLeg.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	//RightArm
-	glm::mat4 Character2RightArmModelMatrix = finalCharacter2ModelMatrix;
-	Character2RightArmModelMatrix = glm::translate(Character2RightArmModelMatrix, glm::vec3(0.0f, 1.0f, 0.0f));
-	Character2RightArmModelMatrix = glm::rotate(Character2RightArmModelMatrix, glm::radians(-character2ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
-	Character2RightArmModelMatrix = glm::translate(Character2RightArmModelMatrix, glm::vec3(0.0f, -1.0f, 0.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2RightArmModelMatrix));
-	glBindVertexArray(vaoCharacter2RightArm);
-	glDrawElements(GL_TRIANGLES, modelCharacter2RightArm.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	//Clothes
-	glm::mat4 Character2ClothesModelMatrix = finalCharacter2ModelMatrix;
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2ClothesModelMatrix));
-	glBindVertexArray(vaoCharacter2Clothes);
-	glDrawElements(GL_TRIANGLES, modelCharacter2Clothes.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	//Eye
-	glm::mat4 Character2EyeModelMatrix = finalCharacter2ModelMatrix;
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2EyeModelMatrix));
-	glBindVertexArray(vaoCharacter2Eye);
-	glDrawElements(GL_TRIANGLES, modelCharacter2Eye.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	//Face
-	glm::mat4 Character2FaceModelMatrix = finalCharacter2ModelMatrix;
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2FaceModelMatrix));
-	glBindVertexArray(vaoCharacter2Face);
-	glDrawElements(GL_TRIANGLES, modelCharacter2Face.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-}
-
-// 캐릭터3 그리기
-void DrawCharacter3(GLuint shaderProgramID, GLint modelMatrixLocation) {
-	glm::mat4 finalCharacter3ModelMatrix = character3ModelMatrix;
-
-	// 몸
-	glm::mat4 Character3BodyModelMatrix = finalCharacter3ModelMatrix;
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character3BodyModelMatrix));
-	glBindVertexArray(vaoCharacter3Body);
-	glDrawElements(GL_TRIANGLES, modelCharacter3Body.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	// 눈
-	glm::mat4 Character3EyeModelMatrix = finalCharacter3ModelMatrix;
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character3EyeModelMatrix));
-	glBindVertexArray(vaoCharacter3Eyes);
-	glDrawElements(GL_TRIANGLES, modelCharacter3Eyes.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	// 얼굴
-	glm::mat4 Character3FaceModelMatrix = finalCharacter3ModelMatrix;
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character3FaceModelMatrix));
-	glBindVertexArray(vaoCharacter3Face);
-	glDrawElements(GL_TRIANGLES, modelCharacter3Face.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	// 왼팔
-	glm::mat4 Character3LeftArmModelMatrix = finalCharacter3ModelMatrix;
-	Character3LeftArmModelMatrix = glm::translate(Character3LeftArmModelMatrix, glm::vec3(0.0f, 1.0f, 0.0f));
-	Character3LeftArmModelMatrix = glm::rotate(Character3LeftArmModelMatrix, glm::radians(character3ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
-	Character3LeftArmModelMatrix = glm::translate(Character3LeftArmModelMatrix, glm::vec3(0.0f, -1.0f, 0.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character3LeftArmModelMatrix));
-	glBindVertexArray(vaoCharacter3LeftArm);
-	glDrawElements(GL_TRIANGLES, modelCharacter3LeftArm.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	// 오른팔
-	glm::mat4 Character3RightArmModelMatrix = finalCharacter3ModelMatrix;
-	Character3RightArmModelMatrix = glm::translate(Character3RightArmModelMatrix, glm::vec3(0.0f, 1.0f, 0.0f));
-	Character3RightArmModelMatrix = glm::rotate(Character3RightArmModelMatrix, glm::radians(-character3ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
-	Character3RightArmModelMatrix = glm::translate(Character3RightArmModelMatrix, glm::vec3(0.0f, -1.0f, 0.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character3RightArmModelMatrix));
-	glBindVertexArray(vaoCharacter3RightArm);
-	glDrawElements(GL_TRIANGLES, modelCharacter3RightArm.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	// 왼다리
-	glm::mat4 Character3LeftLegModelMatrix = finalCharacter3ModelMatrix;
-	Character3LeftLegModelMatrix = glm::translate(Character3LeftLegModelMatrix, glm::vec3(0.0f, 0.5f, 0.0f));
-	Character3LeftLegModelMatrix = glm::rotate(Character3LeftLegModelMatrix, glm::radians(-character3ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
-	Character3LeftLegModelMatrix = glm::translate(Character3LeftLegModelMatrix, glm::vec3(0.0f, -0.5f, 0.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character3LeftLegModelMatrix));
-	glBindVertexArray(vaoCharacter3LeftFoot);
-	glDrawElements(GL_TRIANGLES, modelCharacter3LeftFoot.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	// 오른다리
-	glm::mat4 Character3RightLegModelMatrix = finalCharacter3ModelMatrix;
-	Character3RightLegModelMatrix = glm::translate(Character3RightLegModelMatrix, glm::vec3(0.0f, 0.5f, 0.0f));
-	Character3RightLegModelMatrix = glm::rotate(Character3RightLegModelMatrix, glm::radians(character3ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
-	Character3RightLegModelMatrix = glm::translate(Character3RightLegModelMatrix, glm::vec3(0.0f, -0.5f, 0.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character3RightLegModelMatrix));
-	glBindVertexArray(vaoCharacter3RightFoot);
-	glDrawElements(GL_TRIANGLES, modelCharacter3RightFoot.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-}
+//// 캐릭터2 그리기
+//void DrawCharacter2(GLuint shaderProgramID, GLint modelMatrixLocation) {
+//	glm::mat4 finalCharacter2ModelMatrix = character2ModelMatrix;
+//
+//	//acc
+//	glm::mat4 Character2AccModelMatrix = finalCharacter2ModelMatrix;
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2AccModelMatrix));
+//	glBindVertexArray(vaoCharacter2Acc);
+//	glDrawElements(GL_TRIANGLES, modelCharacter2Acc.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	//body
+//	glm::mat4 Character2BodyModelMatrix = finalCharacter2ModelMatrix;
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2BodyModelMatrix));
+//	glBindVertexArray(vaoCharacter2Body);
+//	glDrawElements(GL_TRIANGLES, modelCharacter2Body.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	//hair
+//	glm::mat4 Character2HairModelMatrix = finalCharacter2ModelMatrix;
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2HairModelMatrix));
+//	glBindVertexArray(vaoCharacter2Hair);
+//	glDrawElements(GL_TRIANGLES, modelCharacter2Hair.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	//leftLeg
+//	glm::mat4 Character2LeftLegModelMatrix = finalCharacter2ModelMatrix;
+//	Character2LeftLegModelMatrix = glm::translate(Character2LeftLegModelMatrix, glm::vec3(0.0f, 0.5f, 0.0f));
+//	Character2LeftLegModelMatrix = glm::rotate(Character2LeftLegModelMatrix, glm::radians(-character2ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
+//	Character2LeftLegModelMatrix = glm::translate(Character2LeftLegModelMatrix, glm::vec3(0.0f, -0.5f, 0.0f));
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2LeftLegModelMatrix));
+//	glBindVertexArray(vaoCharacter2LeftLeg);
+//	glDrawElements(GL_TRIANGLES, modelCharacter2LeftLeg.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	//leftArm
+//	glm::mat4 Character2LeftArmModelMatrix = finalCharacter2ModelMatrix;
+//	Character2LeftArmModelMatrix = glm::translate(Character2LeftArmModelMatrix, glm::vec3(0.0f, 1.0f, 0.0f));
+//	Character2LeftArmModelMatrix = glm::rotate(Character2LeftArmModelMatrix, glm::radians(character2ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
+//	Character2LeftArmModelMatrix = glm::translate(Character2LeftArmModelMatrix, glm::vec3(0.0f, -1.0f, 0.0f));
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2LeftArmModelMatrix));
+//	glBindVertexArray(vaoCharacter2LeftArm);
+//	glDrawElements(GL_TRIANGLES, modelCharacter2LeftArm.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	//RightLeg
+//	glm::mat4 Character2RightLegModelMatrix = finalCharacter2ModelMatrix;
+//	Character2RightLegModelMatrix = glm::translate(Character2RightLegModelMatrix, glm::vec3(0.0f, 0.5f, 0.0f));
+//	Character2RightLegModelMatrix = glm::rotate(Character2RightLegModelMatrix, glm::radians(character2ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
+//	Character2RightLegModelMatrix = glm::translate(Character2RightLegModelMatrix, glm::vec3(0.0f, -0.5f, 0.0f));
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2RightLegModelMatrix));
+//	glBindVertexArray(vaoCharacter2RightLeg);
+//	glDrawElements(GL_TRIANGLES, modelCharacter2RightLeg.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	//RightArm
+//	glm::mat4 Character2RightArmModelMatrix = finalCharacter2ModelMatrix;
+//	Character2RightArmModelMatrix = glm::translate(Character2RightArmModelMatrix, glm::vec3(0.0f, 1.0f, 0.0f));
+//	Character2RightArmModelMatrix = glm::rotate(Character2RightArmModelMatrix, glm::radians(-character2ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
+//	Character2RightArmModelMatrix = glm::translate(Character2RightArmModelMatrix, glm::vec3(0.0f, -1.0f, 0.0f));
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2RightArmModelMatrix));
+//	glBindVertexArray(vaoCharacter2RightArm);
+//	glDrawElements(GL_TRIANGLES, modelCharacter2RightArm.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	//Clothes
+//	glm::mat4 Character2ClothesModelMatrix = finalCharacter2ModelMatrix;
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2ClothesModelMatrix));
+//	glBindVertexArray(vaoCharacter2Clothes);
+//	glDrawElements(GL_TRIANGLES, modelCharacter2Clothes.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	//Eye
+//	glm::mat4 Character2EyeModelMatrix = finalCharacter2ModelMatrix;
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2EyeModelMatrix));
+//	glBindVertexArray(vaoCharacter2Eye);
+//	glDrawElements(GL_TRIANGLES, modelCharacter2Eye.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	//Face
+//	glm::mat4 Character2FaceModelMatrix = finalCharacter2ModelMatrix;
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character2FaceModelMatrix));
+//	glBindVertexArray(vaoCharacter2Face);
+//	glDrawElements(GL_TRIANGLES, modelCharacter2Face.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//}
+//
+//// 캐릭터3 그리기
+//void DrawCharacter3(GLuint shaderProgramID, GLint modelMatrixLocation) {
+//	glm::mat4 finalCharacter3ModelMatrix = character3ModelMatrix;
+//
+//	// 몸
+//	glm::mat4 Character3BodyModelMatrix = finalCharacter3ModelMatrix;
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character3BodyModelMatrix));
+//	glBindVertexArray(vaoCharacter3Body);
+//	glDrawElements(GL_TRIANGLES, modelCharacter3Body.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	// 눈
+//	glm::mat4 Character3EyeModelMatrix = finalCharacter3ModelMatrix;
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character3EyeModelMatrix));
+//	glBindVertexArray(vaoCharacter3Eyes);
+//	glDrawElements(GL_TRIANGLES, modelCharacter3Eyes.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	// 얼굴
+//	glm::mat4 Character3FaceModelMatrix = finalCharacter3ModelMatrix;
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character3FaceModelMatrix));
+//	glBindVertexArray(vaoCharacter3Face);
+//	glDrawElements(GL_TRIANGLES, modelCharacter3Face.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	// 왼팔
+//	glm::mat4 Character3LeftArmModelMatrix = finalCharacter3ModelMatrix;
+//	Character3LeftArmModelMatrix = glm::translate(Character3LeftArmModelMatrix, glm::vec3(0.0f, 1.0f, 0.0f));
+//	Character3LeftArmModelMatrix = glm::rotate(Character3LeftArmModelMatrix, glm::radians(character3ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
+//	Character3LeftArmModelMatrix = glm::translate(Character3LeftArmModelMatrix, glm::vec3(0.0f, -1.0f, 0.0f));
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character3LeftArmModelMatrix));
+//	glBindVertexArray(vaoCharacter3LeftArm);
+//	glDrawElements(GL_TRIANGLES, modelCharacter3LeftArm.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	// 오른팔
+//	glm::mat4 Character3RightArmModelMatrix = finalCharacter3ModelMatrix;
+//	Character3RightArmModelMatrix = glm::translate(Character3RightArmModelMatrix, glm::vec3(0.0f, 1.0f, 0.0f));
+//	Character3RightArmModelMatrix = glm::rotate(Character3RightArmModelMatrix, glm::radians(-character3ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
+//	Character3RightArmModelMatrix = glm::translate(Character3RightArmModelMatrix, glm::vec3(0.0f, -1.0f, 0.0f));
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character3RightArmModelMatrix));
+//	glBindVertexArray(vaoCharacter3RightArm);
+//	glDrawElements(GL_TRIANGLES, modelCharacter3RightArm.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	// 왼다리
+//	glm::mat4 Character3LeftLegModelMatrix = finalCharacter3ModelMatrix;
+//	Character3LeftLegModelMatrix = glm::translate(Character3LeftLegModelMatrix, glm::vec3(0.0f, 0.5f, 0.0f));
+//	Character3LeftLegModelMatrix = glm::rotate(Character3LeftLegModelMatrix, glm::radians(-character3ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
+//	Character3LeftLegModelMatrix = glm::translate(Character3LeftLegModelMatrix, glm::vec3(0.0f, -0.5f, 0.0f));
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character3LeftLegModelMatrix));
+//	glBindVertexArray(vaoCharacter3LeftFoot);
+//	glDrawElements(GL_TRIANGLES, modelCharacter3LeftFoot.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	// 오른다리
+//	glm::mat4 Character3RightLegModelMatrix = finalCharacter3ModelMatrix;
+//	Character3RightLegModelMatrix = glm::translate(Character3RightLegModelMatrix, glm::vec3(0.0f, 0.5f, 0.0f));
+//	Character3RightLegModelMatrix = glm::rotate(Character3RightLegModelMatrix, glm::radians(character3ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
+//	Character3RightLegModelMatrix = glm::translate(Character3RightLegModelMatrix, glm::vec3(0.0f, -0.5f, 0.0f));
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character3RightLegModelMatrix));
+//	glBindVertexArray(vaoCharacter3RightFoot);
+//	glDrawElements(GL_TRIANGLES, modelCharacter3RightFoot.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//}
 
 // 체크박스 그리기
 void DrawMapCheckBox(GLuint shaderProgramID, GLint modelMatrixLocation) {
@@ -1765,20 +1765,6 @@ void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) 
 }
 
 Player1 P1;
-//팔다리 움직임 각도
-GLfloat RotationAngle{ 0.0f };
-GLfloat ArmLegSwingAngle{ 0.0f };
-GLfloat MaxSwingAngle{ 30.0f };
-
-bool IsSwing{ false };
-bool IsJumping{ false };
-bool IsOnMap{ false };
-
-glm::mat4 ModelMatrix = glm::mat4(1.0f);
-glm::vec3 Direction = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::vec3 Position = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::vec3 InitialPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-
 
 void main(int argc, char** argv) {
 	glutInit(&argc, argv);
@@ -2020,8 +2006,8 @@ GLvoid Keyboard(unsigned char key, int x, int y) {
 			glutLeaveMainLoop();
 			break;
 		case ' ':
-			if (!isCharacter1Jumping) {
-				isCharacter1Jumping = true;
+			if (!P1.IsJumping) {
+				P1.IsJumping = true;
 			}
 			break;
 		case 'j':
@@ -2054,28 +2040,28 @@ void SpecialKeyUp(int key, int x, int y) {
 
 GLvoid Timer(int value) {
 	if (moveKeyStates['w']) {
-		character1Direction = glm::vec3(0.0f, 0.0f, -moveSpeed);
+		P1.Direction = glm::vec3(0.0f, 0.0f, -moveSpeed);
 		character1RotationAngle = 0.0f;
-		isCharacter1Swing = true;
+		P1.IsSwing = true;
 	}
 	else if (moveKeyStates['s']) {
-		character1Direction = glm::vec3(0.0f, 0.0f, moveSpeed);
+		P1.Direction = glm::vec3(0.0f, 0.0f, moveSpeed);
 		character1RotationAngle = 180.0f;
-		isCharacter1Swing = true;
+		P1.IsSwing = true;
 	}
 	else if (moveKeyStates['a']) {
-		character1Direction = glm::vec3(-moveSpeed, 0.0f, 0.0f);
+		P1.Direction = glm::vec3(-moveSpeed, 0.0f, 0.0f);
 		character1RotationAngle = 90.0f;
-		isCharacter1Swing = true;
+		P1.IsSwing = true;
 	}
 	else if (moveKeyStates['d']) {
-		character1Direction = glm::vec3(moveSpeed, 0.0f, 0.0f);
+		P1.Direction = glm::vec3(moveSpeed, 0.0f, 0.0f);
 		character1RotationAngle = -90.0f;
-		isCharacter1Swing = true;
+		P1.IsSwing = true;
 	}
 	else {
-		character1Direction = glm::vec3(0.0f, 0.0f, 0.0f);
-		isCharacter1Swing = false;
+		P1.Direction = glm::vec3(0.0f, 0.0f, 0.0f);
+		P1.IsSwing = false;
 	}
 
 	AABB maps[] = { map1, map2, map3, map4, map5 };
