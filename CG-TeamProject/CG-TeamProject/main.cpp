@@ -93,7 +93,7 @@ GLuint shaderProgramID;
 GLuint vertexShader;
 GLuint fragmentShader;
 
-//움직임 스피드 -
+//움직임 스피드 ------------------------------------
 GLfloat moveSpeed = 0.2f;
 //팔다리 움직임 각도
 GLfloat character1RotationAngle = 0.0f;
@@ -109,6 +109,8 @@ GLfloat character2JumpSpeed = 0.3f;
 GLfloat character3JumpSpeed = 0.3f;
 GLfloat gravity = 0.015f;
 GLfloat realGravity = 0.7f;
+//-------------------------------------------
+
 GLfloat BongMove = 0.1f; // 이동 속도
 GLfloat MaxBongMove = 1.6f; // 최대 이동 거리
 GLfloat obstacleRotation = 0.0f;
@@ -150,6 +152,7 @@ glm::vec3 LeftdoorGroupDirection = glm::vec3(-1.0f, 0.0f, 0.0f); // 초기 이동 방
 glm::vec3 RightdoorGroupPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 RightdoorGroupDirection = glm::vec3(1.0f, 0.0f, 0.0f);
 
+//--------------------------------------------------
 bool isCharacter1Swing = false;
 bool isCharacter2Swing = false;
 bool isCharacter3Swing = false;
@@ -159,6 +162,9 @@ bool isCharacter3Jumping = false;
 bool isCharacter1OnMap = false;
 bool isCharacter2OnMap = false;
 bool isCharacter3OnMap = false;
+//--------------------------------------------------
+
+
 bool moveKeyStates[256] = { false }; // 이동 키 상태
 bool arrowKeyStates[256] = { false };
 bool commandKeyStates[256] = { false }; // 명령 키 상태
