@@ -47,6 +47,7 @@ public:
 	//GLvoid SetDirection(glm::vec3 dir);
 	//GLvoid SetInitialPosition(glm::vec3 dir);
 	const GLfloat ArmLegSwingAngle() { return ArmLegSwingAngle; }
+	void ArmLegSwingAngle(GLfloat NAngle) { ArmLegSwingAngle+=NAngle; }
 
 };
 
@@ -74,7 +75,7 @@ public:
 	void Position(glm::vec3 NPosition) { Position += NPosition; }
 
 	void p1ModelMatrix(glm::mat4 NMatrix) { ModelMatrix += NMatrix; }
-	//glm::mat4 ModelMatrix() { return ModelMatrix; }
+	glm::mat4 ModelMatrix() { return ModelMatrix; }
 };
 
 class Player2 : public Charactor

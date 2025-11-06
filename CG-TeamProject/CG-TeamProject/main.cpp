@@ -2065,10 +2065,10 @@ GLvoid Timer(int value) {
 	}
 
 	AABB maps[] = { map1, map2, map3, map4, map5 };
-	isCharacter1OnMap = false;
+	P1.IsOnMap= false;
 	for (const auto& map : maps) {
 		if (checkCollision(character1, map)) {
-			isCharacter1OnMap = true;
+			P1.IsOnMap = true;
 			break;
 		}
 	}
@@ -2080,7 +2080,7 @@ GLvoid Timer(int value) {
 		P1.JSpeed -= gravity;
 
 		if (P1.JSpeed <= 0.0f && P1.IsOnMap) {
-			isCharacter1Jumping = false;
+			P1.IsJumping = false;
 			P1.JSpeed = 0.3f;
 		}
 	}
@@ -2139,7 +2139,7 @@ GLvoid Timer(int value) {
 
 	// 캐릭터1 모델 매트릭스 업데이트
 	P1.p1ModelMatrix(glm::translate(glm::mat4(1.0f), P1.Position()));
-	P1.p1ModelMatrix(glm::rotate(P1.ModelMatrix(), glm::radians(RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f)));
+	P1.p1ModelMatrix(glm::rotate(P1.ModelMatrix(), glm::radians(P1.RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f)));
 
 	// AABB 업데이트
 	character1.update(P1.Position(), glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
@@ -2152,12 +2152,12 @@ GLvoid Timer(int value) {
 	//character2.update(character2Position, glm::vec3(-0.70f, 0.0f, -0.72f), glm::vec3(0.70f, 1.84f, 0.63f));
 
 	// 팔 흔들림 업데이트
-	if (IsSwing) {
-		ArmLegSwingAngle += character1SwingDirection * 2.0f;
-		if (character1ArmLegSwingAngle >= MaxSwingAngle) {
+	if (P1.IsSwing) {
+		P1.ArmLegSwingAngle(+ character1SwingDirection * 2.0f);
+		if (character1ArmLegSwingAngle >= P1.MaxSwingAngle) {
 			character1SwingDirection = -1; // 방향 반전
 		}
-		else if (character1ArmLegSwingAngle <= -MaxSwingAngle) {
+		else if (character1ArmLegSwingAngle <= -P1.MaxSwingAngle) {
 			character1SwingDirection = 1; // 방향 반전
 		}
 	}
