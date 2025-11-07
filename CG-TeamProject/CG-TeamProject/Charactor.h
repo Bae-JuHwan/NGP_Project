@@ -46,8 +46,8 @@ public:
 
 	//GLvoid SetDirection(glm::vec3 dir);
 	//GLvoid SetInitialPosition(glm::vec3 dir);
-	const GLfloat ArmLegSwingAngle() { return ArmLegSwingAngle; }
-	void ArmLegSwingAngle(GLfloat NAngle) { ArmLegSwingAngle+=NAngle; }
+	//const GLfloat ArmLegSwingAngle() { return ArmLegSwingAngle; }
+	//void ArmLegSwingAngle(GLfloat NAngle) { ArmLegSwingAngle+=NAngle; }
 
 };
 
@@ -64,18 +64,13 @@ private:
 	Model modelCharacter1Body, modelCharacter1BackPattern, modelCharacter1Blusher, modelCharacter1Eye, modelCharacter1Face, modelCharacter1LeftArm, modelCharacter1RightArm, modelCharacter1LeftLeg, modelCharacter1RightLeg;
 	GLuint VaoCheckBox, VboCheckBox[2];
 
-	glm::mat4 ModelMatrix = glm::mat4(1.0f);
-	glm::vec3 character1Direction = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 Position = glm::vec3(-5.0f, 0.0f, -5.0f);
-	glm::vec3 character1InitialPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-
 public:
 	void Draw(GLuint shaderProgramID, GLint modelMatrixLocation);
-	glm::vec3 Position() { return Position; }
-	void Position(glm::vec3 NPosition) { Position += NPosition; }
+	//glm::vec3 Position() { return Position; }
+	//void Position(glm::vec3 NPosition) { Position += NPosition; }
 
-	void p1ModelMatrix(glm::mat4 NMatrix) { ModelMatrix += NMatrix; }
-	glm::mat4 ModelMatrix() { return ModelMatrix; }
+	//void p1ModelMatrix(glm::mat4 NMatrix) { ModelMatrix += NMatrix; }
+	//glm::mat4 ModelMatrix() { return ModelMatrix; }
 };
 
 class Player2 : public Charactor

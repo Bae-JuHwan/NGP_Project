@@ -161,7 +161,7 @@ void Player1:: Draw(GLuint shaderProgramID, GLint modelMatrixLocation) {
     // ¿ÞÆÈ
     glm::mat4 Character1LeftArmModelMatrix = finalCharacter1ModelMatrix;
     Character1LeftArmModelMatrix = glm::translate(Character1LeftArmModelMatrix, glm::vec3(0.0f, 1.0f, 0.0f));
-    Character1LeftArmModelMatrix = glm::rotate(Character1LeftArmModelMatrix, glm::radians(ArmLegSwingAngle()), glm::vec3(1.0f, 0.0f, 0.0f));
+    Character1LeftArmModelMatrix = glm::rotate(Character1LeftArmModelMatrix, glm::radians(ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
     Character1LeftArmModelMatrix = glm::translate(Character1LeftArmModelMatrix, glm::vec3(0.0f, -1.0f, 0.0f));
     glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character1LeftArmModelMatrix));
     glBindVertexArray(vaoCharacter1LeftArm);
@@ -171,7 +171,7 @@ void Player1:: Draw(GLuint shaderProgramID, GLint modelMatrixLocation) {
     // ¿À¸¥ÆÈ
     glm::mat4 Character1RightArmModelMatrix = finalCharacter1ModelMatrix;
     Character1RightArmModelMatrix = glm::translate(Character1RightArmModelMatrix, glm::vec3(0.0f, 1.0f, 0.0f));
-    Character1RightArmModelMatrix = glm::rotate(Character1RightArmModelMatrix, glm::radians(-ArmLegSwingAngle()), glm::vec3(1.0f, 0.0f, 0.0f));
+    Character1RightArmModelMatrix = glm::rotate(Character1RightArmModelMatrix, glm::radians(-ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
     Character1RightArmModelMatrix = glm::translate(Character1RightArmModelMatrix, glm::vec3(0.0f, -1.0f, 0.0f));
     glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character1RightArmModelMatrix));
     glBindVertexArray(vaoCharacter1RightArm);
@@ -181,7 +181,7 @@ void Player1:: Draw(GLuint shaderProgramID, GLint modelMatrixLocation) {
     // ¿Þ´Ù¸®
     glm::mat4 Character1LeftLegModelMatrix = finalCharacter1ModelMatrix;
     Character1LeftLegModelMatrix = glm::translate(Character1LeftLegModelMatrix, glm::vec3(0.0f, 0.5f, 0.0f));
-    Character1LeftLegModelMatrix = glm::rotate(Character1LeftLegModelMatrix, glm::radians(-ArmLegSwingAngle()), glm::vec3(1.0f, 0.0f, 0.0f));
+    Character1LeftLegModelMatrix = glm::rotate(Character1LeftLegModelMatrix, glm::radians(-ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
     Character1LeftLegModelMatrix = glm::translate(Character1LeftLegModelMatrix, glm::vec3(0.0f, -0.5f, 0.0f));
     glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character1LeftLegModelMatrix));
     glBindVertexArray(vaoCharacter1LeftLeg);
@@ -191,7 +191,7 @@ void Player1:: Draw(GLuint shaderProgramID, GLint modelMatrixLocation) {
     // ¿À¸¥´Ù¸®
     glm::mat4 Character1RightLegModelMatrix = finalCharacter1ModelMatrix;
     Character1RightLegModelMatrix = glm::translate(Character1RightLegModelMatrix, glm::vec3(0.0f, 0.5f, 0.0f));
-    Character1RightLegModelMatrix = glm::rotate(Character1RightLegModelMatrix, glm::radians(ArmLegSwingAngle()), glm::vec3(1.0f, 0.0f, 0.0f));
+    Character1RightLegModelMatrix = glm::rotate(Character1RightLegModelMatrix, glm::radians(ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
     Character1RightLegModelMatrix = glm::translate(Character1RightLegModelMatrix, glm::vec3(0.0f, -0.5f, 0.0f));
     glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character1RightLegModelMatrix));
     glBindVertexArray(vaoCharacter1RightLeg);

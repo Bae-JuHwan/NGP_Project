@@ -56,21 +56,21 @@ GLuint vaoBottom, vaoArrowAndPillar, vaoEndPoint, vaoPoint;
 GLuint vboBottom[2], vboArrowAndPillar[2], vboEndPoint[2], vboPoint[2];
 Model modelBottom, modelArrowAndPillar, modelEndPoint, modelPoint;
 
-// 캐릭터1
-GLuint vaoCharacter1Body, vaoCharacter1BackPattern, vaoCharacter1Blusher, vaoCharacter1Eye, vaoCharacter1Face, vaoCharacter1LeftArm, vaoCharacter1RightArm, vaoCharacter1LeftLeg, vaoCharacter1RightLeg;
-GLuint vboCharacter1Body[2], vboCharacter1BackPattern[2], vboCharacter1Blusher[2], vboCharacter1Eye[2], vboCharacter1Face[2], vboCharacter1LeftArm[2], vboCharacter1RightArm[2], vboCharacter1LeftLeg[2],
-vboCharacter1RightLeg[2], vboCharacter2[2];
-Model modelCharacter1Body, modelCharacter1BackPattern, modelCharacter1Blusher, modelCharacter1Eye, modelCharacter1Face, modelCharacter1LeftArm, modelCharacter1RightArm, modelCharacter1LeftLeg, modelCharacter1RightLeg;
-
-// 캐릭터2
-GLuint vaoCharacter2Acc, vaoCharacter2Body, vaoCharacter2Clothes, vaoCharacter2Hair, vaoCharacter2LeftLeg, vaoCharacter2RightLeg, vaoCharacter2LeftArm, vaoCharacter2RightArm, vaoCharacter2Eye, vaoCharacter2Face;
-GLuint vboCharacter2Acc[2], vboCharacter2Body[2], vboCharacter2Clothes[2], vboCharacter2Hair[2], vboCharacter2LeftLeg[2], vboCharacter2RightLeg[2], vboCharacter2LeftArm[2], vboCharacter2RightArm[2], vboCharacter2Eye[2], vboCharacter2Face[2];
-Model modelCharacter2Acc, modelCharacter2Body, modelCharacter2Hair, modelCharacter2Clothes, modelCharacter2LeftLeg, modelCharacter2RightLeg, modelCharacter2LeftArm, modelCharacter2RightArm, modelCharacter2Eye, modelCharacter2Face;
-
-// 캐릭터3
-GLuint vaoCharacter3Body, vaoCharacter3Face, vaoCharacter3Eyes, vaoCharacter3LeftArm, vaoCharacter3RightArm, vaoCharacter3LeftFoot, vaoCharacter3RightFoot;
-GLuint vboCharacter3Body[2], vboCharacter3Face[2], vboCharacter3Eyes[2], vboCharacter3LeftArm[2], vboCharacter3RightArm[2], vboCharacter3LeftFoot[2], vboCharacter3RightFoot[2];
-Model modelCharacter3Body, modelCharacter3Face, modelCharacter3Eyes, modelCharacter3LeftArm, modelCharacter3RightArm, modelCharacter3LeftFoot, modelCharacter3RightFoot;
+//// 캐릭터1
+//GLuint vaoCharacter1Body, vaoCharacter1BackPattern, vaoCharacter1Blusher, vaoCharacter1Eye, vaoCharacter1Face, vaoCharacter1LeftArm, vaoCharacter1RightArm, vaoCharacter1LeftLeg, vaoCharacter1RightLeg;
+//GLuint vboCharacter1Body[2], vboCharacter1BackPattern[2], vboCharacter1Blusher[2], vboCharacter1Eye[2], vboCharacter1Face[2], vboCharacter1LeftArm[2], vboCharacter1RightArm[2], vboCharacter1LeftLeg[2],
+//vboCharacter1RightLeg[2], vboCharacter2[2];
+//Model modelCharacter1Body, modelCharacter1BackPattern, modelCharacter1Blusher, modelCharacter1Eye, modelCharacter1Face, modelCharacter1LeftArm, modelCharacter1RightArm, modelCharacter1LeftLeg, modelCharacter1RightLeg;
+//
+//// 캐릭터2
+//GLuint vaoCharacter2Acc, vaoCharacter2Body, vaoCharacter2Clothes, vaoCharacter2Hair, vaoCharacter2LeftLeg, vaoCharacter2RightLeg, vaoCharacter2LeftArm, vaoCharacter2RightArm, vaoCharacter2Eye, vaoCharacter2Face;
+//GLuint vboCharacter2Acc[2], vboCharacter2Body[2], vboCharacter2Clothes[2], vboCharacter2Hair[2], vboCharacter2LeftLeg[2], vboCharacter2RightLeg[2], vboCharacter2LeftArm[2], vboCharacter2RightArm[2], vboCharacter2Eye[2], vboCharacter2Face[2];
+//Model modelCharacter2Acc, modelCharacter2Body, modelCharacter2Hair, modelCharacter2Clothes, modelCharacter2LeftLeg, modelCharacter2RightLeg, modelCharacter2LeftArm, modelCharacter2RightArm, modelCharacter2Eye, modelCharacter2Face;
+//
+//// 캐릭터3
+//GLuint vaoCharacter3Body, vaoCharacter3Face, vaoCharacter3Eyes, vaoCharacter3LeftArm, vaoCharacter3RightArm, vaoCharacter3LeftFoot, vaoCharacter3RightFoot;
+//GLuint vboCharacter3Body[2], vboCharacter3Face[2], vboCharacter3Eyes[2], vboCharacter3LeftArm[2], vboCharacter3RightArm[2], vboCharacter3LeftFoot[2], vboCharacter3RightFoot[2];
+//Model modelCharacter3Body, modelCharacter3Face, modelCharacter3Eyes, modelCharacter3LeftArm, modelCharacter3RightArm, modelCharacter3LeftFoot, modelCharacter3RightFoot;
 
 //장애물
 GLuint vaoBong1, vaoBong2, vaoHorizontalFanPink, vaoHorizontalFanPurple, vaoDoorOut, vaoLeftdoor, vaoRightdoor, vaoJumpBarCenter, vaoJumpBarbargroup1, vaoJumpBarbargroup2, vaoJumpBarbargroup3, vaoVerticalFanBar,
@@ -93,21 +93,21 @@ GLuint vertexShader;
 GLuint fragmentShader;
 
 //움직임 스피드 ------------------------------------
-GLfloat moveSpeed = 0.2f;
-//팔다리 움직임 각도
-GLfloat character1RotationAngle = 0.0f;
-GLfloat character2RotationAngle = 0.0f;
-GLfloat character3RotationAngle = 0.0f;
-GLfloat character1ArmLegSwingAngle = 0.0f;
-GLfloat character2ArmLegSwingAngle = 0.0f;
-GLfloat character3ArmLegSwingAngle = 0.0f;
-GLfloat maxSwingAngle = 30.0f;
-//캐릭터 점프 스피드
-GLfloat character1JumpSpeed = 0.3f;
-GLfloat character2JumpSpeed = 0.3f;
-GLfloat character3JumpSpeed = 0.3f;
-GLfloat gravity = 0.015f;
-GLfloat realGravity = 0.7f;
+//GLfloat moveSpeed = 0.2f;
+////팔다리 움직임 각도
+//GLfloat character1RotationAngle = 0.0f;
+//GLfloat character2RotationAngle = 0.0f;
+//GLfloat character3RotationAngle = 0.0f;
+//GLfloat character1ArmLegSwingAngle = 0.0f;
+//GLfloat character2ArmLegSwingAngle = 0.0f;
+//GLfloat character3ArmLegSwingAngle = 0.0f;
+//GLfloat maxSwingAngle = 30.0f;
+////캐릭터 점프 스피드
+//GLfloat character1JumpSpeed = 0.3f;
+//GLfloat character2JumpSpeed = 0.3f;
+//GLfloat character3JumpSpeed = 0.3f;
+//GLfloat gravity = 0.015f;
+//GLfloat realGravity = 0.7f;
 //-------------------------------------------
 
 GLfloat BongMove = 0.1f; // 이동 속도
@@ -691,8 +691,8 @@ AABB verticalFan5 = {
 //}
 // 캐릭터
 AABB character1 = {
-	P1.Position() + glm::vec3(-0.70f, 0.0f, -0.72f),
-	P1.Position() + glm::vec3(0.70f, 1.84f, 0.63f)
+	P1.Position + glm::vec3(-0.70f, 0.0f, -0.72f),
+	P1.Position + glm::vec3(0.70f, 1.84f, 0.63f)
 };
 
 //// 캐릭터2
@@ -1947,8 +1947,8 @@ GLvoid drawScene() {
 	DrawObstacleBong(shaderProgramID, modelMatrixLocation);
 	P1.Draw(shaderProgramID, modelMatrixLocation);
 	//DrawCharacter2(shaderProgramID, modelMatrixLocation);
-	 =//DrawCharacter3(shaderProgramID, modelMatrixLocation);
-	DrawObstacleHorizontalFan(shaderProgramID, modelMatrixLocation);
+	=//DrawCharacter3(shaderProgramID, modelMatrixLocation);
+		DrawObstacleHorizontalFan(shaderProgramID, modelMatrixLocation);
 	DrawObstacleVerticalFan(shaderProgramID, modelMatrixLocation);
 	DrawObstacleJumpbar(shaderProgramID, modelMatrixLocation);
 	DrawObstacleDoor(shaderProgramID, modelMatrixLocation);
@@ -1977,14 +1977,14 @@ GLvoid drawScene() {
 		character1Position = initialCharacter1Position;
 	}
 
-	if (character2Position.y < -75.0f) {
+	/*if (character2Position.y < -75.0f) {
 		character2Position = initialCharacter2Position;
-	}
+	}*/
 	DrawMap(shaderProgramID, modelMatrixLocation);
 	DrawObstacleBong(shaderProgramID, modelMatrixLocation);
-	DrawCharacter1(shaderProgramID, modelMatrixLocation);
-	DrawCharacter2(shaderProgramID, modelMatrixLocation);
-	DrawCharacter3(shaderProgramID, modelMatrixLocation);
+	P1.Draw(shaderProgramID, modelMatrixLocation);
+	/*DrawCharacter2(shaderProgramID, modelMatrixLocation);
+	DrawCharacter3(shaderProgramID, modelMatrixLocation);*/
 	DrawObstacleHorizontalFan(shaderProgramID, modelMatrixLocation);
 	DrawObstacleVerticalFan(shaderProgramID, modelMatrixLocation);
 	DrawObstacleDoor(shaderProgramID, modelMatrixLocation);
@@ -2010,11 +2010,11 @@ GLvoid Keyboard(unsigned char key, int x, int y) {
 				P1.IsJumping = true;
 			}
 			break;
-		/*case 'j':
-			if (!isCharacter2Jumping) {
-				isCharacter2Jumping = true;
-			}
-			break;*/
+			/*case 'j':
+				if (!isCharacter2Jumping) {
+					isCharacter2Jumping = true;
+				}
+				break;*/
 		}
 	}
 	glutPostRedisplay();
@@ -2026,37 +2026,37 @@ void KeyboardUp(unsigned char key, int x, int y) {
 	}
 }
 
-void SpecialKey(int key, int x, int y) {
-	if (key == GLUT_KEY_UP || key == GLUT_KEY_DOWN || key == GLUT_KEY_LEFT || key == GLUT_KEY_RIGHT) {
-		arrowKeyStates[key] = true;
-	}
-}
-
-void SpecialKeyUp(int key, int x, int y) {
-	if (key == GLUT_KEY_UP || key == GLUT_KEY_DOWN || key == GLUT_KEY_LEFT || key == GLUT_KEY_RIGHT) {
-		arrowKeyStates[key] = false;
-	}
-}
+//void SpecialKey(int key, int x, int y) {
+//	if (key == GLUT_KEY_UP || key == GLUT_KEY_DOWN || key == GLUT_KEY_LEFT || key == GLUT_KEY_RIGHT) {
+//		arrowKeyStates[key] = true;
+//	}
+//}
+//
+//void SpecialKeyUp(int key, int x, int y) {
+//	if (key == GLUT_KEY_UP || key == GLUT_KEY_DOWN || key == GLUT_KEY_LEFT || key == GLUT_KEY_RIGHT) {
+//		arrowKeyStates[key] = false;
+//	}
+//}
 
 GLvoid Timer(int value) {
 	if (moveKeyStates['w']) {
-		P1.Direction = glm::vec3(0.0f, 0.0f, -moveSpeed);
-		character1RotationAngle = 0.0f;
+		P1.Direction = glm::vec3(0.0f, 0.0f, -P1.MSpeed);
+		P1.RotationAngle = 0.0f;
 		P1.IsSwing = true;
 	}
 	else if (moveKeyStates['s']) {
-		P1.Direction = glm::vec3(0.0f, 0.0f, moveSpeed);
-		character1RotationAngle = 180.0f;
+		P1.Direction = glm::vec3(0.0f, 0.0f, P1.MSpeed);
+		P1.RotationAngle = 180.0f;
 		P1.IsSwing = true;
 	}
 	else if (moveKeyStates['a']) {
-		P1.Direction = glm::vec3(-moveSpeed, 0.0f, 0.0f);
-		character1RotationAngle = 90.0f;
+		P1.Direction = glm::vec3(-P1.MSpeed, 0.0f, 0.0f);
+		P1.RotationAngle = 90.0f;
 		P1.IsSwing = true;
 	}
 	else if (moveKeyStates['d']) {
-		P1.Direction = glm::vec3(moveSpeed, 0.0f, 0.0f);
-		character1RotationAngle = -90.0f;
+		P1.Direction = glm::vec3(P1.MSpeed, 0.0f, 0.0f);
+		P1.RotationAngle = -90.0f;
 		P1.IsSwing = true;
 	}
 	else {
@@ -2065,7 +2065,7 @@ GLvoid Timer(int value) {
 	}
 
 	AABB maps[] = { map1, map2, map3, map4, map5 };
-	P1.IsOnMap= false;
+	P1.IsOnMap = false;
 	for (const auto& map : maps) {
 		if (checkCollision(character1, map)) {
 			P1.IsOnMap = true;
@@ -2076,8 +2076,8 @@ GLvoid Timer(int value) {
 	// 점프 로직
 	if (P1.IsJumping) {
 		// character1Position.y += character1JumpSpeed;
-		P1.Position(glm::vec3(0.0f, P1.JSpeed, 0.0f));
-		P1.JSpeed -= gravity;
+		P1.Position = glm::vec3(0.0f, P1.JSpeed, 0.0f);
+		P1.JSpeed -= P1.gravity;
 
 		if (P1.JSpeed <= 0.0f && P1.IsOnMap) {
 			P1.IsJumping = false;
@@ -2086,7 +2086,7 @@ GLvoid Timer(int value) {
 	}
 	else if (!P1.IsOnMap) {
 		//character1Position.y -= realGravity;
-		P1.Position(glm::vec3(0.0f, -realGravity, 0.0f));
+		P1.Position = glm::vec3(0.0f, -P1.realGravity, 0.0f);
 	}
 
 	//// 캐릭터2 이동 처리
@@ -2138,38 +2138,38 @@ GLvoid Timer(int value) {
 	//}
 
 	// 캐릭터1 모델 매트릭스 업데이트
-	P1.p1ModelMatrix(glm::translate(glm::mat4(1.0f), P1.Position()));
-	P1.p1ModelMatrix(glm::rotate(P1.ModelMatrix(), glm::radians(P1.RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f)));
+	P1.ModelMatrix = glm::translate(glm::mat4(1.0f), P1.Position);
+	P1.ModelMatrix = glm::rotate(P1.ModelMatrix, glm::radians(P1.RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	// AABB 업데이트
-	character1.update(P1.Position(), glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
+	character1.update(P1.Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 
 	//// 캐릭터2 모델 매트릭스 업데이트
 	//character2ModelMatrix = glm::translate(glm::mat4(1.0f), character2Position);
-	//character2ModelMatrix = glm::rotate(character2ModelMatrix, glm::radians(character2RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+	//character2ModelMatrix = glm::rotate(character2ModelMatrkix, glm::radians(character2RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	// AABB 업데이트
 	//character2.update(character2Position, glm::vec3(-0.70f, 0.0f, -0.72f), glm::vec3(0.70f, 1.84f, 0.63f));
 
 	// 팔 흔들림 업데이트
 	if (P1.IsSwing) {
-		P1.ArmLegSwingAngle(+ P1.SwingDirection * 2.0f);
-		if (P1.ArmLegSwingAngle() >= P1.MaxSwingAngle) {
+		P1.ArmLegSwingAngle += P1.SwingDirection * 2.0f;
+		if (P1.ArmLegSwingAngle >= P1.MaxSwingAngle) {
 			P1.SwingDirection = -1; // 방향 반전
 		}
-		else if (P1.ArmLegSwingAngle() <= -P1.MaxSwingAngle) {
+		else if (P1.ArmLegSwingAngle <= -P1.MaxSwingAngle) {
 			P1.SwingDirection = 1; // 방향 반전
 		}
 	}
 	else {
 		// 흔들림 비활성화 시 초기 상태로 복구
-		if (P1.ArmLegSwingAngle() > 0.0f) {
-			P1.ArmLegSwingAngle(-2.0f);
-			if (P1.ArmLegSwingAngle() < 0.0f) character1ArmLegSwingAngle = 0.0f;
+		if (P1.ArmLegSwingAngle > 0.0f) {
+			P1.ArmLegSwingAngle -= 2.0f;
+			if (P1.ArmLegSwingAngle < 0.0f) P1.ArmLegSwingAngle = 0.0f;
 		}
-		else if (P1.ArmLegSwingAngle() < 0.0f) {
-			P1.ArmLegSwingAngle(2.0f);
-			if (P1.ArmLegSwingAngle() > 0.0f) character1ArmLegSwingAngle = 0.0f;
+		else if (P1.ArmLegSwingAngle < 0.0f) {
+			P1.ArmLegSwingAngle += 2.0f;
+			if (P1.ArmLegSwingAngle > 0.0f) P1.ArmLegSwingAngle = 0.0f;
 		}
 	}
 
@@ -2194,41 +2194,41 @@ GLvoid Timer(int value) {
 	 }*/
 
 	 // 캐릭터 간 충돌 검사
-	if (checkCollision(character1, character2)) {
-		float overlapX = std::min(character1.max.x, character2.max.x) - std::max(character1.min.x, character2.min.x);
-		float overlapZ = std::min(character1.max.z, character2.max.z) - std::max(character1.min.z, character2.min.z);
+	//if (checkCollision(character1, character2)) {
+	//	float overlapX = std::min(character1.max.x, character2.max.x) - std::max(character1.min.x, character2.min.x);
+	//	float overlapZ = std::min(character1.max.z, character2.max.z) - std::max(character1.min.z, character2.min.z);
 
-		if (overlapX < overlapZ) {
-			if (character1Direction.x > 0.0f && character1.max.x > character2.min.x) {
-				character1Direction.x = 0.0f;
-			}
-			else if (character1Direction.x < 0.0f && character1.min.x < character2.max.x) {
-				character1Direction.x = 0.0f;
-			}
+	//	if (overlapX < overlapZ) {
+	//		if (character1Direction.x > 0.0f && character1.max.x > character2.min.x) {
+	//			character1Direction.x = 0.0f;
+	//		}
+	//		else if (character1Direction.x < 0.0f && character1.min.x < character2.max.x) {
+	//			character1Direction.x = 0.0f;
+	//		}
 
-			if (character2Direction.x > 0.0f && character2.max.x > character1.min.x) {
-				character2Direction.x = 0.0f;
-			}
-			else if (character2Direction.x < 0.0f && character2.min.x < character1.max.x) {
-				character2Direction.x = 0.0f;
-			}
-		}
-		else {
-			if (character1Direction.z > 0.0f && character1.max.z > character2.min.z) {
-				character1Direction.z = 0.0f;
-			}
-			else if (character1Direction.z < 0.0f && character1.min.z < character2.max.z) {
-				character1Direction.z = 0.0f;
-			}
+	//		if (character2Direction.x > 0.0f && character2.max.x > character1.min.x) {
+	//			character2Direction.x = 0.0f;
+	//		}
+	//		else if (character2Direction.x < 0.0f && character2.min.x < character1.max.x) {
+	//			character2Direction.x = 0.0f;
+	//		}
+	//	}
+	//	else {
+	//		if (character1Direction.z > 0.0f && character1.max.z > character2.min.z) {
+	//			character1Direction.z = 0.0f;
+	//		}
+	//		else if (character1Direction.z < 0.0f && character1.min.z < character2.max.z) {
+	//			character1Direction.z = 0.0f;
+	//		}
 
-			if (character2Direction.z > 0.0f && character2.max.z > character1.min.z) {
-				character2Direction.z = 0.0f;
-			}
-			else if (character2Direction.z < 0.0f && character2.min.z < character1.max.z) {
-				character2Direction.z = 0.0f;
-			}
-		}
-	}
+	//		if (character2Direction.z > 0.0f && character2.max.z > character1.min.z) {
+	//			character2Direction.z = 0.0f;
+	//		}
+	//		else if (character2Direction.z < 0.0f && character2.min.z < character1.max.z) {
+	//			character2Direction.z = 0.0f;
+	//		}
+	//	}
+	//}
 
 	// 봉과 캐릭터1 충돌 처리
 	AABB bongs[] = { bong1, bong2, bong3, bong4, bong5, bong6 };
@@ -2238,19 +2238,19 @@ GLvoid Timer(int value) {
 			float overlapbZ = std::min(character1.max.z, bong.max.z) - std::max(character1.min.z, bong.min.z);
 
 			if (overlapbX < overlapbZ) {
-				if (character1Direction.x > 0.0f && character1.max.x > bong.min.x) {
-					character1Direction.x = 0.0f;
+				if (P1.Direction.x > 0.0f && character1.max.x > bong.min.x) {
+					P1.Direction.x = 0.0f;
 				}
-				else if (character1Direction.x < 0.0f && character1.min.x < bong.max.x) {
-					character1Direction.x = 0.0f;
+				else if (P1.Direction.x < 0.0f && character1.min.x < bong.max.x) {
+					P1.Direction.x = 0.0f;
 				}
 			}
 			else {
-				if (character1Direction.z > 0.0f && character1.max.z > bong.min.z) {
-					character1Direction.z = 0.0f;
+				if (P1.Direction.z > 0.0f && character1.max.z > bong.min.z) {
+					P1.Direction.z = 0.0f;
 				}
-				else if (character1Direction.z < 0.0f && character1.min.z < bong.max.z) {
-					character1Direction.z = 0.0f;
+				else if (P1.Direction.z < 0.0f && character1.min.z < bong.max.z) {
+					P1.Direction.z = 0.0f;
 				}
 			}
 		}
@@ -2342,19 +2342,19 @@ GLvoid Timer(int value) {
 			float overlapZ = std::min(character1.max.z, door.max.z) - std::max(character1.min.z, door.min.z);
 
 			if (overlapX < overlapZ) {
-				if (character1Direction.x > 0.0f && character1.max.x > door.min.x) {
-					character1Direction.x = 0.0f;
+				if (P1.Direction.x > 0.0f && character1.max.x > door.min.x) {
+					P1.Direction.x = 0.0f;
 				}
-				else if (character1Direction.x < 0.0f && character1.min.x < door.max.x) {
-					character1Direction.x = 0.0f;
+				else if (P1.Direction.x < 0.0f && character1.min.x < door.max.x) {
+					P1.Direction.x = 0.0f;
 				}
 			}
 			else {
-				if (character1Direction.z > 0.0f && character1.max.z > door.min.z) {
-					character1Direction.z = 0.0f;
+				if (P1.Direction.z > 0.0f && character1.max.z > door.min.z) {
+					P1.Direction.z = 0.0f;
 				}
-				else if (character1Direction.z < 0.0f && character1.min.z < door.max.z) {
-					character1Direction.z = 0.0f;
+				else if (P1.Direction.z < 0.0f && character1.min.z < door.max.z) {
+					P1.Direction.z = 0.0f;
 				}
 			}
 		}
@@ -2365,19 +2365,19 @@ GLvoid Timer(int value) {
 			float overlapZ = std::min(character1.max.z, door.max.z) - std::max(character1.min.z, door.min.z);
 
 			if (overlapX < overlapZ) {
-				if (character1Direction.x > 0.0f && character1.max.x > door.min.x) {
-					character1Direction.x = 0.0f;
+				if (P1.Direction.x > 0.0f && character1.max.x > door.min.x) {
+					P1.Direction.x = 0.0f;
 				}
-				else if (character1Direction.x < 0.0f && character1.min.x < door.max.x) {
-					character1Direction.x = 0.0f;
+				else if (P1.Direction.x < 0.0f && character1.min.x < door.max.x) {
+					P1.Direction.x = 0.0f;
 				}
 			}
 			else {
-				if (character1Direction.z > 0.0f && character1.max.z > door.min.z) {
-					character1Direction.z = 0.0f;
+				if (P1.Direction.z > 0.0f && character1.max.z > door.min.z) {
+					P1.Direction.z = 0.0f;
 				}
-				else if (character1Direction.z < 0.0f && character1.min.z < door.max.z) {
-					character1Direction.z = 0.0f;
+				else if (P1.Direction.z < 0.0f && character1.min.z < door.max.z) {
+					P1.Direction.z = 0.0f;
 				}
 			}
 		}
@@ -2436,19 +2436,19 @@ GLvoid Timer(int value) {
 			float overlapZ = std::min(character1.max.z, outdoor.max.z) - std::max(character1.min.z, outdoor.min.z);
 
 			if (overlapX < overlapZ) {
-				if (character1Direction.x > 0.0f && character1.max.x > outdoor.min.x) {
-					character1Direction.x = 0.0f;
+				if (P1.Direction.x > 0.0f && character1.max.x > outdoor.min.x) {
+					P1.Direction.x = 0.0f;
 				}
-				else if (character1Direction.x < 0.0f && character1.min.x < outdoor.max.x) {
-					character1Direction.x = 0.0f;
+				else if (P1.Direction.x < 0.0f && character1.min.x < outdoor.max.x) {
+					P1.Direction.x = 0.0f;
 				}
 			}
 			else {
-				if (character1Direction.z > 0.0f && character1.max.z > outdoor.min.z) {
-					character1Direction.z = 0.0f;
+				if (P1.Direction.z > 0.0f && character1.max.z > outdoor.min.z) {
+					P1.Direction.z = 0.0f;
 				}
-				else if (character1Direction.z < 0.0f && character1.min.z < outdoor.max.z) {
-					character1Direction.z = 0.0f;
+				else if (P1.Direction.z < 0.0f && character1.min.z < outdoor.max.z) {
+					P1.Direction.z = 0.0f;
 				}
 			}
 		}
@@ -2513,19 +2513,19 @@ GLvoid Timer(int value) {
 			float overlapZ = std::min(character1.max.z, fan.max.z) - std::max(character1.min.z, fan.min.z);
 
 			if (overlapX < overlapZ) {
-				if (character1Direction.x > 0.0f && character1.max.x > fan.min.x) {
-					character1Direction.x = 0.0f;
+				if (P1.Direction.x > 0.0f && character1.max.x > fan.min.x) {
+					P1.Direction.x = 0.0f;
 				}
-				else if (character1Direction.x < 0.0f && character1.min.x < fan.max.x) {
-					character1Direction.x = 0.0f;
+				else if (P1.Direction.x < 0.0f && character1.min.x < fan.max.x) {
+					P1.Direction.x = 0.0f;
 				}
 			}
 			else {
-				if (character1Direction.z > 0.0f && character1.max.z > fan.min.z) {
-					character1Direction.z = 0.0f;
+				if (P1.Direction.z > 0.0f && character1.max.z > fan.min.z) {
+					P1.Direction.z = 0.0f;
 				}
-				else if (character1Direction.z < 0.0f && character1.min.z < fan.max.z) {
-					character1Direction.z = 0.0f;
+				else if (P1.Direction.z < 0.0f && character1.min.z < fan.max.z) {
+					P1.Direction.z = 0.0f;
 				}
 			}
 		}
@@ -2596,19 +2596,19 @@ GLvoid Timer(int value) {
 			float overlapZ = std::min(character1.max.z, barcenter.max.z) - std::max(character1.min.z, barcenter.min.z);
 
 			if (overlapX < overlapZ) { // X축에서 더 겹친 경우
-				if (character1Direction.x > 0.0f && character1.max.x > barcenter.min.x) {
-					character1Direction.x = 0.0f; // 캐릭터가 오른쪽으로 이동 중이면 정지
+				if (P1.Direction.x > 0.0f && character1.max.x > barcenter.min.x) {
+					P1.Direction.x = 0.0f; // 캐릭터가 오른쪽으로 이동 중이면 정지
 				}
-				else if (character1Direction.x < 0.0f && character1.min.x < barcenter.max.x) {
-					character1Direction.x = 0.0f; // 캐릭터가 왼쪽으로 이동 중이면 정지
+				else if (P1.Direction.x < 0.0f && character1.min.x < barcenter.max.x) {
+					P1.Direction.x = 0.0f; // 캐릭터가 왼쪽으로 이동 중이면 정지
 				}
 			}
 			else { // Z축에서 더 겹친 경우
-				if (character1Direction.z > 0.0f && character1.max.z > barcenter.min.z) {
-					character1Direction.z = 0.0f; // 캐릭터가 위쪽으로 이동 중이면 정지
+				if (P1.Direction.z > 0.0f && character1.max.z > barcenter.min.z) {
+					P1.Direction.z = 0.0f; // 캐릭터가 위쪽으로 이동 중이면 정지
 				}
-				else if (character1Direction.z < 0.0f && character1.min.z < barcenter.max.z) {
-					character1Direction.z = 0.0f; // 캐릭터가 아래쪽으로 이동 중이면 정지
+				else if (P1.Direction.z < 0.0f && character1.min.z < barcenter.max.z) {
+					P1.Direction.z = 0.0f; // 캐릭터가 아래쪽으로 이동 중이면 정지
 				}
 			}
 		}
@@ -2619,19 +2619,19 @@ GLvoid Timer(int value) {
 			float overlapZ = std::min(character1.max.z, bar.max.z) - std::max(character1.min.z, bar.min.z);
 
 			if (overlapX < overlapZ) { // X축에서 더 겹친 경우
-				if (character1Direction.x > 0.0f && character1.max.x > bar.min.x) {
-					character1Direction.x = 0.0f; // 오른쪽 이동 정지
+				if (P1.Direction.x > 0.0f && character1.max.x > bar.min.x) {
+					P1.Direction.x = 0.0f; // 오른쪽 이동 정지
 				}
-				else if (character1Direction.x < 0.0f && character1.min.x < bar.max.x) {
-					character1Direction.x = 0.0f; // 왼쪽 이동 정지
+				else if (P1.Direction.x < 0.0f && character1.min.x < bar.max.x) {
+					P1.Direction.x = 0.0f; // 왼쪽 이동 정지
 				}
 			}
 			else { // Z축에서 더 겹친 경우
-				if (character1Direction.z > 0.0f && character1.max.z > bar.min.z) {
-					character1Direction.z = 0.0f; // 위쪽 이동 정지
+				if (P1.Direction.z > 0.0f && character1.max.z > bar.min.z) {
+					P1.Direction.z = 0.0f; // 위쪽 이동 정지
 				}
-				else if (character1Direction.z < 0.0f && character1.min.z < bar.max.z) {
-					character1Direction.z = 0.0f; // 아래쪽 이동 정지
+				else if (P1.Direction.z < 0.0f && character1.min.z < bar.max.z) {
+					P1.Direction.z = 0.0f; // 아래쪽 이동 정지
 				}
 			}
 		}
@@ -2646,19 +2646,19 @@ GLvoid Timer(int value) {
 			float overlapbZ = std::min(character1.max.z, bar.max.z) - std::max(character1.min.z, bar.min.z);
 
 			if (overlapbX < overlapbZ) {
-				if (character1Direction.x > 0.0f && character1.max.x > bar.min.x) {
-					character1Direction.x = 0.0f;
+				if (P1.Direction.x > 0.0f && character1.max.x > bar.min.x) {
+					P1.Direction.x = 0.0f;
 				}
-				else if (character1Direction.x < 0.0f && character1.min.x < bar.max.x) {
-					character1Direction.x = 0.0f;
+				else if (P1.Direction.x < 0.0f && character1.min.x < bar.max.x) {
+					P1.Direction.x = 0.0f;
 				}
 			}
 			else {
-				if (character1Direction.z > 0.0f && character1.max.z > bar.min.z) {
-					character1Direction.z = 0.0f;
+				if (P1.Direction.z > 0.0f && character1.max.z > bar.min.z) {
+					P1.Direction.z = 0.0f;
 				}
-				else if (character1Direction.z < 0.0f && character1.min.z < bar.max.z) {
-					character1Direction.z = 0.0f;
+				else if (P1.Direction.z < 0.0f && character1.min.z < bar.max.z) {
+					P1.Direction.z = 0.0f;
 				}
 			}
 		}
@@ -2692,7 +2692,8 @@ GLvoid Timer(int value) {
 
 
 	// 이동 처리
-	character1Position += character1Direction;
+	//character1Position += P1.Direction;
+	P1.Position += P1.Direction;
 	//character2Position += character2Direction;
 
 	// 화면 갱신
