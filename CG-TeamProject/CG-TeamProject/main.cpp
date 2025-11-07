@@ -8,60 +8,11 @@
 #include "Charactor.h"
 
 
-//struct AABB {
-//	glm::vec3 min; // 충돌박스의 최소 좌표 (x, y, z)
-//	glm::vec3 max; // 충돌박스의 최대 좌표 (x, y, z)
-//
-//	// AABB 갱신 메서드
-//	void update(const glm::vec3& position, const glm::vec3& offsetMin, const glm::vec3& offsetMax) {
-//		min = position + offsetMin;
-//		max = position + offsetMax;
-//	}
-//
-//	void updateRotatedAABB(const glm::vec3& position, const glm::vec3& offsetMin, const glm::vec3& offsetMax, float rotationAngle, glm::vec3 rotationAxis) {
-//		glm::vec3 vertices[8] = {
-//			position + offsetMin,
-//			position + glm::vec3(offsetMin.x, offsetMin.y, offsetMax.z),
-//			position + glm::vec3(offsetMin.x, offsetMax.y, offsetMin.z),
-//			position + glm::vec3(offsetMin.x, offsetMax.y, offsetMax.z),
-//			position + glm::vec3(offsetMax.x, offsetMin.y, offsetMin.z),
-//			position + glm::vec3(offsetMax.x, offsetMin.y, offsetMax.z),
-//			position + glm::vec3(offsetMax.x, offsetMax.y, offsetMin.z),
-//			position + offsetMax
-//		};
-//
-//		glm::mat4 rotationMatrix = glm::translate(glm::mat4(1.0f), position);
-//		rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotationAngle), rotationAxis);
-//		rotationMatrix = glm::translate(rotationMatrix, -position);
-//		for (int i = 0; i < 8; ++i) {
-//			glm::vec4 rotatedVertex = rotationMatrix * glm::vec4(vertices[i], 1.0f);
-//			vertices[i] = glm::vec3(rotatedVertex);
-//		}
-//
-//		glm::vec3 newMin = vertices[0];
-//		glm::vec3 newMax = vertices[0];
-//		for (int i = 1; i < 8; ++i) {
-//			newMin = glm::min(newMin, vertices[i]);
-//			newMax = glm::max(newMax, vertices[i]);
-//		}
-//
-//		min = newMin;
-//		max = newMax;
-//	}
-//
-//};
-
 // 맵
 GLuint vaoBottom, vaoArrowAndPillar, vaoEndPoint, vaoPoint;
 GLuint vboBottom[2], vboArrowAndPillar[2], vboEndPoint[2], vboPoint[2];
 Model modelBottom, modelArrowAndPillar, modelEndPoint, modelPoint;
 
-//// 캐릭터1
-//GLuint vaoCharacter1Body, vaoCharacter1BackPattern, vaoCharacter1Blusher, vaoCharacter1Eye, vaoCharacter1Face, vaoCharacter1LeftArm, vaoCharacter1RightArm, vaoCharacter1LeftLeg, vaoCharacter1RightLeg;
-//GLuint vboCharacter1Body[2], vboCharacter1BackPattern[2], vboCharacter1Blusher[2], vboCharacter1Eye[2], vboCharacter1Face[2], vboCharacter1LeftArm[2], vboCharacter1RightArm[2], vboCharacter1LeftLeg[2],
-//vboCharacter1RightLeg[2], vboCharacter2[2];
-//Model modelCharacter1Body, modelCharacter1BackPattern, modelCharacter1Blusher, modelCharacter1Eye, modelCharacter1Face, modelCharacter1LeftArm, modelCharacter1RightArm, modelCharacter1LeftLeg, modelCharacter1RightLeg;
-//
 //// 캐릭터2
 //GLuint vaoCharacter2Acc, vaoCharacter2Body, vaoCharacter2Clothes, vaoCharacter2Hair, vaoCharacter2LeftLeg, vaoCharacter2RightLeg, vaoCharacter2LeftArm, vaoCharacter2RightArm, vaoCharacter2Eye, vaoCharacter2Face;
 //GLuint vboCharacter2Acc[2], vboCharacter2Body[2], vboCharacter2Clothes[2], vboCharacter2Hair[2], vboCharacter2LeftLeg[2], vboCharacter2RightLeg[2], vboCharacter2LeftArm[2], vboCharacter2RightArm[2], vboCharacter2Eye[2], vboCharacter2Face[2];
@@ -92,23 +43,7 @@ GLuint shaderProgramID;
 GLuint vertexShader;
 GLuint fragmentShader;
 
-//움직임 스피드 ------------------------------------
-//GLfloat moveSpeed = 0.2f;
-////팔다리 움직임 각도
-//GLfloat character1RotationAngle = 0.0f;
-//GLfloat character2RotationAngle = 0.0f;
-//GLfloat character3RotationAngle = 0.0f;
-//GLfloat character1ArmLegSwingAngle = 0.0f;
-//GLfloat character2ArmLegSwingAngle = 0.0f;
-//GLfloat character3ArmLegSwingAngle = 0.0f;
-//GLfloat maxSwingAngle = 30.0f;
-////캐릭터 점프 스피드
-//GLfloat character1JumpSpeed = 0.3f;
-//GLfloat character2JumpSpeed = 0.3f;
-//GLfloat character3JumpSpeed = 0.3f;
-//GLfloat gravity = 0.015f;
-//GLfloat realGravity = 0.7f;
-//-------------------------------------------
+
 
 GLfloat BongMove = 0.1f; // 이동 속도
 GLfloat MaxBongMove = 1.6f; // 최대 이동 거리
@@ -116,11 +51,6 @@ GLfloat obstacleRotation = 0.0f;
 GLfloat DoorMove = 0.05f;
 GLfloat MaxDoorMove = 1.7f;
 GLfloat jumpBarRotationAngle = 0.0f;
-
-//glm::mat4 character1ModelMatrix = glm::mat4(1.0f);
-//glm::vec3 character1Direction = glm::vec3(0.0f, 0.0f, 0.0f);
-//glm::vec3 character1Position = glm::vec3(-5.0f, 0.0f, -5.0f);
-//glm::vec3 character1InitialPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 
 //glm::mat4 character2ModelMatrix = glm::mat4(1.0f);
 //glm::vec3 character2Direction = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -151,17 +81,6 @@ glm::vec3 LeftdoorGroupDirection = glm::vec3(-1.0f, 0.0f, 0.0f); // 초기 이동 방
 glm::vec3 RightdoorGroupPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 RightdoorGroupDirection = glm::vec3(1.0f, 0.0f, 0.0f);
 
-////--------------------------------------------------
-//bool isCharacter1Swing = false;
-//bool isCharacter2Swing = false;
-//bool isCharacter3Swing = false;
-//bool isCharacter1Jumping = false;
-//bool isCharacter2Jumping = false;
-//bool isCharacter3Jumping = false;
-//bool isCharacter1OnMap = false;
-//bool isCharacter2OnMap = false;
-//bool isCharacter3OnMap = false;
-////--------------------------------------------------
 
 
 bool moveKeyStates[256] = { false }; // 이동 키 상태
@@ -207,19 +126,7 @@ void InitArrowAndPillar();
 void InitEndPoint();
 void InitPoint();
 
-// 캐릭터1
-//void InitCharacter1Body();
-//void InitCharacter1BackPattern();
-//void InitCharacter1Blusher();
-//void InitCharacter1Eye();
-//void InitCharacter1Face();
-//void InitCharacter1LeftArm();
-//void InitCharacter1RightArm();
-//void InitCharacter1LeftLeg();
-//void InitCharacter1RightLeg();
-
 //체크박스 추가
-//void InitCharacter1CheckBox();
 //void InitCharacter2CheckBox();
 //void InitCharacter3CheckBox();
 
@@ -270,59 +177,6 @@ GLvoid Timer(int value);
 
 int window_Width = 800;
 int window_Height = 600;
-
-//void InitBuffer(GLuint& vao, GLuint* vbo, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) {
-//	glGenVertexArrays(1, &vao);
-//	glBindVertexArray(vao);
-//
-//	glGenBuffers(2, vbo);
-//
-//	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-//	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-//
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[1]);
-//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-//
-//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-//	glEnableVertexAttribArray(0);
-//
-//	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
-//	glEnableVertexAttribArray(1);
-//
-//	glBindVertexArray(0);
-//}
-
-/*void InitPart(const std::string& filePath, Model& model, GLuint& vao, GLuint* vbo, const glm::vec3& color) {
-	read_obj_file(filePath, model);
-
-	std::vector<Vertex> expandedVertices;
-	std::vector<unsigned int> indices;
-
-	for (size_t i = 0; i < model.faces.size(); ++i) {
-		Vertex v1 = { model.vertices[model.faces[i].v1].x,
-					  model.vertices[model.faces[i].v1].y,
-					  model.vertices[model.faces[i].v1].z,
-					  color };
-		Vertex v2 = { model.vertices[model.faces[i].v2].x,
-					  model.vertices[model.faces[i].v2].y,
-					  model.vertices[model.faces[i].v2].z,
-					  color };
-		Vertex v3 = { model.vertices[model.faces[i].v3].x,
-					  model.vertices[model.faces[i].v3].y,
-					  model.vertices[model.faces[i].v3].z,
-					  color };
-
-		expandedVertices.push_back(v1);
-		expandedVertices.push_back(v2);
-		expandedVertices.push_back(v3);
-
-		indices.push_back(expandedVertices.size() - 3);
-		indices.push_back(expandedVertices.size() - 2);
-		indices.push_back(expandedVertices.size() - 1);
-	}
-
-	InitBuffer(vao, vbo, expandedVertices, indices);
-}*/
 
 // 맵
 void InitBottom() {
@@ -606,89 +460,6 @@ AABB verticalFan5 = {
 	glm::vec3(12.67f, -0.39f, -60.46f),
 	glm::vec3(17.33f, 6.39f, -59.54f)
 };
-
-//// 캐릭터1
-//void InitCharacter1Body() {
-//    InitPart("Character1/body.obj", modelCharacter1Body, vaoCharacter1Body, vboCharacter1Body, glm::vec3(1.0f, 1.0f, 0.0f));
-//}
-//void InitCharacter1BackPattern() {
-//    InitPart("Character1/backPattern.obj", modelCharacter1BackPattern, vaoCharacter1BackPattern, vboCharacter1BackPattern, glm::vec3(0.0f, 0.0f, 0.0f));
-//}
-//void InitCharacter1Blusher() {
-//    InitPart("Character1/blusher.obj", modelCharacter1Blusher, vaoCharacter1Blusher, vboCharacter1Blusher, glm::vec3(1.0f, 0.0f, 0.0f));
-//}
-//void InitCharacter1Eye() {
-//    InitPart("Character1/eye.obj", modelCharacter1Eye, vaoCharacter1Eye, vboCharacter1Eye, glm::vec3(0.0f, 0.0f, 0.0f));
-//}
-//void InitCharacter1Face() {
-//    InitPart("Character1/face.obj", modelCharacter1Face, vaoCharacter1Face, vboCharacter1Face, glm::vec3(1.0f, 1.0f, 1.0f));
-//}
-//void InitCharacter1LeftArm() {
-//    InitPart("Character1/leftArm.obj", modelCharacter1LeftArm, vaoCharacter1LeftArm, vboCharacter1LeftArm, glm::vec3(1.0f, 1.0f, 0.0f));
-//}
-//void InitCharacter1RightArm() {
-//    InitPart("Character1/rightArm.obj", modelCharacter1RightArm, vaoCharacter1RightArm, vboCharacter1RightArm, glm::vec3(1.0f, 1.0f, 0.0f));
-//}
-//void InitCharacter1LeftLeg() {
-//    InitPart("Character1/leftLeg.obj", modelCharacter1LeftLeg, vaoCharacter1LeftLeg, vboCharacter1LeftLeg, glm::vec3(1.0f, 1.0f, 0.0f));
-//}
-//void InitCharacter1RightLeg() {
-//    InitPart("Character1/rightLeg.obj", modelCharacter1RightLeg, vaoCharacter1RightLeg, vboCharacter1RightLeg, glm::vec3(1.0f, 1.0f, 0.0f));
-//}
-
-////체크박스
-//std::vector<float> Character1CheckBox = {
-//	// Bottom
-// -0.47f, 0.f, 0.42f,
-// -0.47f, 0.f, -0.48f,
-// 0.47f, 0.f, -0.48f,
-// 0.47f, 0.f, 0.42f,
-//
-// // Top
-// -0.47f, 1.84f, 0.42f,
-// -0.47f, 1.84f, -0.48f,
-// 0.47f, 1.84f, -0.48f,
-// 0.47f, 1.84f, 0.42f,
-//
-// // Front
-// -0.47f, 0.f, -0.48f,
-// -0.47f, 1.84f, -0.48f,
-// 0.47f, 1.84f, -0.48f,
-// 0.47f, 0.f, -0.48f,
-//
-// // Back face
-// -0.47f, 0.f, 0.42f,
-// -0.47f, 1.84f, 0.42f,
-// 0.47f, 1.84f, 0.42f,
-// 0.47f, 0.f, 0.42f,
-//
-// // Left face
-// -0.47f, 0.f, 0.42f,
-// -0.47f, 0.f, -0.48f,
-// -0.47f, 1.84f, -0.48f,
-// -0.47f, 1.84f, 0.42f,
-//
-// // Right face
-// 0.47f, 0.f, 0.42f,
-// 0.47f, 0.f, -0.48f,
-// 0.47f, 1.84f, -0.48f,
-// 0.47f, 1.84f, 0.42f,
-//
-//};
-//void InitCharacter1CheckBox() {
-//	glGenVertexArrays(1, &vaoCharacter1CheckBox);
-//	glBindVertexArray(vaoCharacter1CheckBox);
-//
-//	glGenBuffers(1, vboCharacter1CheckBox);
-//
-//	glBindBuffer(GL_ARRAY_BUFFER, vboCharacter1CheckBox[0]);
-//	glBufferData(GL_ARRAY_BUFFER, Character1CheckBox.size() * sizeof(float), Character1CheckBox.data(), GL_STATIC_DRAW);
-//
-//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-//	glEnableVertexAttribArray(0);
-//
-//	glBindVertexArray(0);
-//}
 
 //// 캐릭터2
 //void InitCharacter2Acc() {
@@ -1152,86 +923,6 @@ void DrawMap(GLuint shaderPRogramID, GLint modelMatrixLocation) {
 	glDrawElements(GL_TRIANGLES, modelPoint.faces.size() * 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
-
-// 캐릭터1 그리기
-//void DrawCharacter1(GLuint shaderProgramID, GLint modelMatrixLocation) {
-//    glm::mat4 finalCharacter1ModelMatrix = character1ModelMatrix;
-//
-//    // 몸
-//    glm::mat4 Character1BodyModelMatrix = finalCharacter1ModelMatrix;
-//    glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character1BodyModelMatrix));
-//    glBindVertexArray(vaoCharacter1Body);
-//    glDrawElements(GL_TRIANGLES, modelCharacter1Body.faces.size() * 3, GL_UNSIGNED_INT, 0);
-//    glBindVertexArray(0);
-//
-//    // 등에 검은 줄
-//    glm::mat4 Character1BackPatternModelMatrix = finalCharacter1ModelMatrix;
-//    glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character1BackPatternModelMatrix));
-//    glBindVertexArray(vaoCharacter1BackPattern);
-//    glDrawElements(GL_TRIANGLES, modelCharacter1BackPattern.faces.size() * 3, GL_UNSIGNED_INT, 0);
-//    glBindVertexArray(0);
-//
-//    // 블러셔
-//    glm::mat4 Character1BlusherModelMatrix = finalCharacter1ModelMatrix;
-//    glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character1BlusherModelMatrix));
-//    glBindVertexArray(vaoCharacter1Blusher);
-//    glDrawElements(GL_TRIANGLES, modelCharacter1Blusher.faces.size() * 3, GL_UNSIGNED_INT, 0);
-//    glBindVertexArray(0);
-//
-//    // 눈
-//    glm::mat4 Character1EyeModelMatrix = finalCharacter1ModelMatrix;
-//    glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character1EyeModelMatrix));
-//    glBindVertexArray(vaoCharacter1Eye);
-//    glDrawElements(GL_TRIANGLES, modelCharacter1Eye.faces.size() * 3, GL_UNSIGNED_INT, 0);
-//    glBindVertexArray(0);
-//
-//    // 얼굴
-//    glm::mat4 Character1FaceModelMatrix = finalCharacter1ModelMatrix;
-//    glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character1FaceModelMatrix));
-//    glBindVertexArray(vaoCharacter1Face);
-//    glDrawElements(GL_TRIANGLES, modelCharacter1Face.faces.size() * 3, GL_UNSIGNED_INT, 0);
-//    glBindVertexArray(0);
-//
-//    // 왼팔
-//    glm::mat4 Character1LeftArmModelMatrix = finalCharacter1ModelMatrix;
-//    Character1LeftArmModelMatrix = glm::translate(Character1LeftArmModelMatrix, glm::vec3(0.0f, 1.0f, 0.0f));
-//    Character1LeftArmModelMatrix = glm::rotate(Character1LeftArmModelMatrix, glm::radians(character1ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
-//    Character1LeftArmModelMatrix = glm::translate(Character1LeftArmModelMatrix, glm::vec3(0.0f, -1.0f, 0.0f));
-//    glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character1LeftArmModelMatrix));
-//    glBindVertexArray(vaoCharacter1LeftArm);
-//    glDrawElements(GL_TRIANGLES, modelCharacter1LeftArm.faces.size() * 3, GL_UNSIGNED_INT, 0);
-//    glBindVertexArray(0);
-//
-//    // 오른팔
-//    glm::mat4 Character1RightArmModelMatrix = finalCharacter1ModelMatrix;
-//    Character1RightArmModelMatrix = glm::translate(Character1RightArmModelMatrix, glm::vec3(0.0f, 1.0f, 0.0f));
-//    Character1RightArmModelMatrix = glm::rotate(Character1RightArmModelMatrix, glm::radians(-character1ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
-//    Character1RightArmModelMatrix = glm::translate(Character1RightArmModelMatrix, glm::vec3(0.0f, -1.0f, 0.0f));
-//    glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character1RightArmModelMatrix));
-//    glBindVertexArray(vaoCharacter1RightArm);
-//    glDrawElements(GL_TRIANGLES, modelCharacter1RightArm.faces.size() * 3, GL_UNSIGNED_INT, 0);
-//    glBindVertexArray(0);
-//
-//    // 왼다리
-//    glm::mat4 Character1LeftLegModelMatrix = finalCharacter1ModelMatrix;
-//    Character1LeftLegModelMatrix = glm::translate(Character1LeftLegModelMatrix, glm::vec3(0.0f, 0.5f, 0.0f));
-//    Character1LeftLegModelMatrix = glm::rotate(Character1LeftLegModelMatrix, glm::radians(-character1ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
-//    Character1LeftLegModelMatrix = glm::translate(Character1LeftLegModelMatrix, glm::vec3(0.0f, -0.5f, 0.0f));
-//    glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character1LeftLegModelMatrix));
-//    glBindVertexArray(vaoCharacter1LeftLeg);
-//    glDrawElements(GL_TRIANGLES, modelCharacter1LeftLeg.faces.size() * 3, GL_UNSIGNED_INT, 0);
-//    glBindVertexArray(0);
-//
-//    // 오른다리
-//    glm::mat4 Character1RightLegModelMatrix = finalCharacter1ModelMatrix;
-//    Character1RightLegModelMatrix = glm::translate(Character1RightLegModelMatrix, glm::vec3(0.0f, 0.5f, 0.0f));
-//    Character1RightLegModelMatrix = glm::rotate(Character1RightLegModelMatrix, glm::radians(character1ArmLegSwingAngle), glm::vec3(1.0f, 0.0f, 0.0f));
-//    Character1RightLegModelMatrix = glm::translate(Character1RightLegModelMatrix, glm::vec3(0.0f, -0.5f, 0.0f));
-//    glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(Character1RightLegModelMatrix));
-//    glBindVertexArray(vaoCharacter1RightLeg);
-//    glDrawElements(GL_TRIANGLES, modelCharacter1RightLeg.faces.size() * 3, GL_UNSIGNED_INT, 0);
-//    glBindVertexArray(0);
-//}
 
 //// 캐릭터2 그리기
 //void DrawCharacter2(GLuint shaderProgramID, GLint modelMatrixLocation) {
@@ -1779,18 +1470,7 @@ void main(int argc, char** argv) {
 	InitPoint();
 
 	P1 = new Player1();
-	// 캐릭터1
- /*   InitCharacter1Body();
-	InitCharacter1BackPattern();
-	InitCharacter1Blusher();
-	InitCharacter1Eye();
-	InitCharacter1Face();
-	InitCharacter1LeftArm();
-	InitCharacter1RightArm();
-	InitCharacter1LeftLeg();
-	InitCharacter1RightLeg();*/
-	//InitCharacter1CheckBox();
-
+	
 	//// 캐릭터2
 	//InitCharacter2Acc();
 	//InitCharacter2Body();
@@ -2074,7 +1754,7 @@ GLvoid Timer(int value) {
 	// 점프 로직
 	if (P1->IsJumping) {
 		// character1Position.y += character1JumpSpeed;
-		P1->Position = glm::vec3(0.0f, P1->JSpeed, 0.0f);
+		P1->Position += glm::vec3(0.0f, P1->JSpeed, 0.0f);
 		P1->JSpeed -= P1->gravity;
 
 		if (P1->JSpeed <= 0.0f && P1->IsOnMap) {
@@ -2087,67 +1767,12 @@ GLvoid Timer(int value) {
 		P1->Position = glm::vec3(0.0f, -P1->realGravity, 0.0f);
 	}
 
-	//// 캐릭터2 이동 처리
-	//if (arrowKeyStates[GLUT_KEY_UP]) {
-	//    character2Direction = glm::vec3(0.0f, 0.0f, -moveSpeed);
-	//    character2RotationAngle = 0.0f;
-	//    isCharacter2Swing = true;
-	//}
-	//else if (arrowKeyStates[GLUT_KEY_DOWN]) {
-	//    character2Direction = glm::vec3(0.0f, 0.0f, moveSpeed);
-	//    character2RotationAngle = 180.0f;
-	//    isCharacter2Swing = true;
-	//}
-	//else if (arrowKeyStates[GLUT_KEY_LEFT]) {
-	//    character2Direction = glm::vec3(-moveSpeed, 0.0f, 0.0f);
-	//    character2RotationAngle = 90.0f;
-	//    isCharacter2Swing = true;
-	//}
-	//else if (arrowKeyStates[GLUT_KEY_RIGHT]) {
-	//    character2Direction = glm::vec3(moveSpeed, 0.0f, 0.0f);
-	//    character2RotationAngle = -90.0f;
-	//    isCharacter2Swing = true;
-	//}
-	//else {
-	//    character2Direction = glm::vec3(0.0f, 0.0f, 0.0f);
-	//    isCharacter2Swing = false;
-	//}
-
-	//isCharacter2OnMap = false;
-	//for (const auto& map : maps) {
-	//    if (checkCollision(character2, map)) {
-	//        isCharacter2OnMap = true;
-	//        break;
-	//    }
-	//}
-
-	//// 점프 로직
-	//if (isCharacter2Jumping) {
-	//    character2Position.y += character2JumpSpeed;
-	//    character2JumpSpeed -= gravity;
-
-	//    if (character2JumpSpeed <= 0.0f && isCharacter2OnMap) {
-	//        isCharacter2Jumping = false;
-	//        character2JumpSpeed = 0.3f;
-	//    }
-	//}
-	//else if (!isCharacter2OnMap) {
-	//    character2Position.y -= realGravity;
-	//}
-
 	// 캐릭터1 모델 매트릭스 업데이트
 	P1->ModelMatrix = glm::translate(glm::mat4(1.0f), P1->Position);
 	P1->ModelMatrix = glm::rotate(P1->ModelMatrix, glm::radians(P1->RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	// AABB 업데이트
 	P1->CAABB.update(P1->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
-
-	//// 캐릭터2 모델 매트릭스 업데이트
-	//character2ModelMatrix = glm::translate(glm::mat4(1.0f), character2Position);
-	//character2ModelMatrix = glm::rotate(character2ModelMatrkix, glm::radians(character2RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
-
-	// AABB 업데이트
-	//character2.update(character2Position, glm::vec3(-0.70f, 0.0f, -0.72f), glm::vec3(0.70f, 1.84f, 0.63f));
 
 	// 팔 흔들림 업데이트
 	if (P1->IsSwing) {
@@ -2171,25 +1796,6 @@ GLvoid Timer(int value) {
 		}
 	}
 
-	/* if (isCharacter2Swing) {
-		 character2ArmLegSwingAngle += character2SwingDirection * 2.0f;
-		 if (character2ArmLegSwingAngle >= maxSwingAngle) {
-			 character2SwingDirection = -1;
-		 }
-		 else if (character2ArmLegSwingAngle <= -maxSwingAngle) {
-			 character2SwingDirection = 1;
-		 }
-	 }
-	 else {
-		 if (character2ArmLegSwingAngle > 0.0f) {
-			 character2ArmLegSwingAngle -= 2.0f;
-			 if (character2ArmLegSwingAngle < 0.0f) character2ArmLegSwingAngle = 0.0f;
-		 }
-		 else if (character2ArmLegSwingAngle < 0.0f) {
-			 character2ArmLegSwingAngle += 2.0f;
-			 if (character2ArmLegSwingAngle > 0.0f) character2ArmLegSwingAngle = 0.0f;
-		 }
-	 }*/
 
 	 // 캐릭터 간 충돌 검사
 	//if (checkCollision(character1, character2)) {
@@ -2253,31 +1859,6 @@ GLvoid Timer(int value) {
 			}
 		}
 	}
-
-	//// 봉과 캐릭터2 충돌 처리
-	//for (const auto& bong : bongs) {
-	//	if (checkCollision(character2, bong)) {
-	//		float overlapX = std::min(character2.max.x, bong.max.x) - std::max(character2.min.x, bong.min.x);
-	//		float overlapZ = std::min(character2.max.z, bong.max.z) - std::max(character2.min.z, bong.min.z);
-
-	//		if (overlapX < overlapZ) {
-	//			if (character2Direction.x > 0.0f && character2.max.x > bong.min.x) {
-	//				character2Direction.x = 0.0f;
-	//			}
-	//			else if (character2Direction.x < 0.0f && character2.min.x < bong.max.x) {
-	//				character2Direction.x = 0.0f;
-	//			}
-	//		}
-	//		else {
-	//			if (character2Direction.z > 0.0f && character2.max.z > bong.min.z) {
-	//				character2Direction.z = 0.0f;
-	//			}
-	//			else if (character2Direction.z < 0.0f && character2.min.z < bong.max.z) {
-	//				character2Direction.z = 0.0f;
-	//			}
-	//		}
-	//	}
-	//}
 
 	//봉 움직이기
 	BongGroup1Position.x += BongGroup1Direction.x * BongMove;
@@ -2380,53 +1961,7 @@ GLvoid Timer(int value) {
 			}
 		}
 	}
-	//// 캐릭터2와 문짝 충돌 처리
-	//for (const auto& door : leftDoors) {
-	//	if (checkCollision(character2, door)) {
-	//		float overlapX = std::min(character2.max.x, door.max.x) - std::max(character2.min.x, door.min.x);
-	//		float overlapZ = std::min(character2.max.z, door.max.z) - std::max(character2.min.z, door.min.z);
 
-	//		if (overlapX < overlapZ) {
-	//			if (character2Direction.x > 0.0f && character2.max.x > door.min.x) {
-	//				character2Direction.x = 0.0f;
-	//			}
-	//			else if (character2Direction.x < 0.0f && character2.min.x < door.max.x) {
-	//				character2Direction.x = 0.0f;
-	//			}
-	//		}
-	//		else {
-	//			if (character2Direction.z > 0.0f && character2.max.z > door.min.z) {
-	//				character2Direction.z = 0.0f;
-	//			}
-	//			else if (character2Direction.z < 0.0f && character2.min.z < door.max.z) {
-	//				character2Direction.z = 0.0f;
-	//			}
-	//		}
-	//	}
-	//}
-	//for (const auto& door : rightDoors) {
-	//	if (checkCollision(character2, door)) {
-	//		float overlapX = std::min(character2.max.x, door.max.x) - std::max(character2.min.x, door.min.x);
-	//		float overlapZ = std::min(character2.max.z, door.max.z) - std::max(character2.min.z, door.min.z);
-
-	//		if (overlapX < overlapZ) {
-	//			if (character2Direction.x > 0.0f && character2.max.x > door.min.x) {
-	//				character2Direction.x = 0.0f;
-	//			}
-	//			else if (character2Direction.x < 0.0f && character2.min.x < door.max.x) {
-	//				character2Direction.x = 0.0f;
-	//			}
-	//		}
-	//		else {
-	//			if (character2Direction.z > 0.0f && character2.max.z > door.min.z) {
-	//				character2Direction.z = 0.0f;
-	//			}
-	//			else if (character2Direction.z < 0.0f && character2.min.z < door.max.z) {
-	//				character2Direction.z = 0.0f;
-	//			}
-	//		}
-	//	}
-	//}
 	AABB outdoors[] = { outdoor1, outdoor2, outdoor3, outdoor4 };
 	for (const auto& outdoor : outdoors) {
 		if (checkCollision(P1->CAABB, outdoor)) {
@@ -2452,29 +1987,6 @@ GLvoid Timer(int value) {
 		}
 	}
 
-	/*for (const auto& outdoor : outdoors) {
-		if (checkCollision(character2, outdoor)) {
-			float overlapX = std::min(character2.max.x, outdoor.max.x) - std::max(character2.min.x, outdoor.min.x);
-			float overlapZ = std::min(character2.max.z, outdoor.max.z) - std::max(character2.min.z, outdoor.min.z);
-
-			if (overlapX < overlapZ) {
-				if (character2Direction.x > 0.0f && character2.max.x > outdoor.min.x) {
-					character2Direction.x = 0.0f;
-				}
-				else if (character2Direction.x < 0.0f && character2.min.x < outdoor.max.x) {
-					character2Direction.x = 0.0f;
-				}
-			}
-			else {
-				if (character2Direction.z > 0.0f && character2.max.z > outdoor.min.z) {
-					character2Direction.z = 0.0f;
-				}
-				else if (character2Direction.z < 0.0f && character2.min.z < outdoor.max.z) {
-					character2Direction.z = 0.0f;
-				}
-			}
-		}
-	}*/
 
 	// 장애물 AABB 업데이트
 	horizontalFan1.updateRotatedAABB(
