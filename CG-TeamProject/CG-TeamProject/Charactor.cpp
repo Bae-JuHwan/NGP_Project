@@ -1,56 +1,14 @@
 #include "Charactor.h"
 
-void InitBuffer(GLuint& vao, GLuint* vbo, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) {
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
 
-    glGenBuffers(2, vbo);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[1]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
-    glEnableVertexAttribArray(1);
-
-    glBindVertexArray(0);
+Charactor::Charactor()
+{
+    // 생성자 코드
 }
 
-void InitPart(const std::string& filePath, Model& model, GLuint& vao, GLuint* vbo, const glm::vec3& color) {
-    read_obj_file(filePath, model);
-
-    std::vector<Vertex> expandedVertices;
-    std::vector<unsigned int> indices;
-
-    for (size_t i = 0; i < model.faces.size(); ++i) {
-        Vertex v1 = { model.vertices[model.faces[i].v1].x,
-                      model.vertices[model.faces[i].v1].y,
-                      model.vertices[model.faces[i].v1].z,
-                      color };
-        Vertex v2 = { model.vertices[model.faces[i].v2].x,
-                      model.vertices[model.faces[i].v2].y,
-                      model.vertices[model.faces[i].v2].z,
-                      color };
-        Vertex v3 = { model.vertices[model.faces[i].v3].x,
-                      model.vertices[model.faces[i].v3].y,
-                      model.vertices[model.faces[i].v3].z,
-                      color };
-
-        expandedVertices.push_back(v1);
-        expandedVertices.push_back(v2);
-        expandedVertices.push_back(v3);
-
-        indices.push_back(expandedVertices.size() - 3);
-        indices.push_back(expandedVertices.size() - 2);
-        indices.push_back(expandedVertices.size() - 1);
-    }
-
-    InitBuffer(vao, vbo, expandedVertices, indices);
+Charactor::~Charactor()   // 
+{
+    // 소멸자 코드 (비어 있어도 괜찮음)
 }
 
 std::vector<float> CheckBox = {

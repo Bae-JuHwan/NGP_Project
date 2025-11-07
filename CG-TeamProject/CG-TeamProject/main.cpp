@@ -8,48 +8,48 @@
 #include "Charactor.h"
 
 
-struct AABB {
-	glm::vec3 min; // 충돌박스의 최소 좌표 (x, y, z)
-	glm::vec3 max; // 충돌박스의 최대 좌표 (x, y, z)
-
-	// AABB 갱신 메서드
-	void update(const glm::vec3& position, const glm::vec3& offsetMin, const glm::vec3& offsetMax) {
-		min = position + offsetMin;
-		max = position + offsetMax;
-	}
-
-	void updateRotatedAABB(const glm::vec3& position, const glm::vec3& offsetMin, const glm::vec3& offsetMax, float rotationAngle, glm::vec3 rotationAxis) {
-		glm::vec3 vertices[8] = {
-			position + offsetMin,
-			position + glm::vec3(offsetMin.x, offsetMin.y, offsetMax.z),
-			position + glm::vec3(offsetMin.x, offsetMax.y, offsetMin.z),
-			position + glm::vec3(offsetMin.x, offsetMax.y, offsetMax.z),
-			position + glm::vec3(offsetMax.x, offsetMin.y, offsetMin.z),
-			position + glm::vec3(offsetMax.x, offsetMin.y, offsetMax.z),
-			position + glm::vec3(offsetMax.x, offsetMax.y, offsetMin.z),
-			position + offsetMax
-		};
-
-		glm::mat4 rotationMatrix = glm::translate(glm::mat4(1.0f), position);
-		rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotationAngle), rotationAxis);
-		rotationMatrix = glm::translate(rotationMatrix, -position);
-		for (int i = 0; i < 8; ++i) {
-			glm::vec4 rotatedVertex = rotationMatrix * glm::vec4(vertices[i], 1.0f);
-			vertices[i] = glm::vec3(rotatedVertex);
-		}
-
-		glm::vec3 newMin = vertices[0];
-		glm::vec3 newMax = vertices[0];
-		for (int i = 1; i < 8; ++i) {
-			newMin = glm::min(newMin, vertices[i]);
-			newMax = glm::max(newMax, vertices[i]);
-		}
-
-		min = newMin;
-		max = newMax;
-	}
-
-};
+//struct AABB {
+//	glm::vec3 min; // 충돌박스의 최소 좌표 (x, y, z)
+//	glm::vec3 max; // 충돌박스의 최대 좌표 (x, y, z)
+//
+//	// AABB 갱신 메서드
+//	void update(const glm::vec3& position, const glm::vec3& offsetMin, const glm::vec3& offsetMax) {
+//		min = position + offsetMin;
+//		max = position + offsetMax;
+//	}
+//
+//	void updateRotatedAABB(const glm::vec3& position, const glm::vec3& offsetMin, const glm::vec3& offsetMax, float rotationAngle, glm::vec3 rotationAxis) {
+//		glm::vec3 vertices[8] = {
+//			position + offsetMin,
+//			position + glm::vec3(offsetMin.x, offsetMin.y, offsetMax.z),
+//			position + glm::vec3(offsetMin.x, offsetMax.y, offsetMin.z),
+//			position + glm::vec3(offsetMin.x, offsetMax.y, offsetMax.z),
+//			position + glm::vec3(offsetMax.x, offsetMin.y, offsetMin.z),
+//			position + glm::vec3(offsetMax.x, offsetMin.y, offsetMax.z),
+//			position + glm::vec3(offsetMax.x, offsetMax.y, offsetMin.z),
+//			position + offsetMax
+//		};
+//
+//		glm::mat4 rotationMatrix = glm::translate(glm::mat4(1.0f), position);
+//		rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotationAngle), rotationAxis);
+//		rotationMatrix = glm::translate(rotationMatrix, -position);
+//		for (int i = 0; i < 8; ++i) {
+//			glm::vec4 rotatedVertex = rotationMatrix * glm::vec4(vertices[i], 1.0f);
+//			vertices[i] = glm::vec3(rotatedVertex);
+//		}
+//
+//		glm::vec3 newMin = vertices[0];
+//		glm::vec3 newMax = vertices[0];
+//		for (int i = 1; i < 8; ++i) {
+//			newMin = glm::min(newMin, vertices[i]);
+//			newMax = glm::max(newMax, vertices[i]);
+//		}
+//
+//		min = newMin;
+//		max = newMax;
+//	}
+//
+//};
 
 // 맵
 GLuint vaoBottom, vaoArrowAndPillar, vaoEndPoint, vaoPoint;
@@ -199,7 +199,7 @@ char* filetobuf(const char* file) {
 
 void make_vertexShaders();
 void make_fragmentShaders();
-void InitBuffer();
+//void InitBuffer();
 
 // 맵
 void InitBottom();
@@ -219,30 +219,30 @@ void InitPoint();
 //void InitCharacter1RightLeg();
 
 //체크박스 추가
-void InitCharacter1CheckBox();
-void InitCharacter2CheckBox();
-void InitCharacter3CheckBox();
+//void InitCharacter1CheckBox();
+//void InitCharacter2CheckBox();
+//void InitCharacter3CheckBox();
 
-// 캐릭터2
-void InitCharacter2Acc();
-void InitCharacter2Body();
-void InitCharacter2Clothes();
-void InitCharacter2Hair();
-void InitCharacter2LeftLeg();
-void InitCharacter2LeftArm();
-void InitCharacter2RightLeg();
-void InitCharacter2RightArm();
-void InitCharacter2Eye();
-void InitCharacter2Face();
-
-// 캐릭터3
-void InitCharacter3Body();
-void InitCharacter3Face();
-void InitCharacter3Eyes();
-void InitCharacter3LeftArm();
-void InitCharacter3RightArm();
-void InitCharacter3LeftFoot();
-void InitCharacter3RightFoot();
+//// 캐릭터2
+//void InitCharacter2Acc();
+//void InitCharacter2Body();
+//void InitCharacter2Clothes();
+//void InitCharacter2Hair();
+//void InitCharacter2LeftLeg();
+//void InitCharacter2LeftArm();
+//void InitCharacter2RightLeg();
+//void InitCharacter2RightArm();
+//void InitCharacter2Eye();
+//void InitCharacter2Face();
+//
+//// 캐릭터3
+//void InitCharacter3Body();
+//void InitCharacter3Face();
+//void InitCharacter3Eyes();
+//void InitCharacter3LeftArm();
+//void InitCharacter3RightArm();
+//void InitCharacter3LeftFoot();
+//void InitCharacter3RightFoot();
 
 // 봉
 void InitBong1();
@@ -271,28 +271,28 @@ GLvoid Timer(int value);
 int window_Width = 800;
 int window_Height = 600;
 
-void InitBuffer(GLuint& vao, GLuint* vbo, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) {
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
+//void InitBuffer(GLuint& vao, GLuint* vbo, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) {
+//	glGenVertexArrays(1, &vao);
+//	glBindVertexArray(vao);
+//
+//	glGenBuffers(2, vbo);
+//
+//	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+//	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+//
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[1]);
+//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+//
+//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+//	glEnableVertexAttribArray(0);
+//
+//	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+//	glEnableVertexAttribArray(1);
+//
+//	glBindVertexArray(0);
+//}
 
-	glGenBuffers(2, vbo);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[1]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
-	glEnableVertexAttribArray(1);
-
-	glBindVertexArray(0);
-}
-
-void InitPart(const std::string& filePath, Model& model, GLuint& vao, GLuint* vbo, const glm::vec3& color) {
+/*void InitPart(const std::string& filePath, Model& model, GLuint& vao, GLuint* vbo, const glm::vec3& color) {
 	read_obj_file(filePath, model);
 
 	std::vector<Vertex> expandedVertices;
@@ -322,7 +322,7 @@ void InitPart(const std::string& filePath, Model& model, GLuint& vao, GLuint* vb
 	}
 
 	InitBuffer(vao, vbo, expandedVertices, indices);
-}
+}*/
 
 // 맵
 void InitBottom() {
@@ -689,11 +689,6 @@ AABB verticalFan5 = {
 //
 //	glBindVertexArray(0);
 //}
-// 캐릭터
-AABB character1 = {
-	P1.Position + glm::vec3(-0.70f, 0.0f, -0.72f),
-	P1.Position + glm::vec3(0.70f, 1.84f, 0.63f)
-};
 
 //// 캐릭터2
 //void InitCharacter2Acc() {
@@ -1764,8 +1759,7 @@ void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) 
 	verticalFan5.update(verticalFan5Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
 }
 
-Player1 P1;
-
+Player1* P1 = nullptr;
 void main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -1784,6 +1778,7 @@ void main(int argc, char** argv) {
 	InitEndPoint();
 	InitPoint();
 
+	P1 = new Player1();
 	// 캐릭터1
  /*   InitCharacter1Body();
 	InitCharacter1BackPattern();
@@ -1859,6 +1854,9 @@ void main(int argc, char** argv) {
 	glutMainLoop();
 }
 
+// 캐릭터
+
+
 void make_vertexShaders() {
 	GLchar* vertexSource;
 
@@ -1920,9 +1918,9 @@ GLvoid drawScene() {
 	glUseProgram(shaderProgramID);
 
 	// **뷰포트 1: 왼쪽 (캐릭터 1의 카메라)**
-	glViewport(0, 0, window_Width / 2, window_Height); // 왼쪽 절반
-	glm::vec3 camera1Position = character1Position + glm::vec3(0.0f, 10.0f, 15.0f);
-	glm::vec3 camera1Target = character1Position;
+	glViewport(0, 0, window_Width, window_Height); //전체화면
+	glm::vec3 camera1Position = P1->Position + glm::vec3(0.0f, 10.0f, 15.0f);
+	glm::vec3 camera1Target = P1->Position;
 
 	glm::mat4 viewMatrix1 = glm::lookAt(
 		camera1Position,  // 카메라 1 위치
@@ -1943,46 +1941,46 @@ GLvoid drawScene() {
 	glUniformMatrix4fv(projMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix1));
 
 	GLint modelMatrixLocation = glGetUniformLocation(shaderProgramID, "modelTransform");
-	DrawMap(shaderProgramID, modelMatrixLocation);
-	DrawObstacleBong(shaderProgramID, modelMatrixLocation);
-	P1.Draw(shaderProgramID, modelMatrixLocation);
-	//DrawCharacter2(shaderProgramID, modelMatrixLocation);
-	=//DrawCharacter3(shaderProgramID, modelMatrixLocation);
-		DrawObstacleHorizontalFan(shaderProgramID, modelMatrixLocation);
-	DrawObstacleVerticalFan(shaderProgramID, modelMatrixLocation);
-	DrawObstacleJumpbar(shaderProgramID, modelMatrixLocation);
-	DrawObstacleDoor(shaderProgramID, modelMatrixLocation);
+	/* DrawMap(shaderProgramID, modelMatrixLocation);
+	 DrawObstacleBong(shaderProgramID, modelMatrixLocation);
+	 DrawCharacter1(shaderProgramID, modelMatrixLocation);
+	 DrawCharacter2(shaderProgramID, modelMatrixLocation);
+	 DrawCharacter3(shaderProgramID, modelMatrixLocation);
+	 DrawObstacleHorizontalFan(shaderProgramID, modelMatrixLocation);
+	 DrawObstacleVerticalFan(shaderProgramID, modelMatrixLocation);
+	 DrawObstacleJumpbar(shaderProgramID, modelMatrixLocation);
+	 DrawObstacleDoor(shaderProgramID, modelMatrixLocation);*/
 
-	// **뷰포트 2: 오른쪽 (캐릭터 2의 카메라)**
-	glViewport(window_Width / 2, 0, window_Width / 2, window_Height); // 오른쪽 절반
-	glm::vec3 camera2Position = character2Position + glm::vec3(0.0f, 10.0f, 15.0f);
-	glm::vec3 camera2Target = character2Position;
+	 //// **뷰포트 2: 오른쪽 (캐릭터 2의 카메라)**
+	 //glViewport(window_Width / 2, 0, window_Width / 2, window_Height); // 오른쪽 절반
+	 //glm::vec3 camera2Position = character2Position + glm::vec3(0.0f, 10.0f, 15.0f);
+	 //glm::vec3 camera2Target = character2Position;
 
-	glm::mat4 viewMatrix2 = glm::lookAt(
-		camera2Position,  // 카메라 2 위치
-		camera2Target,    // 카메라 2 바라보는 지점
-		glm::vec3(0.0f, 1.0f, 0.0f) // 상향 벡터
-	);
+	 //glm::mat4 viewMatrix2 = glm::lookAt(
+	 //    camera2Position,  // 카메라 2 위치
+	 //    camera2Target,    // 카메라 2 바라보는 지점
+	 //    glm::vec3(0.0f, 1.0f, 0.0f) // 상향 벡터
+	 //);
 
-	glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix2));
+	/* glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix2));*/
 
-	glm::mat4 projectionMatrix2 = glm::perspective(
-		glm::radians(45.0f),
-		(float)(window_Width / 2) / (float)window_Height, // 좌우 절반의 종횡비
-		0.1f,
-		10000.0f
-	);
-	glUniformMatrix4fv(projMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix2));
-	if (character1Position.y < -75.0f) {
-		character1Position = initialCharacter1Position;
+	 //glm::mat4 projectionMatrix2 = glm::perspective(
+	 //    glm::radians(45.0f),
+	 //    (float)(window_Width / 2) / (float)window_Height, // 좌우 절반의 종횡비
+	 //    0.1f,
+	 //    10000.0f
+	 //);
+	 //glUniformMatrix4fv(projMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix2));
+	if (P1->Position.y < -75.0f) {
+		P1->Position = P1->InitialPosition;
 	}
 
-	/*if (character2Position.y < -75.0f) {
-		character2Position = initialCharacter2Position;
-	}*/
+	/* if (character2Position.y < -75.0f) {
+		 character2Position = initialCharacter2Position;
+	 }*/
 	DrawMap(shaderProgramID, modelMatrixLocation);
 	DrawObstacleBong(shaderProgramID, modelMatrixLocation);
-	P1.Draw(shaderProgramID, modelMatrixLocation);
+	P1->Draw(shaderProgramID, modelMatrixLocation);
 	/*DrawCharacter2(shaderProgramID, modelMatrixLocation);
 	DrawCharacter3(shaderProgramID, modelMatrixLocation);*/
 	DrawObstacleHorizontalFan(shaderProgramID, modelMatrixLocation);
@@ -2006,8 +2004,8 @@ GLvoid Keyboard(unsigned char key, int x, int y) {
 			glutLeaveMainLoop();
 			break;
 		case ' ':
-			if (!P1.IsJumping) {
-				P1.IsJumping = true;
+			if (!P1->IsJumping) {
+				P1->IsJumping = true;
 			}
 			break;
 			/*case 'j':
@@ -2026,67 +2024,67 @@ void KeyboardUp(unsigned char key, int x, int y) {
 	}
 }
 
-//void SpecialKey(int key, int x, int y) {
-//	if (key == GLUT_KEY_UP || key == GLUT_KEY_DOWN || key == GLUT_KEY_LEFT || key == GLUT_KEY_RIGHT) {
-//		arrowKeyStates[key] = true;
-//	}
-//}
-//
-//void SpecialKeyUp(int key, int x, int y) {
-//	if (key == GLUT_KEY_UP || key == GLUT_KEY_DOWN || key == GLUT_KEY_LEFT || key == GLUT_KEY_RIGHT) {
-//		arrowKeyStates[key] = false;
-//	}
-//}
+void SpecialKey(int key, int x, int y) {
+	if (key == GLUT_KEY_UP || key == GLUT_KEY_DOWN || key == GLUT_KEY_LEFT || key == GLUT_KEY_RIGHT) {
+		arrowKeyStates[key] = true;
+	}
+}
+
+void SpecialKeyUp(int key, int x, int y) {
+	if (key == GLUT_KEY_UP || key == GLUT_KEY_DOWN || key == GLUT_KEY_LEFT || key == GLUT_KEY_RIGHT) {
+		arrowKeyStates[key] = false;
+	}
+}
 
 GLvoid Timer(int value) {
 	if (moveKeyStates['w']) {
-		P1.Direction = glm::vec3(0.0f, 0.0f, -P1.MSpeed);
-		P1.RotationAngle = 0.0f;
-		P1.IsSwing = true;
+		P1->Direction = glm::vec3(0.0f, 0.0f, -P1->MSpeed);
+		P1->RotationAngle = 0.0f;
+		P1->IsSwing = true;
 	}
 	else if (moveKeyStates['s']) {
-		P1.Direction = glm::vec3(0.0f, 0.0f, P1.MSpeed);
-		P1.RotationAngle = 180.0f;
-		P1.IsSwing = true;
+		P1->Direction = glm::vec3(0.0f, 0.0f, P1->MSpeed);
+		P1->RotationAngle = 180.0f;
+		P1->IsSwing = true;
 	}
 	else if (moveKeyStates['a']) {
-		P1.Direction = glm::vec3(-P1.MSpeed, 0.0f, 0.0f);
-		P1.RotationAngle = 90.0f;
-		P1.IsSwing = true;
+		P1->Direction = glm::vec3(-P1->MSpeed, 0.0f, 0.0f);
+		P1->RotationAngle = 90.0f;
+		P1->IsSwing = true;
 	}
 	else if (moveKeyStates['d']) {
-		P1.Direction = glm::vec3(P1.MSpeed, 0.0f, 0.0f);
-		P1.RotationAngle = -90.0f;
-		P1.IsSwing = true;
+		P1->Direction = glm::vec3(P1->MSpeed, 0.0f, 0.0f);
+		P1->RotationAngle = -90.0f;
+		P1->IsSwing = true;
 	}
 	else {
-		P1.Direction = glm::vec3(0.0f, 0.0f, 0.0f);
-		P1.IsSwing = false;
+		P1->Direction = glm::vec3(0.0f, 0.0f, 0.0f);
+		P1->IsSwing = false;
 	}
 
 	AABB maps[] = { map1, map2, map3, map4, map5 };
-	P1.IsOnMap = false;
+	P1->IsOnMap = false;
 	for (const auto& map : maps) {
-		if (checkCollision(character1, map)) {
-			P1.IsOnMap = true;
+		if (checkCollision(P1->CAABB, map)) {
+			P1->IsOnMap = true;
 			break;
 		}
 	}
 
 	// 점프 로직
-	if (P1.IsJumping) {
+	if (P1->IsJumping) {
 		// character1Position.y += character1JumpSpeed;
-		P1.Position = glm::vec3(0.0f, P1.JSpeed, 0.0f);
-		P1.JSpeed -= P1.gravity;
+		P1->Position = glm::vec3(0.0f, P1->JSpeed, 0.0f);
+		P1->JSpeed -= P1->gravity;
 
-		if (P1.JSpeed <= 0.0f && P1.IsOnMap) {
-			P1.IsJumping = false;
-			P1.JSpeed = 0.3f;
+		if (P1->JSpeed <= 0.0f && P1->IsOnMap) {
+			P1->IsJumping = false;
+			P1->JSpeed = 0.3f;
 		}
 	}
-	else if (!P1.IsOnMap) {
+	else if (!P1->IsOnMap) {
 		//character1Position.y -= realGravity;
-		P1.Position = glm::vec3(0.0f, -P1.realGravity, 0.0f);
+		P1->Position = glm::vec3(0.0f, -P1->realGravity, 0.0f);
 	}
 
 	//// 캐릭터2 이동 처리
@@ -2138,11 +2136,11 @@ GLvoid Timer(int value) {
 	//}
 
 	// 캐릭터1 모델 매트릭스 업데이트
-	P1.ModelMatrix = glm::translate(glm::mat4(1.0f), P1.Position);
-	P1.ModelMatrix = glm::rotate(P1.ModelMatrix, glm::radians(P1.RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+	P1->ModelMatrix = glm::translate(glm::mat4(1.0f), P1->Position);
+	P1->ModelMatrix = glm::rotate(P1->ModelMatrix, glm::radians(P1->RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	// AABB 업데이트
-	character1.update(P1.Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
+	P1->CAABB.update(P1->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 
 	//// 캐릭터2 모델 매트릭스 업데이트
 	//character2ModelMatrix = glm::translate(glm::mat4(1.0f), character2Position);
@@ -2152,24 +2150,24 @@ GLvoid Timer(int value) {
 	//character2.update(character2Position, glm::vec3(-0.70f, 0.0f, -0.72f), glm::vec3(0.70f, 1.84f, 0.63f));
 
 	// 팔 흔들림 업데이트
-	if (P1.IsSwing) {
-		P1.ArmLegSwingAngle += P1.SwingDirection * 2.0f;
-		if (P1.ArmLegSwingAngle >= P1.MaxSwingAngle) {
-			P1.SwingDirection = -1; // 방향 반전
+	if (P1->IsSwing) {
+		P1->ArmLegSwingAngle += P1->SwingDirection * 2.0f;
+		if (P1->ArmLegSwingAngle >= P1->MaxSwingAngle) {
+			P1->SwingDirection = -1; // 방향 반전
 		}
-		else if (P1.ArmLegSwingAngle <= -P1.MaxSwingAngle) {
-			P1.SwingDirection = 1; // 방향 반전
+		else if (P1->ArmLegSwingAngle <= -P1->MaxSwingAngle) {
+			P1->SwingDirection = 1; // 방향 반전
 		}
 	}
 	else {
 		// 흔들림 비활성화 시 초기 상태로 복구
-		if (P1.ArmLegSwingAngle > 0.0f) {
-			P1.ArmLegSwingAngle -= 2.0f;
-			if (P1.ArmLegSwingAngle < 0.0f) P1.ArmLegSwingAngle = 0.0f;
+		if (P1->ArmLegSwingAngle > 0.0f) {
+			P1->ArmLegSwingAngle -= 2.0f;
+			if (P1->ArmLegSwingAngle < 0.0f) P1->ArmLegSwingAngle = 0.0f;
 		}
-		else if (P1.ArmLegSwingAngle < 0.0f) {
-			P1.ArmLegSwingAngle += 2.0f;
-			if (P1.ArmLegSwingAngle > 0.0f) P1.ArmLegSwingAngle = 0.0f;
+		else if (P1->ArmLegSwingAngle < 0.0f) {
+			P1->ArmLegSwingAngle += 2.0f;
+			if (P1->ArmLegSwingAngle > 0.0f) P1->ArmLegSwingAngle = 0.0f;
 		}
 	}
 
@@ -2233,24 +2231,24 @@ GLvoid Timer(int value) {
 	// 봉과 캐릭터1 충돌 처리
 	AABB bongs[] = { bong1, bong2, bong3, bong4, bong5, bong6 };
 	for (const auto& bong : bongs) {
-		if (checkCollision(character1, bong)) {
-			float overlapbX = std::min(character1.max.x, bong.max.x) - std::max(character1.min.x, bong.min.x);
-			float overlapbZ = std::min(character1.max.z, bong.max.z) - std::max(character1.min.z, bong.min.z);
+		if (checkCollision(P1->CAABB, bong)) {
+			float overlapbX = std::min(P1->CAABB.max.x, bong.max.x) - std::max(P1->CAABB.min.x, bong.min.x);
+			float overlapbZ = std::min(P1->CAABB.max.z, bong.max.z) - std::max(P1->CAABB.min.z, bong.min.z);
 
 			if (overlapbX < overlapbZ) {
-				if (P1.Direction.x > 0.0f && character1.max.x > bong.min.x) {
-					P1.Direction.x = 0.0f;
+				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > bong.min.x) {
+					P1->Direction.x = 0.0f;
 				}
-				else if (P1.Direction.x < 0.0f && character1.min.x < bong.max.x) {
-					P1.Direction.x = 0.0f;
+				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < bong.max.x) {
+					P1->Direction.x = 0.0f;
 				}
 			}
 			else {
-				if (P1.Direction.z > 0.0f && character1.max.z > bong.min.z) {
-					P1.Direction.z = 0.0f;
+				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > bong.min.z) {
+					P1->Direction.z = 0.0f;
 				}
-				else if (P1.Direction.z < 0.0f && character1.min.z < bong.max.z) {
-					P1.Direction.z = 0.0f;
+				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < bong.max.z) {
+					P1->Direction.z = 0.0f;
 				}
 			}
 		}
@@ -2337,47 +2335,47 @@ GLvoid Timer(int value) {
 
 	// 캐릭터1과 문짝 충돌 처리
 	for (const auto& door : leftDoors) {
-		if (checkCollision(character1, door)) {
-			float overlapX = std::min(character1.max.x, door.max.x) - std::max(character1.min.x, door.min.x);
-			float overlapZ = std::min(character1.max.z, door.max.z) - std::max(character1.min.z, door.min.z);
+		if (checkCollision(P1->CAABB, door)) {
+			float overlapX = std::min(P1->CAABB.max.x, door.max.x) - std::max(P1->CAABB.min.x, door.min.x);
+			float overlapZ = std::min(P1->CAABB.max.z, door.max.z) - std::max(P1->CAABB.min.z, door.min.z);
 
 			if (overlapX < overlapZ) {
-				if (P1.Direction.x > 0.0f && character1.max.x > door.min.x) {
-					P1.Direction.x = 0.0f;
+				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > door.min.x) {
+					P1->Direction.x = 0.0f;
 				}
-				else if (P1.Direction.x < 0.0f && character1.min.x < door.max.x) {
-					P1.Direction.x = 0.0f;
+				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < door.max.x) {
+					P1->Direction.x = 0.0f;
 				}
 			}
 			else {
-				if (P1.Direction.z > 0.0f && character1.max.z > door.min.z) {
-					P1.Direction.z = 0.0f;
+				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > door.min.z) {
+					P1->Direction.z = 0.0f;
 				}
-				else if (P1.Direction.z < 0.0f && character1.min.z < door.max.z) {
-					P1.Direction.z = 0.0f;
+				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < door.max.z) {
+					P1->Direction.z = 0.0f;
 				}
 			}
 		}
 	}
 	for (const auto& door : rightDoors) {
-		if (checkCollision(character1, door)) {
-			float overlapX = std::min(character1.max.x, door.max.x) - std::max(character1.min.x, door.min.x);
-			float overlapZ = std::min(character1.max.z, door.max.z) - std::max(character1.min.z, door.min.z);
+		if (checkCollision(P1->CAABB, door)) {
+			float overlapX = std::min(P1->CAABB.max.x, door.max.x) - std::max(P1->CAABB.min.x, door.min.x);
+			float overlapZ = std::min(P1->CAABB.max.z, door.max.z) - std::max(P1->CAABB.min.z, door.min.z);
 
 			if (overlapX < overlapZ) {
-				if (P1.Direction.x > 0.0f && character1.max.x > door.min.x) {
-					P1.Direction.x = 0.0f;
+				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > door.min.x) {
+					P1->Direction.x = 0.0f;
 				}
-				else if (P1.Direction.x < 0.0f && character1.min.x < door.max.x) {
-					P1.Direction.x = 0.0f;
+				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < door.max.x) {
+					P1->Direction.x = 0.0f;
 				}
 			}
 			else {
-				if (P1.Direction.z > 0.0f && character1.max.z > door.min.z) {
-					P1.Direction.z = 0.0f;
+				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > door.min.z) {
+					P1->Direction.z = 0.0f;
 				}
-				else if (P1.Direction.z < 0.0f && character1.min.z < door.max.z) {
-					P1.Direction.z = 0.0f;
+				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < door.max.z) {
+					P1->Direction.z = 0.0f;
 				}
 			}
 		}
@@ -2431,24 +2429,24 @@ GLvoid Timer(int value) {
 	//}
 	AABB outdoors[] = { outdoor1, outdoor2, outdoor3, outdoor4 };
 	for (const auto& outdoor : outdoors) {
-		if (checkCollision(character1, outdoor)) {
-			float overlapX = std::min(character1.max.x, outdoor.max.x) - std::max(character1.min.x, outdoor.min.x);
-			float overlapZ = std::min(character1.max.z, outdoor.max.z) - std::max(character1.min.z, outdoor.min.z);
+		if (checkCollision(P1->CAABB, outdoor)) {
+			float overlapX = std::min(P1->CAABB.max.x, outdoor.max.x) - std::max(P1->CAABB.min.x, outdoor.min.x);
+			float overlapZ = std::min(P1->CAABB.max.z, outdoor.max.z) - std::max(P1->CAABB.min.z, outdoor.min.z);
 
 			if (overlapX < overlapZ) {
-				if (P1.Direction.x > 0.0f && character1.max.x > outdoor.min.x) {
-					P1.Direction.x = 0.0f;
+				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > outdoor.min.x) {
+					P1->Direction.x = 0.0f;
 				}
-				else if (P1.Direction.x < 0.0f && character1.min.x < outdoor.max.x) {
-					P1.Direction.x = 0.0f;
+				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < outdoor.max.x) {
+					P1->Direction.x = 0.0f;
 				}
 			}
 			else {
-				if (P1.Direction.z > 0.0f && character1.max.z > outdoor.min.z) {
-					P1.Direction.z = 0.0f;
+				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > outdoor.min.z) {
+					P1->Direction.z = 0.0f;
 				}
-				else if (P1.Direction.z < 0.0f && character1.min.z < outdoor.max.z) {
-					P1.Direction.z = 0.0f;
+				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < outdoor.max.z) {
+					P1->Direction.z = 0.0f;
 				}
 			}
 		}
@@ -2508,24 +2506,24 @@ GLvoid Timer(int value) {
 
 	// 캐릭터1과 장애물 충돌 체크
 	for (const auto& fan : horizontalFans) {
-		if (checkCollision(character1, fan)) {
-			float overlapX = std::min(character1.max.x, fan.max.x) - std::max(character1.min.x, fan.min.x);
-			float overlapZ = std::min(character1.max.z, fan.max.z) - std::max(character1.min.z, fan.min.z);
+		if (checkCollision(P1->CAABB, fan)) {
+			float overlapX = std::min(P1->CAABB.max.x, fan.max.x) - std::max(P1->CAABB.min.x, fan.min.x);
+			float overlapZ = std::min(P1->CAABB.max.z, fan.max.z) - std::max(P1->CAABB.min.z, fan.min.z);
 
 			if (overlapX < overlapZ) {
-				if (P1.Direction.x > 0.0f && character1.max.x > fan.min.x) {
-					P1.Direction.x = 0.0f;
+				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > fan.min.x) {
+					P1->Direction.x = 0.0f;
 				}
-				else if (P1.Direction.x < 0.0f && character1.min.x < fan.max.x) {
-					P1.Direction.x = 0.0f;
+				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < fan.max.x) {
+					P1->Direction.x = 0.0f;
 				}
 			}
 			else {
-				if (P1.Direction.z > 0.0f && character1.max.z > fan.min.z) {
-					P1.Direction.z = 0.0f;
+				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > fan.min.z) {
+					P1->Direction.z = 0.0f;
 				}
-				else if (P1.Direction.z < 0.0f && character1.min.z < fan.max.z) {
-					P1.Direction.z = 0.0f;
+				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < fan.max.z) {
+					P1->Direction.z = 0.0f;
 				}
 			}
 		}
@@ -2591,47 +2589,47 @@ GLvoid Timer(int value) {
 	);
 
 	for (const auto& barcenter : barcenters) {
-		if (checkCollision(character1, barcenter)) {
-			float overlapX = std::min(character1.max.x, barcenter.max.x) - std::max(character1.min.x, barcenter.min.x);
-			float overlapZ = std::min(character1.max.z, barcenter.max.z) - std::max(character1.min.z, barcenter.min.z);
+		if (checkCollision(P1->CAABB, barcenter)) {
+			float overlapX = std::min(P1->CAABB.max.x, barcenter.max.x) - std::max(P1->CAABB.min.x, barcenter.min.x);
+			float overlapZ = std::min(P1->CAABB.max.z, barcenter.max.z) - std::max(P1->CAABB.min.z, barcenter.min.z);
 
 			if (overlapX < overlapZ) { // X축에서 더 겹친 경우
-				if (P1.Direction.x > 0.0f && character1.max.x > barcenter.min.x) {
-					P1.Direction.x = 0.0f; // 캐릭터가 오른쪽으로 이동 중이면 정지
+				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > barcenter.min.x) {
+					P1->Direction.x = 0.0f; // 캐릭터가 오른쪽으로 이동 중이면 정지
 				}
-				else if (P1.Direction.x < 0.0f && character1.min.x < barcenter.max.x) {
-					P1.Direction.x = 0.0f; // 캐릭터가 왼쪽으로 이동 중이면 정지
+				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < barcenter.max.x) {
+					P1->Direction.x = 0.0f; // 캐릭터가 왼쪽으로 이동 중이면 정지
 				}
 			}
 			else { // Z축에서 더 겹친 경우
-				if (P1.Direction.z > 0.0f && character1.max.z > barcenter.min.z) {
-					P1.Direction.z = 0.0f; // 캐릭터가 위쪽으로 이동 중이면 정지
+				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > barcenter.min.z) {
+					P1->Direction.z = 0.0f; // 캐릭터가 위쪽으로 이동 중이면 정지
 				}
-				else if (P1.Direction.z < 0.0f && character1.min.z < barcenter.max.z) {
-					P1.Direction.z = 0.0f; // 캐릭터가 아래쪽으로 이동 중이면 정지
+				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < barcenter.max.z) {
+					P1->Direction.z = 0.0f; // 캐릭터가 아래쪽으로 이동 중이면 정지
 				}
 			}
 		}
 	}
 	for (const auto& bar : barbars) {
-		if (checkCollision(character1, bar)) {
-			float overlapX = std::min(character1.max.x, bar.max.x) - std::max(character1.min.x, bar.min.x);
-			float overlapZ = std::min(character1.max.z, bar.max.z) - std::max(character1.min.z, bar.min.z);
+		if (checkCollision(P1->CAABB, bar)) {
+			float overlapX = std::min(P1->CAABB.max.x, bar.max.x) - std::max(P1->CAABB.min.x, bar.min.x);
+			float overlapZ = std::min(P1->CAABB.max.z, bar.max.z) - std::max(P1->CAABB.min.z, bar.min.z);
 
 			if (overlapX < overlapZ) { // X축에서 더 겹친 경우
-				if (P1.Direction.x > 0.0f && character1.max.x > bar.min.x) {
-					P1.Direction.x = 0.0f; // 오른쪽 이동 정지
+				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > bar.min.x) {
+					P1->Direction.x = 0.0f; // 오른쪽 이동 정지
 				}
-				else if (P1.Direction.x < 0.0f && character1.min.x < bar.max.x) {
-					P1.Direction.x = 0.0f; // 왼쪽 이동 정지
+				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < bar.max.x) {
+					P1->Direction.x = 0.0f; // 왼쪽 이동 정지
 				}
 			}
 			else { // Z축에서 더 겹친 경우
-				if (P1.Direction.z > 0.0f && character1.max.z > bar.min.z) {
-					P1.Direction.z = 0.0f; // 위쪽 이동 정지
+				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > bar.min.z) {
+					P1->Direction.z = 0.0f; // 위쪽 이동 정지
 				}
-				else if (P1.Direction.z < 0.0f && character1.min.z < bar.max.z) {
-					P1.Direction.z = 0.0f; // 아래쪽 이동 정지
+				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < bar.max.z) {
+					P1->Direction.z = 0.0f; // 아래쪽 이동 정지
 				}
 			}
 		}
@@ -2641,24 +2639,24 @@ GLvoid Timer(int value) {
 	// 바와 캐릭터1 충돌 처리
 	AABB bars[] = { leftBar1, leftBar2, leftBar3, leftBar4, leftBar5, middleBar1, middleBar2, middleBar3, middleBar4, middleBar5, rightBar1, rightBar2, rightBar3, rightBar4, rightBar5 };
 	for (const auto& bar : bars) {
-		if (checkCollision(character1, bar)) {
-			float overlapbX = std::min(character1.max.x, bar.max.x) - std::max(character1.min.x, bar.min.x);
-			float overlapbZ = std::min(character1.max.z, bar.max.z) - std::max(character1.min.z, bar.min.z);
+		if (checkCollision(P1->CAABB, bar)) {
+			float overlapbX = std::min(P1->CAABB.max.x, bar.max.x) - std::max(P1->CAABB.min.x, bar.min.x);
+			float overlapbZ = std::min(P1->CAABB.max.z, bar.max.z) - std::max(P1->CAABB.min.z, bar.min.z);
 
 			if (overlapbX < overlapbZ) {
-				if (P1.Direction.x > 0.0f && character1.max.x > bar.min.x) {
-					P1.Direction.x = 0.0f;
+				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > bar.min.x) {
+					P1->Direction.x = 0.0f;
 				}
-				else if (P1.Direction.x < 0.0f && character1.min.x < bar.max.x) {
-					P1.Direction.x = 0.0f;
+				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < bar.max.x) {
+					P1->Direction.x = 0.0f;
 				}
 			}
 			else {
-				if (P1.Direction.z > 0.0f && character1.max.z > bar.min.z) {
-					P1.Direction.z = 0.0f;
+				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > bar.min.z) {
+					P1->Direction.z = 0.0f;
 				}
-				else if (P1.Direction.z < 0.0f && character1.min.z < bar.max.z) {
-					P1.Direction.z = 0.0f;
+				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < bar.max.z) {
+					P1->Direction.z = 0.0f;
 				}
 			}
 		}
@@ -2693,7 +2691,7 @@ GLvoid Timer(int value) {
 
 	// 이동 처리
 	//character1Position += P1.Direction;
-	P1.Position += P1.Direction;
+	P1->Position += P1->Direction;
 	//character2Position += character2Direction;
 
 	// 화면 갱신
