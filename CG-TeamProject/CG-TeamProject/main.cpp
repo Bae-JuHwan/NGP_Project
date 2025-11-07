@@ -2010,11 +2010,11 @@ GLvoid Keyboard(unsigned char key, int x, int y) {
 				P1.IsJumping = true;
 			}
 			break;
-		case 'j':
+		/*case 'j':
 			if (!isCharacter2Jumping) {
 				isCharacter2Jumping = true;
 			}
-			break;
+			break;*/
 		}
 	}
 	glutPostRedisplay();
@@ -2153,23 +2153,23 @@ GLvoid Timer(int value) {
 
 	// 팔 흔들림 업데이트
 	if (P1.IsSwing) {
-		P1.ArmLegSwingAngle(+ character1SwingDirection * 2.0f);
-		if (character1ArmLegSwingAngle >= P1.MaxSwingAngle) {
-			character1SwingDirection = -1; // 방향 반전
+		P1.ArmLegSwingAngle(+ P1.SwingDirection * 2.0f);
+		if (P1.ArmLegSwingAngle() >= P1.MaxSwingAngle) {
+			P1.SwingDirection = -1; // 방향 반전
 		}
-		else if (character1ArmLegSwingAngle <= -P1.MaxSwingAngle) {
-			character1SwingDirection = 1; // 방향 반전
+		else if (P1.ArmLegSwingAngle() <= -P1.MaxSwingAngle) {
+			P1.SwingDirection = 1; // 방향 반전
 		}
 	}
 	else {
 		// 흔들림 비활성화 시 초기 상태로 복구
-		if (character1ArmLegSwingAngle > 0.0f) {
-			character1ArmLegSwingAngle -= 2.0f;
-			if (character1ArmLegSwingAngle < 0.0f) character1ArmLegSwingAngle = 0.0f;
+		if (P1.ArmLegSwingAngle() > 0.0f) {
+			P1.ArmLegSwingAngle(-2.0f);
+			if (P1.ArmLegSwingAngle() < 0.0f) character1ArmLegSwingAngle = 0.0f;
 		}
-		else if (character1ArmLegSwingAngle < 0.0f) {
-			character1ArmLegSwingAngle += 2.0f;
-			if (character1ArmLegSwingAngle > 0.0f) character1ArmLegSwingAngle = 0.0f;
+		else if (P1.ArmLegSwingAngle() < 0.0f) {
+			P1.ArmLegSwingAngle(2.0f);
+			if (P1.ArmLegSwingAngle() > 0.0f) character1ArmLegSwingAngle = 0.0f;
 		}
 	}
 
@@ -2256,30 +2256,30 @@ GLvoid Timer(int value) {
 		}
 	}
 
-	// 봉과 캐릭터2 충돌 처리
-	for (const auto& bong : bongs) {
-		if (checkCollision(character2, bong)) {
-			float overlapX = std::min(character2.max.x, bong.max.x) - std::max(character2.min.x, bong.min.x);
-			float overlapZ = std::min(character2.max.z, bong.max.z) - std::max(character2.min.z, bong.min.z);
+	//// 봉과 캐릭터2 충돌 처리
+	//for (const auto& bong : bongs) {
+	//	if (checkCollision(character2, bong)) {
+	//		float overlapX = std::min(character2.max.x, bong.max.x) - std::max(character2.min.x, bong.min.x);
+	//		float overlapZ = std::min(character2.max.z, bong.max.z) - std::max(character2.min.z, bong.min.z);
 
-			if (overlapX < overlapZ) {
-				if (character2Direction.x > 0.0f && character2.max.x > bong.min.x) {
-					character2Direction.x = 0.0f;
-				}
-				else if (character2Direction.x < 0.0f && character2.min.x < bong.max.x) {
-					character2Direction.x = 0.0f;
-				}
-			}
-			else {
-				if (character2Direction.z > 0.0f && character2.max.z > bong.min.z) {
-					character2Direction.z = 0.0f;
-				}
-				else if (character2Direction.z < 0.0f && character2.min.z < bong.max.z) {
-					character2Direction.z = 0.0f;
-				}
-			}
-		}
-	}
+	//		if (overlapX < overlapZ) {
+	//			if (character2Direction.x > 0.0f && character2.max.x > bong.min.x) {
+	//				character2Direction.x = 0.0f;
+	//			}
+	//			else if (character2Direction.x < 0.0f && character2.min.x < bong.max.x) {
+	//				character2Direction.x = 0.0f;
+	//			}
+	//		}
+	//		else {
+	//			if (character2Direction.z > 0.0f && character2.max.z > bong.min.z) {
+	//				character2Direction.z = 0.0f;
+	//			}
+	//			else if (character2Direction.z < 0.0f && character2.min.z < bong.max.z) {
+	//				character2Direction.z = 0.0f;
+	//			}
+	//		}
+	//	}
+	//}
 
 	//봉 움직이기
 	BongGroup1Position.x += BongGroup1Direction.x * BongMove;
@@ -2382,53 +2382,53 @@ GLvoid Timer(int value) {
 			}
 		}
 	}
-	// 캐릭터2와 문짝 충돌 처리
-	for (const auto& door : leftDoors) {
-		if (checkCollision(character2, door)) {
-			float overlapX = std::min(character2.max.x, door.max.x) - std::max(character2.min.x, door.min.x);
-			float overlapZ = std::min(character2.max.z, door.max.z) - std::max(character2.min.z, door.min.z);
+	//// 캐릭터2와 문짝 충돌 처리
+	//for (const auto& door : leftDoors) {
+	//	if (checkCollision(character2, door)) {
+	//		float overlapX = std::min(character2.max.x, door.max.x) - std::max(character2.min.x, door.min.x);
+	//		float overlapZ = std::min(character2.max.z, door.max.z) - std::max(character2.min.z, door.min.z);
 
-			if (overlapX < overlapZ) {
-				if (character2Direction.x > 0.0f && character2.max.x > door.min.x) {
-					character2Direction.x = 0.0f;
-				}
-				else if (character2Direction.x < 0.0f && character2.min.x < door.max.x) {
-					character2Direction.x = 0.0f;
-				}
-			}
-			else {
-				if (character2Direction.z > 0.0f && character2.max.z > door.min.z) {
-					character2Direction.z = 0.0f;
-				}
-				else if (character2Direction.z < 0.0f && character2.min.z < door.max.z) {
-					character2Direction.z = 0.0f;
-				}
-			}
-		}
-	}
-	for (const auto& door : rightDoors) {
-		if (checkCollision(character2, door)) {
-			float overlapX = std::min(character2.max.x, door.max.x) - std::max(character2.min.x, door.min.x);
-			float overlapZ = std::min(character2.max.z, door.max.z) - std::max(character2.min.z, door.min.z);
+	//		if (overlapX < overlapZ) {
+	//			if (character2Direction.x > 0.0f && character2.max.x > door.min.x) {
+	//				character2Direction.x = 0.0f;
+	//			}
+	//			else if (character2Direction.x < 0.0f && character2.min.x < door.max.x) {
+	//				character2Direction.x = 0.0f;
+	//			}
+	//		}
+	//		else {
+	//			if (character2Direction.z > 0.0f && character2.max.z > door.min.z) {
+	//				character2Direction.z = 0.0f;
+	//			}
+	//			else if (character2Direction.z < 0.0f && character2.min.z < door.max.z) {
+	//				character2Direction.z = 0.0f;
+	//			}
+	//		}
+	//	}
+	//}
+	//for (const auto& door : rightDoors) {
+	//	if (checkCollision(character2, door)) {
+	//		float overlapX = std::min(character2.max.x, door.max.x) - std::max(character2.min.x, door.min.x);
+	//		float overlapZ = std::min(character2.max.z, door.max.z) - std::max(character2.min.z, door.min.z);
 
-			if (overlapX < overlapZ) {
-				if (character2Direction.x > 0.0f && character2.max.x > door.min.x) {
-					character2Direction.x = 0.0f;
-				}
-				else if (character2Direction.x < 0.0f && character2.min.x < door.max.x) {
-					character2Direction.x = 0.0f;
-				}
-			}
-			else {
-				if (character2Direction.z > 0.0f && character2.max.z > door.min.z) {
-					character2Direction.z = 0.0f;
-				}
-				else if (character2Direction.z < 0.0f && character2.min.z < door.max.z) {
-					character2Direction.z = 0.0f;
-				}
-			}
-		}
-	}
+	//		if (overlapX < overlapZ) {
+	//			if (character2Direction.x > 0.0f && character2.max.x > door.min.x) {
+	//				character2Direction.x = 0.0f;
+	//			}
+	//			else if (character2Direction.x < 0.0f && character2.min.x < door.max.x) {
+	//				character2Direction.x = 0.0f;
+	//			}
+	//		}
+	//		else {
+	//			if (character2Direction.z > 0.0f && character2.max.z > door.min.z) {
+	//				character2Direction.z = 0.0f;
+	//			}
+	//			else if (character2Direction.z < 0.0f && character2.min.z < door.max.z) {
+	//				character2Direction.z = 0.0f;
+	//			}
+	//		}
+	//	}
+	//}
 	AABB outdoors[] = { outdoor1, outdoor2, outdoor3, outdoor4 };
 	for (const auto& outdoor : outdoors) {
 		if (checkCollision(character1, outdoor)) {
@@ -2454,7 +2454,7 @@ GLvoid Timer(int value) {
 		}
 	}
 
-	for (const auto& outdoor : outdoors) {
+	/*for (const auto& outdoor : outdoors) {
 		if (checkCollision(character2, outdoor)) {
 			float overlapX = std::min(character2.max.x, outdoor.max.x) - std::max(character2.min.x, outdoor.min.x);
 			float overlapZ = std::min(character2.max.z, outdoor.max.z) - std::max(character2.min.z, outdoor.min.z);
@@ -2476,7 +2476,7 @@ GLvoid Timer(int value) {
 				}
 			}
 		}
-	}
+	}*/
 
 	// 장애물 AABB 업데이트
 	horizontalFan1.updateRotatedAABB(
@@ -2531,30 +2531,30 @@ GLvoid Timer(int value) {
 		}
 	}
 
-	// 캐릭터2와 장애물 충돌 체크
-	for (const auto& fan : horizontalFans) {
-		if (checkCollision(character2, fan)) {
-			float overlapX = std::min(character2.max.x, fan.max.x) - std::max(character2.min.x, fan.min.x);
-			float overlapZ = std::min(character2.max.z, fan.max.z) - std::max(character2.min.z, fan.min.z);
+	//// 캐릭터2와 장애물 충돌 체크
+	//for (const auto& fan : horizontalFans) {
+	//	if (checkCollision(character2, fan)) {
+	//		float overlapX = std::min(character2.max.x, fan.max.x) - std::max(character2.min.x, fan.min.x);
+	//		float overlapZ = std::min(character2.max.z, fan.max.z) - std::max(character2.min.z, fan.min.z);
 
-			if (overlapX < overlapZ) {
-				if (character2Direction.x > 0.0f && character2.max.x > fan.min.x) {
-					character2Direction.x = 0.0f;
-				}
-				else if (character2Direction.x < 0.0f && character2.min.x < fan.max.x) {
-					character2Direction.x = 0.0f;
-				}
-			}
-			else {
-				if (character2Direction.z > 0.0f && character2.max.z > fan.min.z) {
-					character2Direction.z = 0.0f;
-				}
-				else if (character2Direction.z < 0.0f && character2.min.z < fan.max.z) {
-					character2Direction.z = 0.0f;
-				}
-			}
-		}
-	}
+	//		if (overlapX < overlapZ) {
+	//			if (character2Direction.x > 0.0f && character2.max.x > fan.min.x) {
+	//				character2Direction.x = 0.0f;
+	//			}
+	//			else if (character2Direction.x < 0.0f && character2.min.x < fan.max.x) {
+	//				character2Direction.x = 0.0f;
+	//			}
+	//		}
+	//		else {
+	//			if (character2Direction.z > 0.0f && character2.max.z > fan.min.z) {
+	//				character2Direction.z = 0.0f;
+	//			}
+	//			else if (character2Direction.z < 0.0f && character2.min.z < fan.max.z) {
+	//				character2Direction.z = 0.0f;
+	//			}
+	//		}
+	//	}
+	//}
 
 	// 점프바 회전
 	jumpBarRotationAngle += 2.0f;
@@ -2664,36 +2664,36 @@ GLvoid Timer(int value) {
 		}
 	}
 
-	// 바와 캐릭터2 충돌 처리
-	for (const auto& bar : bars) {
-		if (checkCollision(character2, bar)) {
-			float overlapX = std::min(character2.max.x, bar.max.x) - std::max(character2.min.x, bar.min.x);
-			float overlapZ = std::min(character2.max.z, bar.max.z) - std::max(character2.min.z, bar.min.z);
+	//// 바와 캐릭터2 충돌 처리
+	//for (const auto& bar : bars) {
+	//	if (checkCollision(character2, bar)) {
+	//		float overlapX = std::min(character2.max.x, bar.max.x) - std::max(character2.min.x, bar.min.x);
+	//		float overlapZ = std::min(character2.max.z, bar.max.z) - std::max(character2.min.z, bar.min.z);
 
-			if (overlapX < overlapZ) {
-				if (character2Direction.x > 0.0f && character2.max.x > bar.min.x) {
-					character2Direction.x = 0.0f;
-				}
-				else if (character2Direction.x < 0.0f && character2.min.x < bar.max.x) {
-					character2Direction.x = 0.0f;
-				}
-			}
-			else {
-				if (character2Direction.z > 0.0f && character2.max.z > bar.min.z) {
-					character2Direction.z = 0.0f;
-				}
-				else if (character2Direction.z < 0.0f && character2.min.z < bar.max.z) {
-					character2Direction.z = 0.0f;
-				}
-			}
-		}
-	}
+	//		if (overlapX < overlapZ) {
+	//			if (character2Direction.x > 0.0f && character2.max.x > bar.min.x) {
+	//				character2Direction.x = 0.0f;
+	//			}
+	//			else if (character2Direction.x < 0.0f && character2.min.x < bar.max.x) {
+	//				character2Direction.x = 0.0f;
+	//			}
+	//		}
+	//		else {
+	//			if (character2Direction.z > 0.0f && character2.max.z > bar.min.z) {
+	//				character2Direction.z = 0.0f;
+	//			}
+	//			else if (character2Direction.z < 0.0f && character2.min.z < bar.max.z) {
+	//				character2Direction.z = 0.0f;
+	//			}
+	//		}
+	//	}
+	//}
 
 
 
 	// 이동 처리
 	character1Position += character1Direction;
-	character2Position += character2Direction;
+	//character2Position += character2Direction;
 
 	// 화면 갱신
 	glutPostRedisplay();
