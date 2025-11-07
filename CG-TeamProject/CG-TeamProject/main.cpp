@@ -219,30 +219,30 @@ void InitPoint();
 //void InitCharacter1RightLeg();
 
 //체크박스 추가
-void InitCharacter1CheckBox();
-void InitCharacter2CheckBox();
-void InitCharacter3CheckBox();
-
-// 캐릭터2
-void InitCharacter2Acc();
-void InitCharacter2Body();
-void InitCharacter2Clothes();
-void InitCharacter2Hair();
-void InitCharacter2LeftLeg();
-void InitCharacter2LeftArm();
-void InitCharacter2RightLeg();
-void InitCharacter2RightArm();
-void InitCharacter2Eye();
-void InitCharacter2Face();
-
-// 캐릭터3
-void InitCharacter3Body();
-void InitCharacter3Face();
-void InitCharacter3Eyes();
-void InitCharacter3LeftArm();
-void InitCharacter3RightArm();
-void InitCharacter3LeftFoot();
-void InitCharacter3RightFoot();
+//void InitCharacter1CheckBox();
+//void InitCharacter2CheckBox();
+//void InitCharacter3CheckBox();
+//
+//// 캐릭터2
+//void InitCharacter2Acc();
+//void InitCharacter2Body();
+//void InitCharacter2Clothes();
+//void InitCharacter2Hair();
+//void InitCharacter2LeftLeg();
+//void InitCharacter2LeftArm();
+//void InitCharacter2RightLeg();
+//void InitCharacter2RightArm();
+//void InitCharacter2Eye();
+//void InitCharacter2Face();
+//
+//// 캐릭터3
+//void InitCharacter3Body();
+//void InitCharacter3Face();
+//void InitCharacter3Eyes();
+//void InitCharacter3LeftArm();
+//void InitCharacter3RightArm();
+//void InitCharacter3LeftFoot();
+//void InitCharacter3RightFoot();
 
 // 봉
 void InitBong1();
