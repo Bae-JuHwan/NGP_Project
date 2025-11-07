@@ -16,21 +16,24 @@
     <Filter Include="Shader">
       <UniqueIdentifier>{dad00eab-59c5-4d21-a0e7-2bc896300107}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\PCH">
+      <UniqueIdentifier>{d915d203-b258-4d79-a336-147c5fa02cdd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Charactor.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>소스 파일\PCH</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="헤더.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Charactor.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="stdafx.h">
+      <Filter>소스 파일\PCH</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
