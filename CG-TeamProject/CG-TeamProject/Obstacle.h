@@ -6,7 +6,7 @@ class Obstacle
 public:
 	Obstacle(glm::vec3 setp, glm::vec3 setd, GLfloat setMS, GLfloat setMMS, GLfloat setA);
 	~Obstacle();
-private:
+
 public:
 	glm::mat4 ModelMatrix = glm::mat4(1.0f);
 	glm::vec3 Position = glm::vec3(0.0f, 0.0f, 0.0f); // 초기 위치
@@ -20,5 +20,7 @@ public:
 	GLfloat MoveSpeed{ 0.1f }; // 이동 속도
 	GLfloat MaxMoveDistance{ 1.6f }; // 최대 이동 거리
 	GLfloat RotationAngle{ 0.0f }; // 회전 각도
+
+	void Draw(GLuint shaderProgramID, GLint modelMatrixLocation);
 };
 

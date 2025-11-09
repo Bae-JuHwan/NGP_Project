@@ -67,7 +67,6 @@ glm::vec3 RightdoorGroupPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 RightdoorGroupDirection = glm::vec3(1.0f, 0.0f, 0.0f);
 
 
-
 bool moveKeyStates[256] = { false }; // 이동 키 상태
 bool arrowKeyStates[256] = { false };
 bool commandKeyStates[256] = { false }; // 명령 키 상태
@@ -195,11 +194,12 @@ AABB map5 = {
 	glm::vec3(10.6f, -26.5f, -165.0f)   // max
 };
 
-Obstacle Bong1();
+
 // 봉
-void InitBong1() {
-	InitPart("bong/bonggroup1.obj", modelBong1, vaoBong1, vboBong1, glm::vec3(1.0f, 0.078f, 0.576f));
-}
+//void InitBong1() {
+//	//InitPart("bong/bonggroup1.obj", modelBong1, vaoBong1, vboBong1, glm::vec3(1.0f, 0.078f, 0.576f));
+//	InitPart("bong/bonggroup1.obj", Bong1->model, Bong1->vao, Bong1->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
+//}
 void InitBong2() {
 	InitPart("bong/bonggroup2.obj", modelBong2, vaoBong2, vboBong2, glm::vec3(1.0f, 0.078f, 0.576f));
 }
@@ -1097,13 +1097,15 @@ void DrawMapCheckBox(GLuint shaderProgramID, GLint modelMatrixLocation) {
 
 // 장애물 그리기
 void DrawObstacleBong(GLuint shaderPRogramID, GLint modelMatrixLocation) {
-	glm::mat4 finalBong1ModelMatrix = bong1ModelMatrix;
-	bong1ModelMatrix = glm::translate(glm::mat4(1.0f), BongGroup1Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalBong1ModelMatrix));
+	//glm::mat4 finalBong1ModelMatrix = bong1ModelMatrix;
+	//bong1ModelMatrix = glm::translate(glm::mat4(1.0f), BongGroup1Position);
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalBong1ModelMatrix));
 
-	glBindVertexArray(vaoBong1);
-	glDrawElements(GL_TRIANGLES, modelBong1.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+	//glBindVertexArray(vaoBong1);
+	//glDrawElements(GL_TRIANGLES, modelBong1.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
+	//Bong1->Draw(shaderPRogramID, modelMatrixLocation);
+
 
 	glm::mat4 finalBong2ModelMatrix = bong2ModelMatrix;
 	bong2ModelMatrix = glm::translate(glm::mat4(1.0f), BongGroup2Position);
@@ -1116,12 +1118,12 @@ void DrawObstacleBong(GLuint shaderPRogramID, GLint modelMatrixLocation) {
 void DrawBongCheckBoxes(GLuint shaderProgramID, GLint modelMatrixLocation) {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	// 봉 1 체크박스
-	glm::mat4 bongCheckBox1ModelMatrix = glm::translate(glm::mat4(1.0f), BongGroup1Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(bongCheckBox1ModelMatrix));
+	//glm::mat4 bongCheckBox1ModelMatrix = glm::translate(glm::mat4(1.0f), BongGroup1Position);
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(bongCheckBox1ModelMatrix));
 
-	glBindVertexArray(vaoBongCheckBox1);
-	glDrawElements(GL_TRIANGLES, modelBongCheckBox1.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+	//glBindVertexArray(vaoBongCheckBox1);
+	//glDrawElements(GL_TRIANGLES, modelBongCheckBox1.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
 
 	// 봉 2 체크박스
 	glm::mat4 bongCheckBox2ModelMatrix = glm::translate(glm::mat4(1.0f), BongGroup2Position);
@@ -1434,6 +1436,7 @@ void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) 
 }
 
 Player1* P1 = nullptr;
+Obstacle* Bong1 = nullptr;
 void main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -1485,7 +1488,11 @@ void main(int argc, char** argv) {
 	InitCheckBoxMap5();
 
 	//장애물
-	InitBong1();
+
+	Bong1 = new Obstacle(glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f, 0.0f, 0.0f),0.1f,1.6f,0.0f);
+	InitPart("bong/bonggroup1.obj", Bong1->model, Bong1->vao, Bong1->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
+	//InitBong1();
+
 	InitBong2();
 	InitAllBongCheckBoxes();
 
@@ -1610,7 +1617,8 @@ GLvoid drawScene() {
 	}
 
 	DrawMap(shaderProgramID, modelMatrixLocation);
-	DrawObstacleBong(shaderProgramID, modelMatrixLocation);
+	//DrawObstacleBong(shaderProgramID, modelMatrixLocation);
+	Bong1->Draw(shaderProgramID, modelMatrixLocation);
 	P1->Draw(shaderProgramID, modelMatrixLocation);
 	/*DrawCharacter2(shaderProgramID, modelMatrixLocation);
 	DrawCharacter3(shaderProgramID, modelMatrixLocation);*/
