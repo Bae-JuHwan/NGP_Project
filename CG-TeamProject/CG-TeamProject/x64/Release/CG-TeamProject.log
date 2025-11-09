@@ -1,68 +1,4 @@
-﻿  main.cpp
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(99,45): warning C4267: '인수': 'size_t'에서 '_Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(99,45): warning C4267:         with
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(99,45): warning C4267:         [
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(99,45): warning C4267:             _Ty=unsigned int
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(99,45): warning C4267:         ]
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(100,45): warning C4267: '인수': 'size_t'에서 '_Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(100,45): warning C4267:         with
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(100,45): warning C4267:         [
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(100,45): warning C4267:             _Ty=unsigned int
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(100,45): warning C4267:         ]
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(101,45): warning C4267: '인수': 'size_t'에서 '_Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(101,45): warning C4267:         with
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(101,45): warning C4267:         [
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(101,45): warning C4267:             _Ty=unsigned int
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(101,45): warning C4267:         ]
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(881,56): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(889,64): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(897,58): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(905,55): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1104,55): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1112,55): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1122,63): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1130,63): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1138,63): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1146,63): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1154,63): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1162,63): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1174,67): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1183,69): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1195,67): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1204,69): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1216,67): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1225,69): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1235,57): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1243,58): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1251,59): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1259,63): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1270,66): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1280,66): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1290,66): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1300,64): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1308,67): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1317,61): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1328,64): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1336,67): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1345,61): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1356,64): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1364,67): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1373,61): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1384,64): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1392,67): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1401,61): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1412,64): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1420,67): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1429,61): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1436,34): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
-  Obstacle.cpp
+﻿  Obstacle.cpp
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
 C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(99,45): warning C4267: '인수': 'size_t'에서 '_Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(99,45): warning C4267:         with
@@ -85,6 +21,70 @@ C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(101,45): warning C4267:
 C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(101,45): warning C4267:         ]
   (소스 파일 'Obstacle.cpp'을(를) 컴파일하는 중)
   
+  main.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(99,45): warning C4267: '인수': 'size_t'에서 '_Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(99,45): warning C4267:         with
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(99,45): warning C4267:         [
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(99,45): warning C4267:             _Ty=unsigned int
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(99,45): warning C4267:         ]
+  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
+  
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(100,45): warning C4267: '인수': 'size_t'에서 '_Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(100,45): warning C4267:         with
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(100,45): warning C4267:         [
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(100,45): warning C4267:             _Ty=unsigned int
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(100,45): warning C4267:         ]
+  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
+  
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(101,45): warning C4267: '인수': 'size_t'에서 '_Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(101,45): warning C4267:         with
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(101,45): warning C4267:         [
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(101,45): warning C4267:             _Ty=unsigned int
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\Charactor.h(101,45): warning C4267:         ]
+  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
+  
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(882,56): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(890,64): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(898,58): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(906,55): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1105,55): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1113,55): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1123,63): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1131,63): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1139,63): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1147,63): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1155,63): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1163,63): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1175,67): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1184,69): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1196,67): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1205,69): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1217,67): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1226,69): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1236,57): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1244,58): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1252,59): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1260,63): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1271,66): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1281,66): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1291,66): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1301,64): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1309,67): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1318,61): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1329,64): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1337,67): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1346,61): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1357,64): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1365,67): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1374,61): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1385,64): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1393,67): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1402,61): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1413,64): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1421,67): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1430,61): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\NGP_Project\CG-TeamProject\CG-TeamProject\main.cpp(1437,34): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
   코드를 생성하고 있습니다.
   0 of 578 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation

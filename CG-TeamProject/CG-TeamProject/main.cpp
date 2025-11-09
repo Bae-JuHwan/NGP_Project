@@ -33,7 +33,7 @@ modelVerticalFanBar, modelVerticalFanCenter, modelVerticalFan;
 
 //checkbox
 GLuint vaoCheckBoxMap1, vboCheckBoxMap1[2], vaoCheckBoxMap2, vboCheckBoxMap2[2], vaoCheckBoxMap3, vboCheckBoxMap3[2], vaoCheckBoxMap4, vboCheckBoxMap4[2], vaoCheckBoxMap5, vboCheckBoxMap5[2];
-GLuint vaoCharacter1CheckBox, vboCharacter1CheckBox[2], vaoCharacter2CheckBox, vboCharacter2CheckBox[2], vaoCharacter3CheckBox, vboCharacter3CheckBox[3];
+//GLuint vaoCharacter1CheckBox, vboCharacter1CheckBox[2], vaoCharacter2CheckBox, vboCharacter2CheckBox[2], vaoCharacter3CheckBox, vboCharacter3CheckBox[3];
 
 Model modelBongCheckBox1, modelBongCheckBox2, modelBongCheckBox3, modelBongCheckBox4, modelBongCheckBox5, modelBongCheckBox6;
 GLuint vaoBongCheckBox1, vaoBongCheckBox2, vaoBongCheckBox3, vaoBongCheckBox4, vaoBongCheckBox5, vaoBongCheckBox6;
@@ -195,6 +195,7 @@ AABB map5 = {
 	glm::vec3(10.6f, -26.5f, -165.0f)   // max
 };
 
+Obstacle Bong1();
 // ºÀ
 void InitBong1() {
 	InitPart("bong/bonggroup1.obj", modelBong1, vaoBong1, vboBong1, glm::vec3(1.0f, 0.078f, 0.576f));
