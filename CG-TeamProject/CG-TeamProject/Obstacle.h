@@ -21,6 +21,10 @@ public:
 	GLfloat MaxMoveDistance{ 1.6f }; // 최대 이동 거리
 	GLfloat RotationAngle{ 0.0f }; // 회전 각도
 
+	AABB CAABB{};
+	
+
 	void Draw(GLuint shaderProgramID, GLint modelMatrixLocation);
+	void SetAABB(AABB seta) { CAABB = seta; }
 };
 
