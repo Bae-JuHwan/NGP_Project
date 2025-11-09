@@ -112,7 +112,6 @@ public:
 
 private:
 
-	//Model CharModel;	//이건 와르르 넣어야할 거 ㅅ갗은데... 그냥 ㄹ배열마냥 ㅜ 벡터 써서 핤싸
 
 public:
 	//스피드

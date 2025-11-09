@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <set>
-#include "Charactor.h"
+#include "Obstacle.h"
 
 
 // 맵
@@ -52,21 +52,6 @@ GLfloat DoorMove = 0.05f;
 GLfloat MaxDoorMove = 1.7f;
 GLfloat jumpBarRotationAngle = 0.0f;
 
-//glm::mat4 character2ModelMatrix = glm::mat4(1.0f);
-//glm::vec3 character2Direction = glm::vec3(0.0f, 0.0f, 0.0f);
-//glm::vec3 character2Position = glm::vec3(5.0f, 0.0f, -5.0f);
-//glm::vec3 character2InitialPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-//
-//glm::mat4 character3ModelMatrix = glm::mat4(1.0f);
-//glm::vec3 character3Direction = glm::vec3(0.0f, 0.0f, 0.0f);
-//glm::vec3 character3Position = glm::vec3(10.0f, 0.0f, -5.0f);
-////glm::vec3 character3InitialPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-//
-//glm::vec3 initialCharacter1Position = glm::vec3(0.0f, 0.0f, 0.0f); // 캐릭터 1 초기 위치
-//glm::vec3 initialCharacter2Position = glm::vec3(5.0f, 0.0f, 0.0f); // 캐릭터 2 초기 위치
-//glm::vec3 initialCharacter3Position = glm::vec3(10.0f, 0.0f, 0.0f); // 캐릭터 3 초기 위치
-
-
 glm::mat4 bong1ModelMatrix = glm::mat4(1.0f);
 glm::mat4 bong2ModelMatrix = glm::mat4(1.0f);
 glm::vec3 BongGroup1Position = glm::vec3(0.0f, 0.0f, 0.0f); // 초기 위치
@@ -88,9 +73,6 @@ bool arrowKeyStates[256] = { false };
 bool commandKeyStates[256] = { false }; // 명령 키 상태
 bool isObstacleRotate = true;
 
-int character1SwingDirection = 1;
-int character2SwingDirection = 1;
-int character3SwingDirection = 1;
 
 bool checkCollision(const AABB& box1, const AABB& box2) {
 	return (box1.max.x > box2.min.x && box1.min.x < box2.max.x &&
@@ -1621,43 +1603,11 @@ GLvoid drawScene() {
 	glUniformMatrix4fv(projMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix1));
 
 	GLint modelMatrixLocation = glGetUniformLocation(shaderProgramID, "modelTransform");
-	/* DrawMap(shaderProgramID, modelMatrixLocation);
-	 DrawObstacleBong(shaderProgramID, modelMatrixLocation);
-	 DrawCharacter1(shaderProgramID, modelMatrixLocation);
-	 DrawCharacter2(shaderProgramID, modelMatrixLocation);
-	 DrawCharacter3(shaderProgramID, modelMatrixLocation);
-	 DrawObstacleHorizontalFan(shaderProgramID, modelMatrixLocation);
-	 DrawObstacleVerticalFan(shaderProgramID, modelMatrixLocation);
-	 DrawObstacleJumpbar(shaderProgramID, modelMatrixLocation);
-	 DrawObstacleDoor(shaderProgramID, modelMatrixLocation);*/
-
-	 //// **뷰포트 2: 오른쪽 (캐릭터 2의 카메라)**
-	 //glViewport(window_Width / 2, 0, window_Width / 2, window_Height); // 오른쪽 절반
-	 //glm::vec3 camera2Position = character2Position + glm::vec3(0.0f, 10.0f, 15.0f);
-	 //glm::vec3 camera2Target = character2Position;
-
-	 //glm::mat4 viewMatrix2 = glm::lookAt(
-	 //    camera2Position,  // 카메라 2 위치
-	 //    camera2Target,    // 카메라 2 바라보는 지점
-	 //    glm::vec3(0.0f, 1.0f, 0.0f) // 상향 벡터
-	 //);
-
-	/* glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix2));*/
-
-	 //glm::mat4 projectionMatrix2 = glm::perspective(
-	 //    glm::radians(45.0f),
-	 //    (float)(window_Width / 2) / (float)window_Height, // 좌우 절반의 종횡비
-	 //    0.1f,
-	 //    10000.0f
-	 //);
-	 //glUniformMatrix4fv(projMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix2));
+	
 	if (P1->Position.y < -75.0f) {
 		P1->Position = P1->InitialPosition;
 	}
 
-	/* if (character2Position.y < -75.0f) {
-		 character2Position = initialCharacter2Position;
-	 }*/
 	DrawMap(shaderProgramID, modelMatrixLocation);
 	DrawObstacleBong(shaderProgramID, modelMatrixLocation);
 	P1->Draw(shaderProgramID, modelMatrixLocation);
@@ -1688,11 +1638,6 @@ GLvoid Keyboard(unsigned char key, int x, int y) {
 				P1->IsJumping = true;
 			}
 			break;
-			/*case 'j':
-				if (!isCharacter2Jumping) {
-					isCharacter2Jumping = true;
-				}
-				break;*/
 		}
 	}
 	glutPostRedisplay();
