@@ -7,14 +7,30 @@
 #include <vector>
 #include <set>
 #include"stdafx.h"
+#include "Common.h"      // 공용 오류 처리 및 유틸 함수(예: err_quit, err_display) 선언부
 #include "헤더.h"
 
+char* SERVERIP = (char*)"127.0.0.1";
 struct character {
     glm::vec3 position;           // 캐릭터의 위치정보를 담음
     glm::vec3 direction;          //캐릭터의 방향정보를 담음
     GLfloat ArmLegSwingAngle;     //캐릭터 팔다리 회전 정보
     bool isCollision;             //캐릭터의 충돌 유무
 };
+
+// 캐릭터 정보를 서버에 전송하는 함수
+void C2S_Character(SOCKET sock, const character& char_info)
+{
+
+
+    // 3. 서버에 패킷 전송
+    int retval = send(sock, (char*)&char_info, sizeof(char_info), 0);
+    if (retval == SOCKET_ERROR) {
+        err_display("send() - C2S_Character, position");
+        return;
+    }
+    printf("[TCP 클라이언트] 캐릭터 정보 전송 완료 (%d 바이트)\n", retval);
+}
 
 struct AABB {
     glm::vec3 min; // 충돌박스의 최소 좌표 (x, y, z)
