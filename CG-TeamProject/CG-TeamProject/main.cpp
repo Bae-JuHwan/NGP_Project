@@ -24,9 +24,9 @@ Model modelBottom, modelArrowAndPillar, modelEndPoint, modelPoint;
 //Model modelCharacter3Body, modelCharacter3Face, modelCharacter3Eyes, modelCharacter3LeftArm, modelCharacter3RightArm, modelCharacter3LeftFoot, modelCharacter3RightFoot;
 
 //장애물
-GLuint vaoBong1, vaoBong2, vaoHorizontalFanPink, vaoHorizontalFanPurple, vaoDoorOut, vaoLeftdoor, vaoRightdoor, vaoJumpBarCenter, vaoJumpBarbargroup1, vaoJumpBarbargroup2, vaoJumpBarbargroup3, vaoVerticalFanBar,
+GLuint vaoHorizontalFanPink, vaoHorizontalFanPurple, vaoDoorOut, vaoLeftdoor, vaoRightdoor, vaoJumpBarCenter, vaoJumpBarbargroup1, vaoJumpBarbargroup2, vaoJumpBarbargroup3, vaoVerticalFanBar,
 vaoVerticalFanCenter, vaoVerticalFan;
-GLuint vboBong1[2], vboBong2[2], vboHorizontalFanPink[2], vboHorizontalFanPurple[2], vboDoorOut[2], vboLeftdoor[2], vboRightdoor[2], vboJumpBarCenter[2], vboJumpBarbargroup1[2], vboJumpBarbargroup2[2],
+GLuint  vboHorizontalFanPink[2], vboHorizontalFanPurple[2], vboDoorOut[2], vboLeftdoor[2], vboRightdoor[2], vboJumpBarCenter[2], vboJumpBarbargroup1[2], vboJumpBarbargroup2[2],
 vboJumpBarbargroup3[2], vboVerticalFanBar[2], vboVerticalFanCenter[2], vboVerticalFan[2];
 Model modelBong1, modelBong2, modelHorizontalFanPink, modelHorizontalFanPurple, modelDoorOut, modelLeftdoor, modelRightdoor, modelJumpBarCenter, modelJumpBarbargroup1, modelJumpBarbargroup2, modelJumpBarbargroup3,
 modelVerticalFanBar, modelVerticalFanCenter, modelVerticalFan;
@@ -51,13 +51,13 @@ GLfloat obstacleRotation = 0.0f;
 GLfloat DoorMove = 0.05f;
 GLfloat MaxDoorMove = 1.7f;
 GLfloat jumpBarRotationAngle = 0.0f;
-
-glm::mat4 bong1ModelMatrix = glm::mat4(1.0f);
-glm::mat4 bong2ModelMatrix = glm::mat4(1.0f);
-glm::vec3 BongGroup1Position = glm::vec3(0.0f, 0.0f, 0.0f); // 초기 위치
-glm::vec3 BongGroup1Direction = glm::vec3(1.0f, 0.0f, 0.0f); // 초기 이동 방향 (오른쪽)
-glm::vec3 BongGroup2Position = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::vec3 BongGroup2Direction = glm::vec3(-1.0f, 0.0f, 0.0f);
+//
+//glm::mat4 bong1ModelMatrix = glm::mat4(1.0f);
+//glm::mat4 bong2ModelMatrix = glm::mat4(1.0f);
+//glm::vec3 BongGroup1Position = glm::vec3(0.0f, 0.0f, 0.0f); // 초기 위치
+//glm::vec3 BongGroup1Direction = glm::vec3(1.0f, 0.0f, 0.0f); // 초기 이동 방향 (오른쪽)
+//glm::vec3 BongGroup2Position = glm::vec3(0.0f, 0.0f, 0.0f);
+//glm::vec3 BongGroup2Direction = glm::vec3(-1.0f, 0.0f, 0.0f);
 
 glm::mat4 LeftdoorModelMatrix = glm::mat4(1.0f);
 glm::mat4 RightdoorModelMatrix = glm::mat4(1.0f);
@@ -1285,6 +1285,7 @@ void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) 
 
 Player1* P1 = nullptr;
 Obstacle* Bong1 = nullptr;
+Obstacle* Bong2 = nullptr;
 void main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -1322,6 +1323,14 @@ void main(int argc, char** argv) {
 	Bong1 = new Obstacle(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
 	InitPart("bong/bonggroup1.obj", Bong1->model, Bong1->vao, Bong1->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
 	Bong1->SetAABB(bong1);
+
+	AABB bong2 = {
+	glm::vec3(-9.47f, 0.0f, -33.25f), // min
+	glm::vec3(-7.47f ,  3.6f,  -31.25f)  // max
+	};
+	Bong2 = new Obstacle(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
+	InitPart("bong/bonggroup2.obj", Bong2->model, Bong2->vao, Bong2->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
+	Bong2->SetAABB(bong2);
 
 	//InitBong1();
 
@@ -1451,9 +1460,10 @@ GLvoid drawScene() {
 	DrawMap(shaderProgramID, modelMatrixLocation);
 	//DrawObstacleBong(shaderProgramID, modelMatrixLocation);
 	Bong1->Draw(shaderProgramID, modelMatrixLocation);
+	Bong2->Draw(shaderProgramID, modelMatrixLocation);
 	P1->Draw(shaderProgramID, modelMatrixLocation);
 	//상대 캐릭터도 받아서 그려야함.
-	
+
 	//DrawObstacleHorizontalFan(shaderProgramID, modelMatrixLocation);
 	//DrawObstacleVerticalFan(shaderProgramID, modelMatrixLocation);
 	//DrawObstacleDoor(shaderProgramID, modelMatrixLocation);
@@ -1657,20 +1667,20 @@ GLvoid Timer(int value) {
 		Bong1->Direction.x = 1;  // 오른쪽으로 이동
 	}
 
-	//// 봉 그룹 2 움직이기 (반대 방향)
-	//BongGroup2Position.x += BongGroup2Direction.x * BongMove;
-	//if (BongGroup2Position.x >= MaxBongMove) {
-	//	BongGroup2Direction.x = -1;
-	//}
-	//else if (BongGroup2Position.x <= -MaxBongMove) {
-	//	BongGroup2Direction.x = 1;
-	//}
+	// 봉 그룹 2 움직이기 (반대 방향)
+	Bong2->Position.x += Bong2->Direction.x * Bong2->MoveSpeed;
+	if (Bong2->Position.x >= Bong2->MaxMoveDistance) {
+		Bong2->Direction.x = -1;
+	}
+	else if (Bong2->Position.x <= -Bong2->MaxMoveDistance) {
+		Bong2->Direction.x = 1;
+	}
 
 	//if (isObstacleRotate) {
 	//	obstacleRotation += 2.0f;
 	//}
 	Bong1->CAABB.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
-	//bong2.update(BongGroup2Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
+	Bong2->CAABB.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
 	//bong3.update(BongGroup1Position, glm::vec3(-3.169f, 0.0f, -33.25f), glm::vec3(-1.169f, 3.6f, -31.25f));
 	//bong4.update(BongGroup2Position, glm::vec3(3.045f, 0.0f, -33.25f), glm::vec3(5.045f, 3.6f, -31.25f));
 	//bong5.update(BongGroup1Position, glm::vec3(9.27f, 0.0f, -33.25f), glm::vec3(11.27f, 3.6f, -31.25f));
