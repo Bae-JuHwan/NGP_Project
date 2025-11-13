@@ -130,11 +130,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Charactor.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Obstacle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Charactor.h" />
+    <ClInclude Include="Obstacle.h" />
     <ClInclude Include="헤더.h" />
   </ItemGroup>
   <ItemGroup>

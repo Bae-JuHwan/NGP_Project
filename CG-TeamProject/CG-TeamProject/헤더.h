@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -20,7 +21,7 @@ struct Model {
     std::vector<Face> faces;
 };
 
-void read_obj_file(const std::string& filename, Model& model) {
+inline void read_obj_file(const std::string& filename, Model& model) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         throw std::runtime_error("Error opening file: " + filename);
