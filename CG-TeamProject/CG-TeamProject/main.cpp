@@ -28,7 +28,7 @@ GLuint vaoHorizontalFanPink, vaoHorizontalFanPurple, vaoDoorOut, vaoLeftdoor, va
 vaoVerticalFanCenter, vaoVerticalFan;
 GLuint  vboHorizontalFanPink[2], vboHorizontalFanPurple[2], vboDoorOut[2], vboLeftdoor[2], vboRightdoor[2], vboJumpBarCenter[2], vboJumpBarbargroup1[2], vboJumpBarbargroup2[2],
 vboJumpBarbargroup3[2], vboVerticalFanBar[2], vboVerticalFanCenter[2], vboVerticalFan[2];
-Model modelBong1, modelBong2, modelHorizontalFanPink, modelHorizontalFanPurple, modelDoorOut, modelLeftdoor, modelRightdoor, modelJumpBarCenter, modelJumpBarbargroup1, modelJumpBarbargroup2, modelJumpBarbargroup3,
+Model modelHorizontalFanPink, modelHorizontalFanPurple, modelDoorOut, modelLeftdoor, modelRightdoor, modelJumpBarCenter, modelJumpBarbargroup1, modelJumpBarbargroup2, modelJumpBarbargroup3,
 modelVerticalFanBar, modelVerticalFanCenter, modelVerticalFan;
 
 //checkbox
@@ -137,7 +137,7 @@ void InitPoint();
 //void InitBong2();
 
 // 가로팬
-void InitHorizontalFanPink();
+//void InitHorizontalFanPink();
 void InitHorizontalFanPurple();
 // 점프바
 void InitJumpbarCenter();
@@ -218,12 +218,12 @@ AABB map5 = {
 //	InitBongCheckBoxPart("bong/bongcheckbox6.obj", modelBongCheckBox6, vaoBongCheckBox6, vboBongCheckBox6);
 //}
 // 가로팬
-void InitHorizontalFanPink() {
-	InitPart("horizontalFan/pink.obj", modelHorizontalFanPink, vaoHorizontalFanPink, vboHorizontalFanPink, glm::vec3(1.0f, 0.7f, 0.75f));
-}
-void InitHorizontalFanPurple() {
-	InitPart("horizontalFan/purple.obj", modelHorizontalFanPurple, vaoHorizontalFanPurple, vboHorizontalFanPurple, glm::vec3(0.5f, 0.0f, 0.5f));
-}
+//void InitHorizontalFanPink() {
+//	InitPart("horizontalFan/pink.obj", modelHorizontalFanPink, vaoHorizontalFanPink, vboHorizontalFanPink, glm::vec3(1.0f, 0.7f, 0.75f));
+//}
+//void InitHorizontalFanPurple() {
+//	InitPart("horizontalFan/purple.obj", modelHorizontalFanPurple, vaoHorizontalFanPurple, vboHorizontalFanPurple, glm::vec3(0.5f, 0.0f, 0.5f));
+//}
 // 개구리문
 void InitDoorOut() {
 	InitPart("frogDoor/outsidegroup.obj", modelDoorOut, vaoDoorOut, vboDoorOut, glm::vec3(0.576f, 0.078f, 1.0f));
@@ -350,19 +350,19 @@ AABB barbar3 = {
 	glm::vec3(10.43f, -0.36f, -94.457f), // min
 	glm::vec3(10.83f,0.0399f,  -88.457f)   // max
 };
-// 가로팬
-AABB horizontalFan1 = {
-	glm::vec3(-6.1f, -0.3f, -140.49f),  // min
-	glm::vec3(6.1f, 4.1f, -139.51f)     // max
-};
-AABB horizontalFan2 = {
-	glm::vec3(0.9f, -0.3f, -115.49f),   // min
-	glm::vec3(13.1f, 4.1f, -114.51f)    // max
-};
-AABB horizontalFan3 = {
-	glm::vec3(-13.1f, -0.3f, -115.49f), // min
-	glm::vec3(-0.9f, 4.1f, -114.51f)    // max
-};
+//// 가로팬
+//AABB horizontalFan1 = {
+//	glm::vec3(-6.1f, -0.3f, -140.49f),  // min
+//	glm::vec3(6.1f, 4.1f, -139.51f)     // max
+//};
+//AABB horizontalFan2 = {
+//	glm::vec3(0.9f, -0.3f, -115.49f),   // min
+//	glm::vec3(13.1f, 4.1f, -114.51f)    // max
+//};
+//AABB horizontalFan3 = {
+//	glm::vec3(-13.1f, -0.3f, -115.49f), // min
+//	glm::vec3(-0.9f, 4.1f, -114.51f)    // max
+//};
 // 세로팬
 AABB leftBar1 = {
 	glm::vec3(-18.12f, -0.64f, -62.86f),
@@ -1034,9 +1034,9 @@ void DrawObstacleHorizontalFan(GLuint shaderPRogramID, GLint modelMatrixLocation
 	glDrawElements(GL_TRIANGLES, modelHorizontalFanPurple.faces.size() * 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	horizontalFan1.update(horizontalFan1Position, glm::vec3(-6.1f, -0.3f, -0.49f), glm::vec3(6.1f, 4.4f, 0.49f));
+	//horizontalFan1.update(horizontalFan1Position, glm::vec3(-6.1f, -0.3f, -0.49f), glm::vec3(6.1f, 4.4f, 0.49f));
 
-	glm::vec3 horizontalFan2Position = glm::vec3(7.0f, -0.3f, -115.0f);
+	/*glm::vec3 horizontalFan2Position = glm::vec3(7.0f, -0.3f, -115.0f);
 	glm::mat4 HorizontalFanPink2ModelMatrix = glm::mat4(1.0f);
 	HorizontalFanPink2ModelMatrix = glm::translate(HorizontalFanPink2ModelMatrix, horizontalFan2Position);
 	HorizontalFanPink2ModelMatrix = glm::rotate(HorizontalFanPink2ModelMatrix, glm::radians(-obstacleRotation), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1076,7 +1076,7 @@ void DrawObstacleHorizontalFan(GLuint shaderPRogramID, GLint modelMatrixLocation
 	glDrawElements(GL_TRIANGLES, modelHorizontalFanPurple.faces.size() * 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	horizontalFan3.update(horizontalFan3Position, glm::vec3(-6.1f, -0.3f, -0.49f), glm::vec3(6.1f, 4.4f, 0.49f));
+	horizontalFan3.update(horizontalFan3Position, glm::vec3(-6.1f, -0.3f, -0.49f), glm::vec3(6.1f, 4.4f, 0.49f));*/
 }
 void DrawObstacleDoor(GLuint shaderPRogramID, GLint modelMatrixLocation) {
 	glm::mat4 DooroutModelMatrix = glm::mat4(1.0f);
@@ -1284,8 +1284,11 @@ void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) 
 }
 
 Player1* P1 = nullptr;
-Obstacle* Bong1 = nullptr;
-Obstacle* Bong2 = nullptr;
+BongGroup* Bong1 = nullptr;
+BongGroup* Bong2 = nullptr;
+HorizontalFan* PinkFan1 = nullptr;
+HorizontalFan* PurpleFan1 = nullptr;
+
 void main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -1320,7 +1323,7 @@ void main(int argc, char** argv) {
 		glm::vec3(-15.74f , 0.0f, -33.25f), // min
 		glm::vec3(-13.74f,  3.6f,  -31.25f)  // max
 	};
-	Bong1 = new Obstacle(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
+	Bong1 = new BongGroup(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
 	InitPart("bong/bonggroup1.obj", Bong1->model, Bong1->vao, Bong1->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
 	Bong1->SetAABB(bong1);
 
@@ -1328,17 +1331,39 @@ void main(int argc, char** argv) {
 	glm::vec3(-9.47f, 0.0f, -33.25f), // min
 	glm::vec3(-7.47f ,  3.6f,  -31.25f)  // max
 	};
-	Bong2 = new Obstacle(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
+	Bong2 = new BongGroup(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
 	InitPart("bong/bonggroup2.obj", Bong2->model, Bong2->vao, Bong2->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
 	Bong2->SetAABB(bong2);
+
+	// 가로팬
+	AABB horizontalFan1 = {
+		glm::vec3(-6.1f, -0.3f, -140.49f),  // min
+		glm::vec3(6.1f, 4.1f, -139.51f)     // max
+	};
+	AABB horizontalFan2 = {
+		glm::vec3(0.9f, -0.3f, -115.49f),   // min
+		glm::vec3(13.1f, 4.1f, -114.51f)    // max
+	};
+	AABB horizontalFan3 = {
+		glm::vec3(-13.1f, -0.3f, -115.49f), // min
+		glm::vec3(-0.9f, 4.1f, -114.51f)    // max
+	};
+
+	PinkFan1 = new HorizontalFan(glm::vec3(0.0f, -0.3f, -140.0f));
+	InitPart("horizontalFan/pink.obj", PinkFan1->model, PinkFan1->vao, PinkFan1->vbo, glm::vec3(1.0f, 0.7f, 0.75f));
+	PinkFan1->SetAABB(horizontalFan1);
+
+	PurpleFan1 = new HorizontalFan(PinkFan1->Position);
+	InitPart("horizontalFan/purple.obj", PurpleFan1->model, PurpleFan1->vao, PurpleFan1->vbo, glm::vec3(0.5f, 0.0f, 0.5f));
+
 
 	//InitBong1();
 
 	//InitBong2();
 	//InitAllBongCheckBoxes();
 
-	InitHorizontalFanPink();
-	InitHorizontalFanPurple();
+	//InitHorizontalFanPink();
+	//InitHorizontalFanPurple();
 	InitDoorOut();
 	InitDoorLeft();
 	InitDoorRight();
@@ -1463,7 +1488,8 @@ GLvoid drawScene() {
 	Bong2->Draw(shaderProgramID, modelMatrixLocation);
 	P1->Draw(shaderProgramID, modelMatrixLocation);
 	//상대 캐릭터도 받아서 그려야함.
-
+	PinkFan1->Draw(shaderProgramID, modelMatrixLocation);
+	PurpleFan1->Draw(shaderProgramID, modelMatrixLocation);
 	//DrawObstacleHorizontalFan(shaderProgramID, modelMatrixLocation);
 	//DrawObstacleVerticalFan(shaderProgramID, modelMatrixLocation);
 	//DrawObstacleDoor(shaderProgramID, modelMatrixLocation);
@@ -1786,7 +1812,7 @@ GLvoid Timer(int value) {
 
 
 	// 장애물 AABB 업데이트
-	horizontalFan1.updateRotatedAABB(
+	PinkFan1->CAABB.updateRotatedAABB(
 		glm::vec3(0.0f, -0.3f, -140.0f),  // 장애물의 중심 위치
 		glm::vec3(-6.1f, -0.3f, -0.49f), // 로컬 최소 오프셋
 		glm::vec3(6.1f, 4.4f, 0.49f),    // 로컬 최대 오프셋
@@ -1794,24 +1820,24 @@ GLvoid Timer(int value) {
 		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
 	);
 
-	horizontalFan2.updateRotatedAABB(
-		glm::vec3(7.0f, -0.3f, -115.0f),  // 장애물의 중심 위치
-		glm::vec3(-6.1f, -0.3f, -0.49f), // 로컬 최소 오프셋
-		glm::vec3(6.1f, 4.4f, 0.49f),    // 로컬 최대 오프셋
-		obstacleRotation,                // 회전 각도
-		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
-	);
+	//horizontalFan2.updateRotatedAABB(
+	//	glm::vec3(7.0f, -0.3f, -115.0f),  // 장애물의 중심 위치
+	//	glm::vec3(-6.1f, -0.3f, -0.49f), // 로컬 최소 오프셋
+	//	glm::vec3(6.1f, 4.4f, 0.49f),    // 로컬 최대 오프셋
+	//	obstacleRotation,                // 회전 각도
+	//	glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
+	//);
 
-	horizontalFan3.updateRotatedAABB(
-		glm::vec3(-7.0f, -0.3f, -115.0f), // 장애물의 중심 위치
-		glm::vec3(-6.1f, -0.3f, -0.49f), // 로컬 최소 오프셋
-		glm::vec3(6.1f, 4.4f, 0.49f),    // 로컬 최대 오프셋
-		obstacleRotation,                // 회전 각도
-		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
-	);
+	//horizontalFan3.updateRotatedAABB(
+	//	glm::vec3(-7.0f, -0.3f, -115.0f), // 장애물의 중심 위치
+	//	glm::vec3(-6.1f, -0.3f, -0.49f), // 로컬 최소 오프셋
+	//	glm::vec3(6.1f, 4.4f, 0.49f),    // 로컬 최대 오프셋
+	//	obstacleRotation,                // 회전 각도
+	//	glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
+	//);
 
 	// 장애물 AABB 배열 업데이트
-	AABB horizontalFans[] = { horizontalFan1, horizontalFan2, horizontalFan3 };
+	AABB horizontalFans[] = { PurpleFan1->CAABB/*, horizontalFan2, horizontalFan3 */};
 
 	// 캐릭터1과 장애물 충돌 체크
 	for (const auto& fan : horizontalFans) {
