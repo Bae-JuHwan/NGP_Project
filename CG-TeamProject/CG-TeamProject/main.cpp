@@ -1631,11 +1631,17 @@ GLvoid Timer(int value) {
 	//character1Position += P1.Direction;
 	P1->Position += P1->Direction;
 	//character2Position += character2Direction;
-	int recv_count = 0;
-	while (recv_character()) {
-		recv_count++;
-		if (recv_count > 10) break;  // 무한 루프 방지
-	}
+
+
+	// 서버로부터 정보를 받는 로직인데 아직 구현을 덜했음
+	//int recv_count = 0;
+	//while (recv_character()) {
+	//	recv_count++;
+	//	if (recv_count > 10) break;  // 무한 루프 방지
+	//}
+
+
+
 	//전송 로직
 	if (Socket != INVALID_SOCKET && P1 != nullptr) {
 		character myCharacter;
