@@ -1,9 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <windows.h>
-
+#include"Common.h"
+#include <gtc/matrix_transform.hpp>
+#include <gl/glew.h>
 #pragma comment(lib, "ws2_32.lib")
 
 #define SERVERPORT 9000
@@ -12,6 +9,67 @@
 CRITICAL_SECTION g_cs;  // 임계영역
 int g_clientCount = 0;
 
+// 캐릭터 구조체
+#pragma pack(1)
+struct character {
+    glm::vec3 position;
+    glm::vec3 direction;
+    GLfloat ArmLegSwingAngle;
+    bool isCollision;
+};
+#pragma pack()
+// 클라이언트 정보 구조체 추가
+struct ClientInfo {
+    SOCKET sock;
+    int id;
+    character charInfo;
+    bool isActive;
+};
+
+// 충돌 처리 함수 (아직 미구현)
+bool CheckCollision(const character& ch) {
+    return false; // 임시 반환
+}
+
+// 클라이언트로부터 캐릭터 정보 받기
+bool recv_character(SOCKET sock, character& ch) {
+    int retval = recv(sock, (char*)&ch, sizeof(character), 0);
+    if (retval == SOCKET_ERROR) {
+        err_display("recv() - recv_character");
+        return false;
+    }
+    if (retval == 0) {
+        printf("클라이언트 연결 종료\n");
+        return false;
+    }
+    return true;
+}
+
+// 서버에서 클라이언트로 캐릭터 정보 전송
+bool S2C_Character(SOCKET sock, const character& char_info) {
+    // 소켓이 유효한지 확인
+    if (sock == INVALID_SOCKET) {
+        printf("[경고] 소켓이 유효하지 않습니다\n");
+        return false;
+    }
+
+    // 클라이언트에게 캐릭터 정보 전송
+    int retval = send(sock, (char*)&char_info, sizeof(character), 0);
+
+    if (retval == SOCKET_ERROR) {
+        int err = WSAGetLastError();
+        printf("[에러] S2C_Character() 전송 실패 - 에러코드: %d\n", err);
+        return false;
+    }
+
+    if (retval != sizeof(character)) {
+        printf("[경고] 전송된 데이터 크기 불일치 (예상: %zu, 실제: %d)\n", sizeof(character), retval);
+    }
+
+    // 전송 성공
+    printf("[서버] 캐릭터 정보 전송 완료 (%d 바이트)\n", retval);
+    return true;
+}
 // 클라이언트 스레드 함수
 DWORD WINAPI ClientThread(LPVOID arg) {
     SOCKET client_sock = *(SOCKET*)arg;
@@ -25,6 +83,33 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     printf("클라이언트 %d번 접속 완료\n", client_id);
 
     // TODO
+    int receive_count = 0;
+    while (true) {
+        character received_char;
+
+        // 클라이언트로부터 캐릭터 정보 수신
+        if (!recv_character(client_sock, received_char)) {
+            break;  // 수신 실패 시 루프 종료
+        }
+
+        receive_count++;
+
+        // 수신한 데이터 출력
+        if (receive_count % 100 == 0) {
+            printf("\n=== [클라이언트 %d] 수신 %d회 ===\n", client_id, receive_count);
+            printf("  Position: (%.2f, %.2f, %.2f)\n",
+                received_char.position.x, received_char.position.y, received_char.position.z);
+            printf("  Direction: (%.2f, %.2f, %.2f)\n",
+                received_char.direction.x, received_char.direction.y, received_char.direction.z);
+            printf("  ArmLegSwingAngle: %.2f\n", received_char.ArmLegSwingAngle);
+            printf("  isCollision: %s\n", received_char.isCollision ? "true" : "false");
+            printf("\n");
+        }
+        // 임계영역 진입 - 데이터 저장
+        EnterCriticalSection(&g_cs);
+        // 여기에 클라이언트 정보 저장 (나중에 구현)
+        LeaveCriticalSection(&g_cs);
+    }
 
     closesocket(client_sock);
     printf("클라이언트 %d번 연결 종료\n", client_id);

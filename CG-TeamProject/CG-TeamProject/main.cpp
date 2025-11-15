@@ -6,9 +6,124 @@
 #include <iostream>
 #include <set>
 #include "stdafx.h"
+#include"Common.h"
 #include "Obstacle.h"
 
+char* SERVERIP = (char*)"127.0.0.1";
+#define SERVERPORT 9000
+SOCKET Socket = INVALID_SOCKET; //전역 변수로 소켓 선언
+#pragma pack(1)
+struct character {
+	glm::vec3 position;
+	glm::vec3 direction;
+	GLfloat ArmLegSwingAngle;
+	bool isCollision;
+};
+#pragma pack()
 
+// 다른 클라이언트들의 캐릭터 정보 저장
+#define MAX_OTHER_PLAYERS 2
+character otherPlayers[MAX_OTHER_PLAYERS];
+bool otherPlayersActive[MAX_OTHER_PLAYERS] = { false, false };
+
+// 캐릭터 정보를 서버에 전송하는 함수
+void C2S_Character(SOCKET sock, const character& char_info)
+{
+	// 3. 서버에 패킷 전송
+	int retval = send(sock, (char*)&char_info, sizeof(char_info), 0);
+	if (retval == SOCKET_ERROR) {
+		err_display("send() - C2S_Character, position");
+		return;
+	}
+
+}
+
+int recv_count = 0;
+// 서버로부터 다른 캐릭터 정보 수신
+bool recv_character() {
+	// 소켓이 유효한지 확인
+	if (Socket == INVALID_SOCKET) {
+		printf("[경고] 소켓이 유효하지 않습니다\n");
+		return false;
+	}
+
+	character received_char;
+
+	// 서버로부터 캐릭터 정보 패킷 수신
+	int retval = recv(Socket, (char*)&received_char, sizeof(character), 0);
+	recv_count++;
+
+	if (retval == SOCKET_ERROR) {
+		int err = WSAGetLastError();
+		if (err != WSAEWOULDBLOCK) {
+			printf("[에러] recv_character() 실패 - 에러코드: %d\n", err);
+			return false;
+		}
+		return false;  // 데이터 없음
+	}
+
+	if (retval == 0) {
+		printf("[경고] 서버와의 연결이 종료되었습니다\n");
+		return false;
+	}
+
+	// 수신 출력
+	if (recv_count % 100 == 0) {
+		printf("\n[수신] 다른 클라이언트 정보 수신 완료 (%d 바이트)\n", retval);
+		printf("  Position: (%.2f, %.2f, %.2f)\n",
+			received_char.position.x, received_char.position.y, received_char.position.z);
+		printf("  Direction: (%.2f, %.2f, %.2f)\n",
+			received_char.direction.x, received_char.direction.y, received_char.direction.z);
+		printf("  ArmLegSwingAngle: %.2f\n", received_char.ArmLegSwingAngle);
+		printf("  isCollision: %s\n\n", received_char.isCollision ? "true" : "false");
+
+	}
+	return true;
+}
+// 네트워크 초기화
+bool InitNetworkConnection() {
+	WSADATA wsa;
+
+	// Winsock 초기화
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+		err_quit("WSAStartup()");
+		return false;
+	}
+
+	// 소켓 생성
+	Socket = socket(AF_INET, SOCK_STREAM, 0);
+	if (Socket == INVALID_SOCKET) {
+		err_quit("socket()");
+		return false;
+	}
+
+	// 서버 주소 설정
+	struct sockaddr_in serveraddr;
+	memset(&serveraddr, 0, sizeof(serveraddr));
+	serveraddr.sin_family = AF_INET;
+	inet_pton(AF_INET, SERVERIP, &serveraddr.sin_addr);
+	serveraddr.sin_port = htons(SERVERPORT);
+
+	// 서버에 연결
+	int retval = connect(Socket, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
+	if (retval == SOCKET_ERROR) {
+		err_display("connect()");
+		closesocket(Socket);
+		Socket = INVALID_SOCKET;
+		WSACleanup();
+		return false;
+	}
+
+	return true;
+}
+// 네트워크 정리
+void CleanupNetworkConnection() {
+	if (Socket != INVALID_SOCKET) {
+		closesocket(Socket);
+		Socket = INVALID_SOCKET;
+	}
+	WSACleanup();
+}
 // 맵
 GLuint vaoBottom, vaoArrowAndPillar, vaoEndPoint, vaoPoint;
 GLuint vboBottom[2], vboArrowAndPillar[2], vboEndPoint[2], vboPoint[2];
@@ -934,11 +1049,12 @@ void main(int argc, char** argv) {
 	InitCheckBoxMap4();
 	InitCheckBoxMap5();
 
+	std::cout << "캐릭터 생성중...." << std::endl;
 	P1 = new Player1();
 
 
 	//장애물
-
+	std::cout << "장애물 생성중...." << std::endl;
 	AABB bong1 = {
 		glm::vec3(-15.74f , 0.0f, -33.25f), // min
 		glm::vec3(-13.74f,  3.6f,  -31.25f)  // max
@@ -994,6 +1110,13 @@ void main(int argc, char** argv) {
 	InitVerticalFanBar();
 	InitVerticalFanCenter();
 	InitVerticalFan();
+
+	printf("[클라이언트] 서버 연결 시도...\n");
+	if (!InitNetworkConnection()) {
+		printf("[클라이언트] 서버 연결 실패! 게임을 종료합니다.\n");
+		return;
+	}
+	printf("[클라이언트] 서버 연결 성공!\n");
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -1073,7 +1196,7 @@ GLvoid drawScene() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgramID);
 
-	// **뷰포트 1: 왼쪽 (캐릭터 1의 카메라)**
+
 	glViewport(0, 0, window_Width, window_Height); //전체화면
 	glm::vec3 camera1Position = P1->Position + glm::vec3(0.0f, 10.0f, 15.0f);
 	glm::vec3 camera1Target = P1->Position;
@@ -1103,17 +1226,12 @@ GLvoid drawScene() {
 	}
 
 	DrawMap(shaderProgramID, modelMatrixLocation);
-	//DrawObstacleBong(shaderProgramID, modelMatrixLocation);
 	Bong1->Draw(shaderProgramID, modelMatrixLocation);
 	Bong2->Draw(shaderProgramID, modelMatrixLocation);
 	P1->Draw(shaderProgramID, modelMatrixLocation);
 	//상대 캐릭터도 받아서 그려야함.
 	PinkFan1->Draw(shaderProgramID, modelMatrixLocation);
 	PurpleFan1->Draw(shaderProgramID, modelMatrixLocation);
-	//DrawObstacleHorizontalFan(shaderProgramID, modelMatrixLocation);
-	//DrawObstacleVerticalFan(shaderProgramID, modelMatrixLocation);
-	//DrawObstacleDoor(shaderProgramID, modelMatrixLocation);
-	//DrawObstacleJumpbar(shaderProgramID, modelMatrixLocation);
 	glutSwapBuffers();
 }
 
@@ -1238,70 +1356,6 @@ GLvoid Timer(int value) {
 		}
 	}
 
-
-	// 캐릭터 간 충돌 검사
-   //if (checkCollision(character1, character2)) {
-   //	float overlapX = std::min(character1.max.x, character2.max.x) - std::max(character1.min.x, character2.min.x);
-   //	float overlapZ = std::min(character1.max.z, character2.max.z) - std::max(character1.min.z, character2.min.z);
-
-   //	if (overlapX < overlapZ) {
-   //		if (character1Direction.x > 0.0f && character1.max.x > character2.min.x) {
-   //			character1Direction.x = 0.0f;
-   //		}
-   //		else if (character1Direction.x < 0.0f && character1.min.x < character2.max.x) {
-   //			character1Direction.x = 0.0f;
-   //		}
-
-   //		if (character2Direction.x > 0.0f && character2.max.x > character1.min.x) {
-   //			character2Direction.x = 0.0f;
-   //		}
-   //		else if (character2Direction.x < 0.0f && character2.min.x < character1.max.x) {
-   //			character2Direction.x = 0.0f;
-   //		}
-   //	}
-   //	else {
-   //		if (character1Direction.z > 0.0f && character1.max.z > character2.min.z) {
-   //			character1Direction.z = 0.0f;
-   //		}
-   //		else if (character1Direction.z < 0.0f && character1.min.z < character2.max.z) {
-   //			character1Direction.z = 0.0f;
-   //		}
-
-   //		if (character2Direction.z > 0.0f && character2.max.z > character1.min.z) {
-   //			character2Direction.z = 0.0f;
-   //		}
-   //		else if (character2Direction.z < 0.0f && character2.min.z < character1.max.z) {
-   //			character2Direction.z = 0.0f;
-   //		}
-   //	}
-   //}
-
-   // 봉과 캐릭터1 충돌 처리
-	/*AABB bongs[] = { bong1, bong2, bong3, bong4, bong5, bong6 };
-	for (const auto& bong : bongs) {
-		if (checkCollision(P1->CAABB, bong)) {
-			float overlapbX = std::min(P1->CAABB.max.x, bong.max.x) - std::max(P1->CAABB.min.x, bong.min.x);
-			float overlapbZ = std::min(P1->CAABB.max.z, bong.max.z) - std::max(P1->CAABB.min.z, bong.min.z);
-
-			if (overlapbX < overlapbZ) {
-				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > bong.min.x) {
-					P1->Direction.x = 0.0f;
-				}
-				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < bong.max.x) {
-					P1->Direction.x = 0.0f;
-				}
-			}
-			else {
-				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > bong.min.z) {
-					P1->Direction.z = 0.0f;
-				}
-				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < bong.max.z) {
-					P1->Direction.z = 0.0f;
-				}
-			}
-		}
-	}*/
-
 	//봉 움직이기
 	//Bong1->Position.x += BongGroup1Direction.x * BongMove;
 	Bong1->Position.x += Bong1->Direction.x * Bong1->MoveSpeed;
@@ -1327,10 +1381,6 @@ GLvoid Timer(int value) {
 	//}
 	Bong1->CAABB.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
 	Bong2->CAABB.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
-	//bong3.update(BongGroup1Position, glm::vec3(-3.169f, 0.0f, -33.25f), glm::vec3(-1.169f, 3.6f, -31.25f));
-	//bong4.update(BongGroup2Position, glm::vec3(3.045f, 0.0f, -33.25f), glm::vec3(5.045f, 3.6f, -31.25f));
-	//bong5.update(BongGroup1Position, glm::vec3(9.27f, 0.0f, -33.25f), glm::vec3(11.27f, 3.6f, -31.25f));
-	//bong6.update(BongGroup2Position, glm::vec3(14.945f, 0.0f, -33.25f), glm::vec3(16.945f, 3.6f, -31.25f));
 
 
 	// 문짝 움직이기
@@ -1440,21 +1490,6 @@ GLvoid Timer(int value) {
 		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
 	);
 
-	//horizontalFan2.updateRotatedAABB(
-	//	glm::vec3(7.0f, -0.3f, -115.0f),  // 장애물의 중심 위치
-	//	glm::vec3(-6.1f, -0.3f, -0.49f), // 로컬 최소 오프셋
-	//	glm::vec3(6.1f, 4.4f, 0.49f),    // 로컬 최대 오프셋
-	//	obstacleRotation,                // 회전 각도
-	//	glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
-	//);
-
-	//horizontalFan3.updateRotatedAABB(
-	//	glm::vec3(-7.0f, -0.3f, -115.0f), // 장애물의 중심 위치
-	//	glm::vec3(-6.1f, -0.3f, -0.49f), // 로컬 최소 오프셋
-	//	glm::vec3(6.1f, 4.4f, 0.49f),    // 로컬 최대 오프셋
-	//	obstacleRotation,                // 회전 각도
-	//	glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
-	//);
 
 	// 장애물 AABB 배열 업데이트
 	AABB horizontalFans[] = { PurpleFan1->CAABB/*, horizontalFan2, horizontalFan3 */};
@@ -1483,32 +1518,6 @@ GLvoid Timer(int value) {
 			}
 		}
 	}
-
-	//// 캐릭터2와 장애물 충돌 체크
-	//for (const auto& fan : horizontalFans) {
-	//	if (checkCollision(character2, fan)) {
-	//		float overlapX = std::min(character2.max.x, fan.max.x) - std::max(character2.min.x, fan.min.x);
-	//		float overlapZ = std::min(character2.max.z, fan.max.z) - std::max(character2.min.z, fan.min.z);
-
-	//		if (overlapX < overlapZ) {
-	//			if (character2Direction.x > 0.0f && character2.max.x > fan.min.x) {
-	//				character2Direction.x = 0.0f;
-	//			}
-	//			else if (character2Direction.x < 0.0f && character2.min.x < fan.max.x) {
-	//				character2Direction.x = 0.0f;
-	//			}
-	//		}
-	//		else {
-	//			if (character2Direction.z > 0.0f && character2.max.z > fan.min.z) {
-	//				character2Direction.z = 0.0f;
-	//			}
-	//			else if (character2Direction.z < 0.0f && character2.min.z < fan.max.z) {
-	//				character2Direction.z = 0.0f;
-	//			}
-	//		}
-	//	}
-	//}
-
 	// 점프바 회전
 	jumpBarRotationAngle += 2.0f;
 	if (jumpBarRotationAngle >= 360.0f) {
@@ -1617,37 +1626,26 @@ GLvoid Timer(int value) {
 		}
 	}
 
-	//// 바와 캐릭터2 충돌 처리
-	//for (const auto& bar : bars) {
-	//	if (checkCollision(character2, bar)) {
-	//		float overlapX = std::min(character2.max.x, bar.max.x) - std::max(character2.min.x, bar.min.x);
-	//		float overlapZ = std::min(character2.max.z, bar.max.z) - std::max(character2.min.z, bar.min.z);
-
-	//		if (overlapX < overlapZ) {
-	//			if (character2Direction.x > 0.0f && character2.max.x > bar.min.x) {
-	//				character2Direction.x = 0.0f;
-	//			}
-	//			else if (character2Direction.x < 0.0f && character2.min.x < bar.max.x) {
-	//				character2Direction.x = 0.0f;
-	//			}
-	//		}
-	//		else {
-	//			if (character2Direction.z > 0.0f && character2.max.z > bar.min.z) {
-	//				character2Direction.z = 0.0f;
-	//			}
-	//			else if (character2Direction.z < 0.0f && character2.min.z < bar.max.z) {
-	//				character2Direction.z = 0.0f;
-	//			}
-	//		}
-	//	}
-	//}
-
-
 
 	// 이동 처리
 	//character1Position += P1.Direction;
 	P1->Position += P1->Direction;
 	//character2Position += character2Direction;
+	int recv_count = 0;
+	while (recv_character()) {
+		recv_count++;
+		if (recv_count > 10) break;  // 무한 루프 방지
+	}
+	//전송 로직
+	if (Socket != INVALID_SOCKET && P1 != nullptr) {
+		character myCharacter;
+		myCharacter.position = P1->Position;
+		myCharacter.direction = P1->Direction;
+		myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
+		myCharacter.isCollision = false;  // 필요시 나중에 수정
+
+		C2S_Character(Socket, myCharacter);
+	}
 
 	// 화면 갱신
 	glutPostRedisplay();
