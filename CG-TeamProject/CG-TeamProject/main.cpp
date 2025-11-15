@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <set>
+#include "stdafx.h"
 #include "Obstacle.h"
 
 
@@ -13,15 +14,6 @@ GLuint vaoBottom, vaoArrowAndPillar, vaoEndPoint, vaoPoint;
 GLuint vboBottom[2], vboArrowAndPillar[2], vboEndPoint[2], vboPoint[2];
 Model modelBottom, modelArrowAndPillar, modelEndPoint, modelPoint;
 
-//// 캐릭터2
-//GLuint vaoCharacter2Acc, vaoCharacter2Body, vaoCharacter2Clothes, vaoCharacter2Hair, vaoCharacter2LeftLeg, vaoCharacter2RightLeg, vaoCharacter2LeftArm, vaoCharacter2RightArm, vaoCharacter2Eye, vaoCharacter2Face;
-//GLuint vboCharacter2Acc[2], vboCharacter2Body[2], vboCharacter2Clothes[2], vboCharacter2Hair[2], vboCharacter2LeftLeg[2], vboCharacter2RightLeg[2], vboCharacter2LeftArm[2], vboCharacter2RightArm[2], vboCharacter2Eye[2], vboCharacter2Face[2];
-//Model modelCharacter2Acc, modelCharacter2Body, modelCharacter2Hair, modelCharacter2Clothes, modelCharacter2LeftLeg, modelCharacter2RightLeg, modelCharacter2LeftArm, modelCharacter2RightArm, modelCharacter2Eye, modelCharacter2Face;
-//
-//// 캐릭터3
-//GLuint vaoCharacter3Body, vaoCharacter3Face, vaoCharacter3Eyes, vaoCharacter3LeftArm, vaoCharacter3RightArm, vaoCharacter3LeftFoot, vaoCharacter3RightFoot;
-//GLuint vboCharacter3Body[2], vboCharacter3Face[2], vboCharacter3Eyes[2], vboCharacter3LeftArm[2], vboCharacter3RightArm[2], vboCharacter3LeftFoot[2], vboCharacter3RightFoot[2];
-//Model modelCharacter3Body, modelCharacter3Face, modelCharacter3Eyes, modelCharacter3LeftArm, modelCharacter3RightArm, modelCharacter3LeftFoot, modelCharacter3RightFoot;
 
 //장애물
 GLuint vaoHorizontalFanPink, vaoHorizontalFanPurple, vaoDoorOut, vaoLeftdoor, vaoRightdoor, vaoJumpBarCenter, vaoJumpBarbargroup1, vaoJumpBarbargroup2, vaoJumpBarbargroup3, vaoVerticalFanBar,
@@ -52,12 +44,6 @@ GLfloat DoorMove = 0.05f;
 GLfloat MaxDoorMove = 1.7f;
 GLfloat jumpBarRotationAngle = 0.0f;
 //
-//glm::mat4 bong1ModelMatrix = glm::mat4(1.0f);
-//glm::mat4 bong2ModelMatrix = glm::mat4(1.0f);
-//glm::vec3 BongGroup1Position = glm::vec3(0.0f, 0.0f, 0.0f); // 초기 위치
-//glm::vec3 BongGroup1Direction = glm::vec3(1.0f, 0.0f, 0.0f); // 초기 이동 방향 (오른쪽)
-//glm::vec3 BongGroup2Position = glm::vec3(0.0f, 0.0f, 0.0f);
-//glm::vec3 BongGroup2Direction = glm::vec3(-1.0f, 0.0f, 0.0f);
 
 glm::mat4 LeftdoorModelMatrix = glm::mat4(1.0f);
 glm::mat4 RightdoorModelMatrix = glm::mat4(1.0f);
@@ -107,33 +93,6 @@ void InitArrowAndPillar();
 void InitEndPoint();
 void InitPoint();
 
-//체크박스 추가
-//void InitCharacter2CheckBox();
-//void InitCharacter3CheckBox();
-
-//// 캐릭터2
-//void InitCharacter2Acc();
-//void InitCharacter2Body();
-//void InitCharacter2Clothes();
-//void InitCharacter2Hair();
-//void InitCharacter2LeftLeg();
-//void InitCharacter2LeftArm();
-//void InitCharacter2RightLeg();
-//void InitCharacter2RightArm();
-//void InitCharacter2Eye();
-//void InitCharacter2Face();
-//
-//// 캐릭터3
-//void InitCharacter3Body();
-//void InitCharacter3Face();
-//void InitCharacter3Eyes();
-//void InitCharacter3LeftArm();
-//void InitCharacter3RightArm();
-//void InitCharacter3LeftFoot();
-//void InitCharacter3RightFoot();
-
-// 봉
-//void InitBong1();
 //void InitBong2();
 
 // 가로팬
@@ -196,45 +155,6 @@ AABB map5 = {
 };
 
 
-// 봉
-//void InitBong1() {
-//	//InitPart("bong/bonggroup1.obj", modelBong1, vaoBong1, vboBong1, glm::vec3(1.0f, 0.078f, 0.576f));
-//	InitPart("bong/bonggroup1.obj", Bong1->model, Bong1->vao, Bong1->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
-//}
-//void InitBong2() {
-//	InitPart("bong/bonggroup2.obj", modelBong2, vaoBong2, vboBong2, glm::vec3(1.0f, 0.078f, 0.576f));
-//}
-//void InitBongCheckBoxPart(const std::string& filePath, Model& model, GLuint& vao, GLuint* vbo) {
-//	InitPart(filePath, model, vao, vbo, glm::vec3(1.0f, 0.0f, 0.0f)); // 빨간색
-//}
-//GLuint vaoBongCheckBox[6];
-//GLuint vboBongCheckBox[6][2];
-//void InitAllBongCheckBoxes() {
-//	InitBongCheckBoxPart("bong/bongcheckbox1.obj", modelBongCheckBox1, vaoBongCheckBox1, vboBongCheckBox1);
-//	InitBongCheckBoxPart("bong/bongcheckbox2.obj", modelBongCheckBox2, vaoBongCheckBox2, vboBongCheckBox2);
-//	InitBongCheckBoxPart("bong/bongcheckbox3.obj", modelBongCheckBox3, vaoBongCheckBox3, vboBongCheckBox3);
-//	InitBongCheckBoxPart("bong/bongcheckbox4.obj", modelBongCheckBox4, vaoBongCheckBox4, vboBongCheckBox4);
-//	InitBongCheckBoxPart("bong/bongcheckbox5.obj", modelBongCheckBox5, vaoBongCheckBox5, vboBongCheckBox5);
-//	InitBongCheckBoxPart("bong/bongcheckbox6.obj", modelBongCheckBox6, vaoBongCheckBox6, vboBongCheckBox6);
-//}
-// 가로팬
-//void InitHorizontalFanPink() {
-//	InitPart("horizontalFan/pink.obj", modelHorizontalFanPink, vaoHorizontalFanPink, vboHorizontalFanPink, glm::vec3(1.0f, 0.7f, 0.75f));
-//}
-//void InitHorizontalFanPurple() {
-//	InitPart("horizontalFan/purple.obj", modelHorizontalFanPurple, vaoHorizontalFanPurple, vboHorizontalFanPurple, glm::vec3(0.5f, 0.0f, 0.5f));
-//}
-
-//// 개구리문
-//void InitDoorOut() {
-//	InitPart("frogDoor/outsidegroup.obj", modelDoorOut, vaoDoorOut, vboDoorOut, glm::vec3(0.576f, 0.078f, 1.0f));
-//}
-//void InitDoorLeft() {
-//	InitPart("frogDoor/leftdoorgroup.obj", modelLeftdoor, vaoLeftdoor, vboLeftdoor, glm::vec3(1.0f, 0.078f, 0.576f));
-//}
-//void InitDoorRight() {
-//	InitPart("frogDoor/rightdoorgroup.obj", modelRightdoor, vaoRightdoor, vboRightdoor, glm::vec3(1.0f, 0.078f, 0.576f));
-//}
 // 점프바
 void InitJumpbarCenter() {
 	InitPart("jumpBong/centergroup.obj", modelJumpBarCenter, vaoJumpBarCenter, vboJumpBarCenter, glm::vec3(0.576f, 0.078f, 1.0f));
@@ -259,31 +179,7 @@ void InitVerticalFan() {
 	InitPart("verticalFan/fan.obj", modelVerticalFan, vaoVerticalFan, vboVerticalFan, glm::vec3(1.0f, 0.4f, 0.7f));
 }
 
-// 봉
-//AABB bong1 = {
-//	glm::vec3(-15.74f , 0.0f, -33.25f), // min
-//	glm::vec3(-13.74f,  3.6f,  -31.25f)  // max
-//};
-//AABB bong2 = {
-//	glm::vec3(-9.47f, 0.0f, -33.25f), // min
-//	glm::vec3(-7.47f ,  3.6f,  -31.25f)  // max
-//};
-//AABB bong3 = {
-//	glm::vec3(-3.169f + BongGroup1Position.x, 0.0f, -33.25f), // min
-//	glm::vec3(-1.169f + BongGroup1Position.x,  3.6f,  -31.25f)  // max
-//};
-//AABB bong4 = {
-//	glm::vec3(3.045f , 0.0f, -33.25f), // min
-//	glm::vec3(5.045f,  3.6f,  -31.25f)  // max
-//};
-//AABB bong5 = {
-//	glm::vec3(9.27f , 0.0f, -33.25f), // min
-//	glm::vec3(11.27f ,  3.6f,  -31.25f)  // max
-//};
-//AABB bong6 = {
-//	glm::vec3(14.945f , 0.0f, -33.25f), // min
-//	glm::vec3(16.945f ,  3.6f,  -31.25f)  // max
-//};
+
 
 // 문
 AABB leftdoor1 = {
@@ -446,175 +342,6 @@ AABB verticalFan5 = {
 	glm::vec3(17.33f, 6.39f, -59.54f)
 };
 
-//// 캐릭터2
-//void InitCharacter2Acc() {
-//	InitPart("Character2/accessories.obj", modelCharacter2Acc, vaoCharacter2Acc, vboCharacter2Acc, glm::vec3(1.0f, 0.078f, 0.576f));
-//}
-//void InitCharacter2Body() {
-//	InitPart("Character2/body.obj", modelCharacter2Body, vaoCharacter2Body, vboCharacter2Body, glm::vec3(1.0f, 0.714f, 0.757f));
-//}
-//void InitCharacter2Clothes() {
-//	InitPart("Character2/clothes.obj", modelCharacter2Clothes, vaoCharacter2Clothes, vboCharacter2Clothes, glm::vec3(0.0f, 0.0f, 0.0f));
-//}
-//void InitCharacter2Hair() {
-//	InitPart("Character2/hair.obj", modelCharacter2Hair, vaoCharacter2Hair, vboCharacter2Hair, glm::vec3(1.0f, 1.0f, 0.4f));
-//}
-//void InitCharacter2LeftLeg() {
-//	InitPart("Character2/leftLeg.obj", modelCharacter2LeftLeg, vaoCharacter2LeftLeg, vboCharacter2LeftLeg, glm::vec3(1.0f, 0.714f, 0.757f));
-//}
-//void InitCharacter2LeftArm() {
-//	InitPart("Character2/leftArm.obj", modelCharacter2LeftArm, vaoCharacter2LeftArm, vboCharacter2LeftArm, glm::vec3(1.0f, 0.714f, 0.757f));
-//}
-//void InitCharacter2RightLeg() {
-//	InitPart("Character2/rightLeg.obj", modelCharacter2RightLeg, vaoCharacter2RightLeg, vboCharacter2RightLeg, glm::vec3(1.0f, 0.714f, 0.757f));
-//}
-//void InitCharacter2RightArm() {
-//	InitPart("Character2/rightArm.obj", modelCharacter2RightArm, vaoCharacter2RightArm, vboCharacter2RightArm, glm::vec3(1.0f, 0.714f, 0.757f));
-//}
-//void InitCharacter2Eye() {
-//	InitPart("Character2/eye.obj", modelCharacter2Eye, vaoCharacter2Eye, vboCharacter2Eye, glm::vec3(0.0f, 0.0f, 0.0f));
-//}
-//void InitCharacter2Face() {
-//	InitPart("Character2/face.obj", modelCharacter2Face, vaoCharacter2Face, vboCharacter2Face, glm::vec3(1.0f, 1.0, 0.941f));
-//}
-
-////체크박스
-//std::vector<float> Character2CheckBox = {
-//	// Bottom
-//-0.47f, 0.f, 0.42f,
-//-0.47f, 0.f, -0.48f,
-//0.47f, 0.f, -0.48f,
-//0.47f, 0.f, 0.42f,
-//
-//// Top
-//-0.47f, 1.84f, 0.42f,
-//-0.47f, 1.84f, -0.48f,
-//0.47f, 1.84f, -0.48f,
-//0.47f, 1.84f, 0.42f,
-//
-//// Front
-//-0.47f, 0.f, -0.48f,
-//-0.47f, 1.84f, -0.48f,
-//0.47f, 1.84f, -0.48f,
-//0.47f, 0.f, -0.48f,
-//
-//// Back face
-//-0.47f, 0.f, 0.42f,
-//-0.47f, 1.84f, 0.42f,
-//0.47f, 1.84f, 0.42f,
-//0.47f, 0.f, 0.42f,
-//
-//// Left face
-//-0.47f, 0.f, 0.42f,
-//-0.47f, 0.f, -0.48f,
-//-0.47f, 1.84f, -0.48f,
-//-0.47f, 1.84f, 0.42f,
-//
-//// Right face
-//0.47f, 0.f, 0.42f,
-//0.47f, 0.f, -0.48f,
-//0.47f, 1.84f, -0.48f,
-//0.47f, 1.84f, 0.42f,
-//};
-//void InitCharacter2CheckBox() {
-//	glGenVertexArrays(1, &vaoCharacter2CheckBox);
-//	glBindVertexArray(vaoCharacter2CheckBox);
-//
-//	glGenBuffers(1, vboCharacter2CheckBox);
-//
-//	glBindBuffer(GL_ARRAY_BUFFER, vboCharacter2CheckBox[0]);
-//	glBufferData(GL_ARRAY_BUFFER, Character2CheckBox.size() * sizeof(float), Character2CheckBox.data(), GL_STATIC_DRAW);
-//
-//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-//	glEnableVertexAttribArray(0);
-//
-//	glBindVertexArray(0);
-//}
-//AABB character2 = {
-//	character2Position + glm::vec3(-0.70f, 0.0f, -0.72f),
-//	character2Position + glm::vec3(0.70f, 1.84f, 0.63f)
-//};
-//
-//// 캐릭터3
-//void InitCharacter3Body() {
-//	InitPart("Character3/body.obj", modelCharacter3Body, vaoCharacter3Body, vboCharacter3Body, glm::vec3(1.0f, 0.0f, 0.0f));
-//}
-//void InitCharacter3Face() {
-//	InitPart("Character3/face.obj", modelCharacter3Face, vaoCharacter3Face, vboCharacter3Face, glm::vec3(1.0f, 1.0f, 1.0f));
-//}
-//void InitCharacter3Eyes() {
-//	InitPart("Character3/eyes.obj", modelCharacter3Eyes, vaoCharacter3Eyes, vboCharacter3Eyes, glm::vec3(0.0f, 0.0f, 0.0f));
-//}
-//void InitCharacter3LeftArm() {
-//	InitPart("Character3/leftArm.obj", modelCharacter3LeftArm, vaoCharacter3LeftArm, vboCharacter3LeftArm, glm::vec3(1.0f, 0.0f, 0.0f));
-//}
-//void InitCharacter3RightArm() {
-//	InitPart("Character3/rightArm.obj", modelCharacter3RightArm, vaoCharacter3RightArm, vboCharacter3RightArm, glm::vec3(1.0f, 0.0f, 0.0f));
-//}
-//void InitCharacter3LeftFoot() {
-//	InitPart("Character3/leftFoot.obj", modelCharacter3LeftFoot, vaoCharacter3LeftFoot, vboCharacter3LeftFoot, glm::vec3(1.0f, 0.0f, 0.0f));
-//}
-//void InitCharacter3RightFoot() {
-//	InitPart("Character3/rightFoot.obj", modelCharacter3RightFoot, vaoCharacter3RightFoot, vboCharacter3RightFoot, glm::vec3(1.0f, 0.0f, 0.0f));
-//}
-
-//체크박스
-//std::vector<float> Character3CheckBox = {
-//	// Bottom
-//-0.47f, 0.f, 0.42f,
-//-0.47f, 0.f, -0.48f,
-//0.47f, 0.f, -0.48f,
-//0.47f, 0.f, 0.42f,
-//
-//// Top
-//-0.47f, 1.84f, 0.42f,
-//-0.47f, 1.84f, -0.48f,
-//0.47f, 1.84f, -0.48f,
-//0.47f, 1.84f, 0.42f,
-//
-//// Front
-//-0.47f, 0.f, -0.48f,
-//-0.47f, 1.84f, -0.48f,
-//0.47f, 1.84f, -0.48f,
-//0.47f, 0.f, -0.48f,
-//
-//// Back face
-//-0.47f, 0.f, 0.42f,
-//-0.47f, 1.84f, 0.42f,
-//0.47f, 1.84f, 0.42f,
-//0.47f, 0.f, 0.42f,
-//
-//// Left face
-//-0.47f, 0.f, 0.42f,
-//-0.47f, 0.f, -0.48f,
-//-0.47f, 1.84f, -0.48f,
-//-0.47f, 1.84f, 0.42f,
-//
-//// Right face
-//0.47f, 0.f, 0.42f,
-//0.47f, 0.f, -0.48f,
-//0.47f, 1.84f, -0.48f,
-//0.47f, 1.84f, 0.42f,
-//};
-
-//void InitCharacter3CheckBox() {
-//	glGenVertexArrays(1, &vaoCharacter3CheckBox);
-//	glBindVertexArray(vaoCharacter3CheckBox);
-//
-//	glGenBuffers(1, vboCharacter3CheckBox);
-//
-//	glBindBuffer(GL_ARRAY_BUFFER, vboCharacter3CheckBox[0]);
-//	glBufferData(GL_ARRAY_BUFFER, Character3CheckBox.size() * sizeof(float), Character3CheckBox.data(), GL_STATIC_DRAW);
-//
-//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-//	glEnableVertexAttribArray(0);
-//
-//	glBindVertexArray(0);
-//}
-//AABB character3 = {
-//	character3Position + glm::vec3(-0.70f, 0.0f, -0.72f),
-//	character3Position + glm::vec3(0.70f, 1.84f, 0.63f)
-//};
 
 // 맵 충돌박스
 std::vector<float> CheckBoxVerticesMap1 = {
@@ -946,74 +673,9 @@ void DrawMapCheckBox(GLuint shaderProgramID, GLint modelMatrixLocation) {
 
 // 장애물 그리기
 void DrawObstacleBong(GLuint shaderPRogramID, GLint modelMatrixLocation) {
-	//glm::mat4 finalBong1ModelMatrix = bong1ModelMatrix;
-	//bong1ModelMatrix = glm::translate(glm::mat4(1.0f), BongGroup1Position);
-	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalBong1ModelMatrix));
-
-	//glBindVertexArray(vaoBong1);
-	//glDrawElements(GL_TRIANGLES, modelBong1.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	//glBindVertexArray(0);
-	//Bong1->Draw(shaderPRogramID, modelMatrixLocation);
-
-
-	//glm::mat4 finalBong2ModelMatrix = bong2ModelMatrix;
-	//bong2ModelMatrix = glm::translate(glm::mat4(1.0f), BongGroup2Position);
-	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalBong2ModelMatrix));
-
-	//glBindVertexArray(vaoBong2);
-	//glDrawElements(GL_TRIANGLES, modelBong2.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	//glBindVertexArray(0);
 }
 void DrawBongCheckBoxes(GLuint shaderProgramID, GLint modelMatrixLocation) {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	// 봉 1 체크박스
-	//glm::mat4 bongCheckBox1ModelMatrix = glm::translate(glm::mat4(1.0f), BongGroup1Position);
-	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(bongCheckBox1ModelMatrix));
-
-	//glBindVertexArray(vaoBongCheckBox1);
-	//glDrawElements(GL_TRIANGLES, modelBongCheckBox1.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	//glBindVertexArray(0);
-
-	// 봉 2 체크박스
-	//glm::mat4 bongCheckBox2ModelMatrix = glm::translate(glm::mat4(1.0f), BongGroup2Position);
-	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(bongCheckBox2ModelMatrix));
-
-	//glBindVertexArray(vaoBongCheckBox2);
-	//glDrawElements(GL_TRIANGLES, modelBongCheckBox2.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	//glBindVertexArray(0);
-
-	// 봉 3 체크박스
-	//glm::mat4 bongCheckBox3ModelMatrix = glm::translate(glm::mat4(1.0f), BongGroup1Position);
-	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(bongCheckBox3ModelMatrix));
-
-	//glBindVertexArray(vaoBongCheckBox3);
-	//glDrawElements(GL_TRIANGLES, modelBongCheckBox3.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	//glBindVertexArray(0);
-
-	//// 봉 4 체크박스
-	//glm::mat4 bongCheckBox4ModelMatrix = glm::translate(glm::mat4(1.0f), BongGroup2Position);
-	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(bongCheckBox4ModelMatrix));
-
-	//glBindVertexArray(vaoBongCheckBox4);
-	//glDrawElements(GL_TRIANGLES, modelBongCheckBox4.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	//glBindVertexArray(0);
-
-	//// 봉 5 체크박스
-	//glm::mat4 bongCheckBox5ModelMatrix = glm::translate(glm::mat4(1.0f), BongGroup1Position);
-	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(bongCheckBox5ModelMatrix));
-
-	//glBindVertexArray(vaoBongCheckBox5);
-	//glDrawElements(GL_TRIANGLES, modelBongCheckBox5.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	//glBindVertexArray(0);
-
-	//// 봉 6 체크박스
-	//glm::mat4 bongCheckBox6ModelMatrix = glm::translate(glm::mat4(1.0f), BongGroup2Position);
-	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(bongCheckBox6ModelMatrix));
-
-	//glBindVertexArray(vaoBongCheckBox6);
-	//glDrawElements(GL_TRIANGLES, modelBongCheckBox6.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	//glBindVertexArray(0);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 void DrawObstacleHorizontalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) {
 	glm::vec3 horizontalFan1Position = glm::vec3(0.0f, -0.3f, -140.0f);
@@ -1035,49 +697,6 @@ void DrawObstacleHorizontalFan(GLuint shaderPRogramID, GLint modelMatrixLocation
 	glDrawElements(GL_TRIANGLES, modelHorizontalFanPurple.faces.size() * 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	//horizontalFan1.update(horizontalFan1Position, glm::vec3(-6.1f, -0.3f, -0.49f), glm::vec3(6.1f, 4.4f, 0.49f));
-
-	/*glm::vec3 horizontalFan2Position = glm::vec3(7.0f, -0.3f, -115.0f);
-	glm::mat4 HorizontalFanPink2ModelMatrix = glm::mat4(1.0f);
-	HorizontalFanPink2ModelMatrix = glm::translate(HorizontalFanPink2ModelMatrix, horizontalFan2Position);
-	HorizontalFanPink2ModelMatrix = glm::rotate(HorizontalFanPink2ModelMatrix, glm::radians(-obstacleRotation), glm::vec3(0.0f, 1.0f, 0.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(HorizontalFanPink2ModelMatrix));
-
-	glBindVertexArray(vaoHorizontalFanPink);
-	glDrawElements(GL_TRIANGLES, modelHorizontalFanPink.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 HorizontalFanPurple2ModelMatrix = glm::mat4(1.0f);
-	HorizontalFanPurple2ModelMatrix = glm::translate(HorizontalFanPurple2ModelMatrix, horizontalFan2Position);
-	HorizontalFanPurple2ModelMatrix = glm::rotate(HorizontalFanPurple2ModelMatrix, glm::radians(-obstacleRotation), glm::vec3(0.0f, 1.0f, 0.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(HorizontalFanPurple2ModelMatrix));
-
-	glBindVertexArray(vaoHorizontalFanPurple);
-	glDrawElements(GL_TRIANGLES, modelHorizontalFanPurple.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	horizontalFan2.update(horizontalFan2Position, glm::vec3(-6.1f, -0.3f, -0.49f), glm::vec3(6.1f, 4.4f, 0.49f));
-
-	glm::vec3 horizontalFan3Position = glm::vec3(-7.0f, -0.3f, -115.0f);
-	glm::mat4 HorizontalFanPink3ModelMatrix = glm::mat4(1.0f);
-	HorizontalFanPink3ModelMatrix = glm::translate(HorizontalFanPink3ModelMatrix, horizontalFan3Position);
-	HorizontalFanPink3ModelMatrix = glm::rotate(HorizontalFanPink3ModelMatrix, glm::radians(obstacleRotation), glm::vec3(0.0f, 1.0f, 0.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(HorizontalFanPink3ModelMatrix));
-
-	glBindVertexArray(vaoHorizontalFanPink);
-	glDrawElements(GL_TRIANGLES, modelHorizontalFanPink.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 HorizontalFanPurple3ModelMatrix = glm::mat4(1.0f);
-	HorizontalFanPurple3ModelMatrix = glm::translate(HorizontalFanPurple3ModelMatrix, horizontalFan3Position);
-	HorizontalFanPurple3ModelMatrix = glm::rotate(HorizontalFanPurple3ModelMatrix, glm::radians(obstacleRotation), glm::vec3(0.0f, 1.0f, 0.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(HorizontalFanPurple3ModelMatrix));
-
-	glBindVertexArray(vaoHorizontalFanPurple);
-	glDrawElements(GL_TRIANGLES, modelHorizontalFanPurple.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	horizontalFan3.update(horizontalFan3Position, glm::vec3(-6.1f, -0.3f, -0.49f), glm::vec3(6.1f, 4.4f, 0.49f));*/
 }
 void DrawObstacleDoor(GLuint shaderPRogramID, GLint modelMatrixLocation) {
 	glm::mat4 DooroutModelMatrix = glm::mat4(1.0f);
@@ -1365,9 +984,9 @@ void main(int argc, char** argv) {
 
 	//InitHorizontalFanPink();
 	//InitHorizontalFanPurple();
-	InitDoorOut();
-	InitDoorLeft();
-	InitDoorRight();
+	//InitDoorOut();
+	//InitDoorLeft();
+	//InitDoorRight();
 	InitJumpbarCenter();
 	InitJumpbarbargroup1();
 	InitJumpbarbargroup2();
@@ -1470,7 +1089,7 @@ GLvoid drawScene() {
 
 	glm::mat4 projectionMatrix1 = glm::perspective(
 		glm::radians(45.0f),
-		(float)(window_Width / 2) / (float)window_Height, // 좌우 절반의 종횡비
+		(float)(window_Width ) / (float)window_Height, // 좌우 절반의 종횡비
 		0.1f,
 		10000.0f
 	);
