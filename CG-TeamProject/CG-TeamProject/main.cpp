@@ -1390,7 +1390,7 @@ void main(int argc, char** argv) {
 	JumpbarCenter = new BongGroup(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
 	InitPart("jumpBong/centergroup.obj", JumpbarCenter->model, JumpbarCenter->vao, JumpbarCenter->vbo, glm::vec3(0.576f, 0.078f, 1.0f));
 	JumpbarCenter->SetAABB(barcenter1);
-	//¾ê°¡ aabb 3°³ °®°íÀÖÀ½.
+	//3개 aabb더 추가해야함. 
 
 	Jumpbar1 = new Obstacle(glm::vec3(9.5f, 0.0f, 94.93f));
 	InitPart("jumpBong/bar1.obj", Jumpbar1->model, Jumpbar1->vao, Jumpbar1->vbo, glm::vec3(0.576f, 0.078f, 1.0f));
@@ -1889,7 +1889,7 @@ GLvoid Timer(int value) {
 	//);
 
 	// 장애물 AABB 배열 업데이트
-	AABB horizontalFans[] = { PurpleFan1->CAABB/*, horizontalFan2, horizontalFan3 */};
+	AABB horizontalFans[] = { PurpleFan1->CAABB/*, horizontalFan2, horizontalFan3 */ };
 
 	// 캐릭터1과 장애물 충돌 체크
 	for (const auto& fan : horizontalFans) {
@@ -1941,86 +1941,75 @@ GLvoid Timer(int value) {
 	//	}
 	//}
 
-	// 점프바 회전
-	jumpBarRotationAngle += 2.0f;
-	if (jumpBarRotationAngle >= 360.0f) {
-		jumpBarRotationAngle -= 360.0f;
-	}
-	AABB barbars[] = { barbar1, barbar2, barbar3 };
+	AABB barbars[] = { Jumpbar1->CAABB, Jumpbar2->CAABB, Jumpbar3->CAABB };
+	Obstacle* Bars[] = { Jumpbar1, Jumpbar2, Jumpbar3 };
 	AABB barcenters[] = { barcenter1, barcenter2, barcenter3 };
-	// barbar1 AABB 업데이트
-	barbar1.updateRotatedAABB(
-		glm::vec3(-9.5f, 0.0f, -94.93f),  // 장애물의 중심 위치
-		glm::vec3(-0.3f, -0.36f, -0.5f), // 로컬 최소 오프셋
-		glm::vec3(0.3f, 0.04f, 0.5f),    // 로컬 최대 오프셋
-		jumpBarRotationAngle,            // 회전 각도
-		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
-	);
 
-	// barbar2 AABB 업데이트
-	barbar2.updateRotatedAABB(
-		glm::vec3(0.6f, 0.0f, -94.93f),  // 장애물의 중심 위치
-		glm::vec3(-0.3f, -0.36f, -0.5f), // 로컬 최소 오프셋
-		glm::vec3(0.3f, 0.04f, 0.5f),    // 로컬 최대 오프셋
-		-jumpBarRotationAngle,           // 회전 각도 (반대 방향)
-		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
-	);
 
-	// barbar3 AABB 업데이트
-	barbar3.updateRotatedAABB(
-		glm::vec3(10.5f, 0.0f, -94.93f), // 장애물의 중심 위치
-		glm::vec3(-0.3f, -0.36f, -0.5f), // 로컬 최소 오프셋
-		glm::vec3(0.3f, 0.04f, 0.5f),    // 로컬 최대 오프셋
-		jumpBarRotationAngle,            // 회전 각도
-		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
-	);
-
-	for (const auto& barcenter : barcenters) {
-		if (checkCollision(P1->CAABB, barcenter)) {
-			float overlapX = std::min(P1->CAABB.max.x, barcenter.max.x) - std::max(P1->CAABB.min.x, barcenter.min.x);
-			float overlapZ = std::min(P1->CAABB.max.z, barcenter.max.z) - std::max(P1->CAABB.min.z, barcenter.min.z);
-
-			if (overlapX < overlapZ) { // X축에서 더 겹친 경우
-				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > barcenter.min.x) {
-					P1->Direction.x = 0.0f; // 캐릭터가 오른쪽으로 이동 중이면 정지
-				}
-				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < barcenter.max.x) {
-					P1->Direction.x = 0.0f; // 캐릭터가 왼쪽으로 이동 중이면 정지
-				}
-			}
-			else { // Z축에서 더 겹친 경우
-				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > barcenter.min.z) {
-					P1->Direction.z = 0.0f; // 캐릭터가 위쪽으로 이동 중이면 정지
-				}
-				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < barcenter.max.z) {
-					P1->Direction.z = 0.0f; // 캐릭터가 아래쪽으로 이동 중이면 정지
-				}
-			}
+	int i = 0;
+	for (const auto& bar : Bars) {		// 점프바 가운데는 반대로 돌아야하는 것 같은데 회전 코드부터 전부 +로 되어있음.
+		bar->RotationAngle += 2.0f;
+		if (bar->RotationAngle >= 360.0f) {
+			bar->RotationAngle -= 360.0f;
 		}
+		int val = (i % 2 == 0) ? 1 : -1;
+		if (val == -1)bar->RotationAngle = -(Jumpbar1->RotationAngle);
+		bar->CAABB.updateRotatedAABB(
+			-(bar->Position),  // 장애물의 중심 위치
+			glm::vec3(-0.3f, -0.36f, -0.5f), // 로컬 최소 오프셋
+			glm::vec3(0.3f, 0.04f, 0.5f),    // 로컬 최대 오프셋
+			bar->RotationAngle,            // 회전 각도
+			glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
+		);
+		i++;
 	}
-	for (const auto& bar : barbars) {
-		if (checkCollision(P1->CAABB, bar)) {
-			float overlapX = std::min(P1->CAABB.max.x, bar.max.x) - std::max(P1->CAABB.min.x, bar.min.x);
-			float overlapZ = std::min(P1->CAABB.max.z, bar.max.z) - std::max(P1->CAABB.min.z, bar.min.z);
 
-			if (overlapX < overlapZ) { // X축에서 더 겹친 경우
-				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > bar.min.x) {
-					P1->Direction.x = 0.0f; // 오른쪽 이동 정지
-				}
-				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < bar.max.x) {
-					P1->Direction.x = 0.0f; // 왼쪽 이동 정지
-				}
-			}
-			else { // Z축에서 더 겹친 경우
-				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > bar.min.z) {
-					P1->Direction.z = 0.0f; // 위쪽 이동 정지
-				}
-				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < bar.max.z) {
-					P1->Direction.z = 0.0f; // 아래쪽 이동 정지
-				}
-			}
-		}
-	}
+	//for (const auto& barcenter : barcenters) {
+	//	if (checkCollision(P1->CAABB, barcenter)) {
+	//		float overlapX = std::min(P1->CAABB.max.x, barcenter.max.x) - std::max(P1->CAABB.min.x, barcenter.min.x);
+	//		float overlapZ = std::min(P1->CAABB.max.z, barcenter.max.z) - std::max(P1->CAABB.min.z, barcenter.min.z);
+
+	//		if (overlapX < overlapZ) { // X축에서 더 겹친 경우
+	//			if (P1->Direction.x > 0.0f && P1->CAABB.max.x > barcenter.min.x) {
+	//				P1->Direction.x = 0.0f; // 캐릭터가 오른쪽으로 이동 중이면 정지
+	//			}
+	//			else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < barcenter.max.x) {
+	//				P1->Direction.x = 0.0f; // 캐릭터가 왼쪽으로 이동 중이면 정지
+	//			}
+	//		}
+	//		else { // Z축에서 더 겹친 경우
+	//			if (P1->Direction.z > 0.0f && P1->CAABB.max.z > barcenter.min.z) {
+	//				P1->Direction.z = 0.0f; // 캐릭터가 위쪽으로 이동 중이면 정지
+	//			}
+	//			else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < barcenter.max.z) {
+	//				P1->Direction.z = 0.0f; // 캐릭터가 아래쪽으로 이동 중이면 정지
+	//			}
+	//		}
+	//	}
+	//}
+	//for (const auto& bar : barbars) {
+	//	if (checkCollision(P1->CAABB, bar)) {
+	//		float overlapX = std::min(P1->CAABB.max.x, bar.max.x) - std::max(P1->CAABB.min.x, bar.min.x);
+	//		float overlapZ = std::min(P1->CAABB.max.z, bar.max.z) - std::max(P1->CAABB.min.z, bar.min.z);
+
+	//		if (overlapX < overlapZ) { // X축에서 더 겹친 경우
+	//			if (P1->Direction.x > 0.0f && P1->CAABB.max.x > bar.min.x) {
+	//				P1->Direction.x = 0.0f; // 오른쪽 이동 정지
+	//			}
+	//			else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < bar.max.x) {
+	//				P1->Direction.x = 0.0f; // 왼쪽 이동 정지
+	//			}
+	//		}
+	//		else { // Z축에서 더 겹친 경우
+	//			if (P1->Direction.z > 0.0f && P1->CAABB.max.z > bar.min.z) {
+	//				P1->Direction.z = 0.0f; // 위쪽 이동 정지
+	//			}
+	//			else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < bar.max.z) {
+	//				P1->Direction.z = 0.0f; // 아래쪽 이동 정지
+	//			}
+	//		}
+	//	}
+	//}
 
 
 	// 바와 캐릭터1 충돌 처리
