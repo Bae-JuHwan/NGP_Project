@@ -1947,7 +1947,7 @@ GLvoid Timer(int value) {
 
 
 	int i = 0;
-	for (const auto& bar : Bars) {		// 점프바 가운데는 반대로 돌아야하는 것 같은데 회전 코드부터 전부 +로 되어있음.
+	for (const auto& bar : Bars) {	
 		bar->RotationAngle += 2.0f;
 		if (bar->RotationAngle >= 360.0f) {
 			bar->RotationAngle -= 360.0f;
@@ -1964,6 +1964,7 @@ GLvoid Timer(int value) {
 		i++;
 	}
 
+	//// 점프바와 캐릭터1 충돌 처리
 	//for (const auto& barcenter : barcenters) {
 	//	if (checkCollision(P1->CAABB, barcenter)) {
 	//		float overlapX = std::min(P1->CAABB.max.x, barcenter.max.x) - std::max(P1->CAABB.min.x, barcenter.min.x);
