@@ -49,8 +49,7 @@ GLfloat BongMove = 0.1f; // 이동 속도
 GLfloat MaxBongMove = 1.6f; // 최대 이동 거리
 GLfloat obstacleRotation = 0.0f;
 GLfloat DoorMove = 0.05f;
-GLfloat MaxDoorMove = 1.7f;
-GLfloat jumpBarRotationAngle = 0.0f;
+GLfloat MaxDoorMove = 1.7f;\
 //
 //glm::mat4 bong1ModelMatrix = glm::mat4(1.0f);
 //glm::mat4 bong2ModelMatrix = glm::mat4(1.0f);
@@ -326,31 +325,7 @@ AABB outdoor4 = {
 	glm::vec3(8.295f, -0.6f,-160.437f), // min
 	glm::vec3(9.495f,  2.6, -158.4f)   // max
 };
-//점프바
-AABB barcenter1 = {
-	glm::vec3(-10.2f, 0.0f, -94.93f), // min
-	glm::vec3(-9.0f, 0.76f,  -93.73f)   // max
-};
-AABB barcenter2 = {
-	glm::vec3(-0.29f, 0.0f, -94.93f), // min
-	glm::vec3(0.9f, 0.76f,  -93.73f)   // max
-};
-AABB barcenter3 = {
-	glm::vec3(10.03f, 0.0f, -94.93f), // min
-	glm::vec3(11.23f, 0.76f,  -93.73f)   // max
-};
-AABB barbar1 = {
-	glm::vec3(-9.8f, -0.36f, -94.457f), // min
-	glm::vec3(-9.4f,0.0399f,  -88.457f)   // max
-};
-AABB barbar2 = {
-	glm::vec3(0.155f, -0.36f, -94.457f), // min
-	glm::vec3(0.555f,0.0399f,  -88.457f)   // max
-};
-AABB barbar3 = {
-	glm::vec3(10.43f, -0.36f, -94.457f), // min
-	glm::vec3(10.83f,0.0399f,  -88.457f)   // max
-};
+
 //// 가로팬
 //AABB horizontalFan1 = {
 //	glm::vec3(-6.1f, -0.3f, -140.49f),  // min
@@ -1103,45 +1078,7 @@ void DrawObstacleDoor(GLuint shaderPRogramID, GLint modelMatrixLocation) {
 	glDrawElements(GL_TRIANGLES, modelRightdoor.faces.size() * 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
-void DrawObstacleJumpbar(GLuint shaderPRogramID, GLint modelMatrixLocation) {
-	glm::mat4 JumpBarCenterModelMatrix = glm::mat4(1.0f);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(JumpBarCenterModelMatrix));
 
-	glBindVertexArray(vaoJumpBarCenter);
-	glDrawElements(GL_TRIANGLES, modelJumpBarCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	// 첫 번째 바 회전
-	glm::mat4 JumpBarbargroup1ModelMatrix = glm::mat4(1.0f);
-	JumpBarbargroup1ModelMatrix = glm::translate(JumpBarbargroup1ModelMatrix, glm::vec3(-9.5f, 0.0f, -94.93f)); // 센터로 이동
-	JumpBarbargroup1ModelMatrix = glm::rotate(JumpBarbargroup1ModelMatrix, glm::radians(jumpBarRotationAngle), glm::vec3(0.0f, 1.0f, 0.0f)); // Y축 회전
-	JumpBarbargroup1ModelMatrix = glm::translate(JumpBarbargroup1ModelMatrix, glm::vec3(9.5f, 0.0f, 94.93f)); // 원래 위치로 이동
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(JumpBarbargroup1ModelMatrix));
-
-	glBindVertexArray(vaoJumpBarbargroup1);
-	glDrawElements(GL_TRIANGLES, modelJumpBarbargroup1.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 JumpBarbargroup2ModelMatrix = glm::mat4(1.0f);
-	JumpBarbargroup2ModelMatrix = glm::translate(JumpBarbargroup2ModelMatrix, glm::vec3(0.6f, 0.0f, -94.93f)); // 센터로 이동
-	JumpBarbargroup2ModelMatrix = glm::rotate(JumpBarbargroup2ModelMatrix, glm::radians(-jumpBarRotationAngle), glm::vec3(0.0f, 1.0f, 0.0f)); // 반대 방향 회전
-	JumpBarbargroup2ModelMatrix = glm::translate(JumpBarbargroup2ModelMatrix, glm::vec3(-0.6f, 0.0f, 94.93f)); // 원래 위치로 이동
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(JumpBarbargroup2ModelMatrix));
-
-	glBindVertexArray(vaoJumpBarbargroup2);
-	glDrawElements(GL_TRIANGLES, modelJumpBarbargroup2.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 JumpBarbargroup3ModelMatrix = glm::mat4(1.0f);
-	JumpBarbargroup3ModelMatrix = glm::translate(JumpBarbargroup3ModelMatrix, glm::vec3(10.5f, 0.0f, -94.93f)); // 센터로 이동
-	JumpBarbargroup3ModelMatrix = glm::rotate(JumpBarbargroup3ModelMatrix, glm::radians(jumpBarRotationAngle), glm::vec3(0.0f, 1.0f, 0.0f)); // 반대 방향 회전
-	JumpBarbargroup3ModelMatrix = glm::translate(JumpBarbargroup3ModelMatrix, glm::vec3(-10.5f, 0.0f, 94.93f)); // 원래 위치로 이동
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(JumpBarbargroup3ModelMatrix));
-
-	glBindVertexArray(vaoJumpBarbargroup3);
-	glDrawElements(GL_TRIANGLES, modelJumpBarbargroup3.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-}
 void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) {
 	glm::vec3 verticalFan1Position = glm::vec3(0.0f, 3.0f, -60.0f);
 	glm::mat4 verticalFanBar1ModelMatrix = glm::mat4(1.0f);
@@ -1283,7 +1220,41 @@ void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) 
 
 	verticalFan5.update(verticalFan5Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
 }
+////////////////////////////////////////////////////////////////////////////////////////////////
+AABB bong1 = {
+		glm::vec3(-15.74f , 0.0f, -33.25f), // min
+		glm::vec3(-13.74f,  3.6f,  -31.25f)  // max
+};
+AABB bong2 = {
+	glm::vec3(-9.47f, 0.0f, -33.25f), // min
+	glm::vec3(-7.47f ,  3.6f,  -31.25f)  // max
+};
+AABB barcenter1 = {
+		glm::vec3(-10.2f, 0.0f, -94.93f), // min
+		glm::vec3(-9.0f, 0.76f,  -93.73f)   // max
+};
+//AABB barcenter2 = {
+//	glm::vec3(-0.29f, 0.0f, -94.93f), // min
+//	glm::vec3(0.9f, 0.76f,  -93.73f)   // max
+//};
+//AABB barcenter3 = {
+//	glm::vec3(10.03f, 0.0f, -94.93f), // min
+//	glm::vec3(11.23f, 0.76f,  -93.73f)   // max
+//};
+AABB barbar1 = {
+	glm::vec3(-9.8f, -0.36f, -94.457f), // min
+	glm::vec3(-9.4f,0.0399f,  -88.457f)   // max
+};
+AABB barbar2 = {
+	glm::vec3(0.155f, -0.36f, -94.457f), // min
+	glm::vec3(0.555f,0.0399f,  -88.457f)   // max
+};
+AABB barbar3 = {
+	glm::vec3(10.43f, -0.36f, -94.457f), // min
+	glm::vec3(10.83f,0.0399f,  -88.457f)   // max
+};
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 Player1* P1 = nullptr;
 BongGroup* Bong1 = nullptr;
@@ -1325,18 +1296,10 @@ void main(int argc, char** argv) {
 
 	//장애물
 
-	AABB bong1 = {
-		glm::vec3(-15.74f , 0.0f, -33.25f), // min
-		glm::vec3(-13.74f,  3.6f,  -31.25f)  // max
-	};
 	Bong1 = new BongGroup(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
 	InitPart("bong/bonggroup1.obj", Bong1->model, Bong1->vao, Bong1->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
 	Bong1->SetAABB(bong1);
 
-	AABB bong2 = {
-	glm::vec3(-9.47f, 0.0f, -33.25f), // min
-	glm::vec3(-7.47f ,  3.6f,  -31.25f)  // max
-	};
 	Bong2 = new BongGroup(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
 	InitPart("bong/bonggroup2.obj", Bong2->model, Bong2->vao, Bong2->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
 	Bong2->SetAABB(bong2);
@@ -1362,31 +1325,6 @@ void main(int argc, char** argv) {
 	PurpleFan1 = new HorizontalFan(PinkFan1->Position);
 	InitPart("horizontalFan/purple.obj", PurpleFan1->model, PurpleFan1->vao, PurpleFan1->vbo, glm::vec3(0.5f, 0.0f, 0.5f));
 
-
-	AABB barcenter1 = {
-		glm::vec3(-10.2f, 0.0f, -94.93f), // min
-		glm::vec3(-9.0f, 0.76f,  -93.73f)   // max
-	};
-	AABB barcenter2 = {
-		glm::vec3(-0.29f, 0.0f, -94.93f), // min
-		glm::vec3(0.9f, 0.76f,  -93.73f)   // max
-	};
-	AABB barcenter3 = {
-		glm::vec3(10.03f, 0.0f, -94.93f), // min
-		glm::vec3(11.23f, 0.76f,  -93.73f)   // max
-	};
-	AABB barbar1 = {
-		glm::vec3(-9.8f, -0.36f, -94.457f), // min
-		glm::vec3(-9.4f,0.0399f,  -88.457f)   // max
-	};
-	AABB barbar2 = {
-		glm::vec3(0.155f, -0.36f, -94.457f), // min
-		glm::vec3(0.555f,0.0399f,  -88.457f)   // max
-	};
-	AABB barbar3 = {
-		glm::vec3(10.43f, -0.36f, -94.457f), // min
-		glm::vec3(10.83f,0.0399f,  -88.457f)   // max
-	};
 	JumpbarCenter = new BongGroup(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
 	InitPart("jumpBong/centergroup.obj", JumpbarCenter->model, JumpbarCenter->vao, JumpbarCenter->vbo, glm::vec3(0.576f, 0.078f, 1.0f));
 	JumpbarCenter->SetAABB(barcenter1);
@@ -1943,7 +1881,7 @@ GLvoid Timer(int value) {
 
 	AABB barbars[] = { Jumpbar1->CAABB, Jumpbar2->CAABB, Jumpbar3->CAABB };
 	Obstacle* Bars[] = { Jumpbar1, Jumpbar2, Jumpbar3 };
-	AABB barcenters[] = { barcenter1, barcenter2, barcenter3 };
+	//AABB barcenters[] = { barcenter1, barcenter2, barcenter3 };
 
 
 	int i = 0;

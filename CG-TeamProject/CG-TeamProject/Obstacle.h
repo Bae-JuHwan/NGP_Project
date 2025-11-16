@@ -1,6 +1,8 @@
 #pragma once
 #include "Charactor.h"
 
+
+
 class Obstacle
 {
 public:
@@ -49,4 +51,3 @@ public:
 
 	void Draw(GLuint shaderProgramID, GLint modelMatrixLocation);
 };
-
