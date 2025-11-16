@@ -1,11 +1,24 @@
 #include "Obstacle.h"
 
-
-Obstacle::Obstacle()
+Obstacle::Obstacle(glm::vec3 setp)
 {
-
+	Position = setp;
 }
 
+void Obstacle::JumpBarDraw(GLuint shaderProgramID, GLint modelMatrixLocation)
+{
+	glm::mat4 JumpBarModelMatrix = glm::mat4(1.0f);
+	JumpBarModelMatrix = glm::translate(JumpBarModelMatrix, -Position); // 센터로 이동
+	JumpBarModelMatrix = glm::rotate(JumpBarModelMatrix, glm::radians(RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f)); //Y축 회전
+	JumpBarModelMatrix = glm::translate(JumpBarModelMatrix, Position); // 원래 위치로 이동
+	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(JumpBarModelMatrix));
+
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, model.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////
 BongGroup::BongGroup(glm::vec3 setp, glm::vec3 setd, GLfloat setMS, GLfloat setMMS, GLfloat setA)
 {
 	Position = setp;
@@ -18,15 +31,15 @@ BongGroup::BongGroup(glm::vec3 setp, glm::vec3 setd, GLfloat setMS, GLfloat setM
 
 void BongGroup::Draw(GLuint shaderProgramID, GLint modelMatrixLocation)
 {
-	glm::mat4 finalBong1ModelMatrix = ModelMatrix;
+	glm::mat4 finalModelMatrix = ModelMatrix;
 	ModelMatrix = glm::translate(glm::mat4(1.0f), Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalBong1ModelMatrix));
+	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalModelMatrix));
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, model.faces.size() * 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	//체크박스 그리기
+	//페크박스
 	glm::mat4 bongCheckBox1ModelMatrix = glm::translate(glm::mat4(1.0f), Position);
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(bongCheckBox1ModelMatrix));
 
@@ -35,6 +48,18 @@ void BongGroup::Draw(GLuint shaderProgramID, GLint modelMatrixLocation)
 	glBindVertexArray(0);
 }
 
+void BongGroup::JumpBarCenterDraw(GLuint shaderProgramID, GLint modelMatrixLocation)
+{
+	glm::mat4 finalModelMatrix = ModelMatrix;
+	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalModelMatrix));
+
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, model.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
 HorizontalFan::HorizontalFan(glm::vec3 setp)
 {
 	Position = setp;
