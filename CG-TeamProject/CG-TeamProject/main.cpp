@@ -131,9 +131,6 @@ void InitPoint();
 //void InitCharacter3LeftFoot();
 //void InitCharacter3RightFoot();
 
-// 봉
-//void InitBong1();
-//void InitBong2();
 
 // 가로팬
 //void InitHorizontalFanPink();
@@ -195,14 +192,6 @@ AABB map5 = {
 };
 
 
-// 봉
-//void InitBong1() {
-//	//InitPart("bong/bonggroup1.obj", modelBong1, vaoBong1, vboBong1, glm::vec3(1.0f, 0.078f, 0.576f));
-//	InitPart("bong/bonggroup1.obj", Bong1->model, Bong1->vao, Bong1->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
-//}
-//void InitBong2() {
-//	InitPart("bong/bonggroup2.obj", modelBong2, vaoBong2, vboBong2, glm::vec3(1.0f, 0.078f, 0.576f));
-//}
 //void InitBongCheckBoxPart(const std::string& filePath, Model& model, GLuint& vao, GLuint* vbo) {
 //	InitPart(filePath, model, vao, vbo, glm::vec3(1.0f, 0.0f, 0.0f)); // 빨간색
 //}
@@ -234,19 +223,8 @@ AABB map5 = {
 //void InitDoorRight() {
 //	InitPart("frogDoor/rightdoorgroup.obj", modelRightdoor, vaoRightdoor, vboRightdoor, glm::vec3(1.0f, 0.078f, 0.576f));
 //}
-// 점프바
-void InitJumpbarCenter() {
-	InitPart("jumpBong/centergroup.obj", modelJumpBarCenter, vaoJumpBarCenter, vboJumpBarCenter, glm::vec3(0.576f, 0.078f, 1.0f));
-}
-void InitJumpbarbargroup1() {
-	InitPart("jumpBong/bar1.obj", modelJumpBarbargroup1, vaoJumpBarbargroup1, vboJumpBarbargroup1, glm::vec3(0.576f, 0.078f, 1.0f));
-}
-void InitJumpbarbargroup2() {
-	InitPart("jumpBong/bar2.obj", modelJumpBarbargroup2, vaoJumpBarbargroup2, vboJumpBarbargroup2, glm::vec3(0.576f, 0.078f, 1.0f));
-}
-void InitJumpbarbar3() {
-	InitPart("jumpBong/bar3.obj", modelJumpBarbargroup3, vaoJumpBarbargroup3, vboJumpBarbargroup3, glm::vec3(0.576f, 0.078f, 1.0f));
-}
+ 
+
 // 세로팬
 void InitVerticalFanBar() {
 	InitPart("verticalFan/bar.obj", modelVerticalFanBar, vaoVerticalFanBar, vboVerticalFanBar, glm::vec3(0.5f, 0.5f, 0.5f));
@@ -1342,9 +1320,6 @@ void main(int argc, char** argv) {
 	InitPart("jumpBong/bar3.obj", Jumpbar3->model, Jumpbar3->vao, Jumpbar3->vbo, glm::vec3(0.576f, 0.078f, 1.0f));
 	Jumpbar3->SetAABB(barbar3);
 
-	//InitBong1();
-
-	//InitBong2();
 	//InitAllBongCheckBoxes();
 
 	//InitHorizontalFanPink();
@@ -1352,9 +1327,6 @@ void main(int argc, char** argv) {
 	//InitDoorOut();
 	//InitDoorLeft();
 	//InitDoorRight();
-	//InitJumpbarCenter();
-	//InitJumpbarbargroup1();
-	//InitJumpbarbargroup2();
 	//InitJumpbarbar3();
 	InitVerticalFanBar();
 	InitVerticalFanCenter();
