@@ -2,7 +2,6 @@
 #include "Charactor.h"
 
 
-
 class Obstacle
 {
 public:
@@ -48,6 +47,21 @@ class HorizontalFan :public Obstacle
 public:
 	HorizontalFan(glm::vec3 setp);
 	~HorizontalFan() {};
+
+	void Draw(GLuint shaderProgramID, GLint modelMatrixLocation);
+};
+
+class VerticalFan :public Obstacle
+{
+public:
+	VerticalFan(glm::vec3 setBp, glm::vec3 setCp, glm::vec3 setFp);
+	VerticalFan(glm::vec3 setp);
+	~VerticalFan() {};
+
+	Obstacle* FanBar;
+	Obstacle* FanCenter;
+	Obstacle* VFan;
+	glm::vec3 Position = glm::vec3(0.0f, 0.0f, 0.0f); // 초기 위치
 
 	void Draw(GLuint shaderProgramID, GLint modelMatrixLocation);
 };

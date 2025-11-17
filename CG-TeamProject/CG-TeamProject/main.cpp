@@ -135,10 +135,7 @@ void InitPoint();
 // 가로팬
 //void InitHorizontalFanPink();
 void InitHorizontalFanPurple();
-// 점프바
-void InitJumpbarCenter();
-void InitJumpbarbargroup1();
-void InitJumpbarbargroup2();
+
 // 세로팬
 void InitVerticalFanBar();
 void InitVerticalFanCenter();
@@ -224,18 +221,6 @@ AABB map5 = {
 //	InitPart("frogDoor/rightdoorgroup.obj", modelRightdoor, vaoRightdoor, vboRightdoor, glm::vec3(1.0f, 0.078f, 0.576f));
 //}
  
-
-// 세로팬
-void InitVerticalFanBar() {
-	InitPart("verticalFan/bar.obj", modelVerticalFanBar, vaoVerticalFanBar, vboVerticalFanBar, glm::vec3(0.5f, 0.5f, 0.5f));
-}
-void InitVerticalFanCenter() {
-	InitPart("verticalFan/center.obj", modelVerticalFanCenter, vaoVerticalFanCenter, vboVerticalFanCenter, glm::vec3(1.0f, 0.4f, 0.7f));
-}
-void InitVerticalFan() {
-	InitPart("verticalFan/fan.obj", modelVerticalFan, vaoVerticalFan, vboVerticalFan, glm::vec3(1.0f, 0.4f, 0.7f));
-}
-
 // 봉
 //AABB bong1 = {
 //	glm::vec3(-15.74f , 0.0f, -33.25f), // min
@@ -897,26 +882,7 @@ void DrawMapCheckBox(GLuint shaderProgramID, GLint modelMatrixLocation) {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-// 장애물 그리기
-void DrawObstacleBong(GLuint shaderPRogramID, GLint modelMatrixLocation) {
-	//glm::mat4 finalBong1ModelMatrix = bong1ModelMatrix;
-	//bong1ModelMatrix = glm::translate(glm::mat4(1.0f), BongGroup1Position);
-	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalBong1ModelMatrix));
 
-	//glBindVertexArray(vaoBong1);
-	//glDrawElements(GL_TRIANGLES, modelBong1.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	//glBindVertexArray(0);
-	//Bong1->Draw(shaderPRogramID, modelMatrixLocation);
-
-
-	//glm::mat4 finalBong2ModelMatrix = bong2ModelMatrix;
-	//bong2ModelMatrix = glm::translate(glm::mat4(1.0f), BongGroup2Position);
-	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalBong2ModelMatrix));
-
-	//glBindVertexArray(vaoBong2);
-	//glDrawElements(GL_TRIANGLES, modelBong2.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	//glBindVertexArray(0);
-}
 void DrawBongCheckBoxes(GLuint shaderProgramID, GLint modelMatrixLocation) {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	// 봉 1 체크박스
@@ -1059,7 +1025,7 @@ void DrawObstacleDoor(GLuint shaderPRogramID, GLint modelMatrixLocation) {
 
 void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) {
 	glm::vec3 verticalFan1Position = glm::vec3(0.0f, 3.0f, -60.0f);
-	glm::mat4 verticalFanBar1ModelMatrix = glm::mat4(1.0f);
+	glm::mat4 verticalFanBar1ModelMatrix = glm::mat4(1.0f);	//체크박스 
 	verticalFanBar1ModelMatrix = glm::translate(verticalFanBar1ModelMatrix, verticalFan1Position);
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar1ModelMatrix));
 
@@ -1074,7 +1040,7 @@ void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) 
 	glBindVertexArray(vaoVerticalFanCenter);
 	glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
-
+	//----------------------------------
 	glm::mat4 verticalFan1ModelMatrix = glm::mat4(1.0f);
 	verticalFan1ModelMatrix = glm::translate(verticalFan1ModelMatrix, verticalFan1Position);
 	verticalFan1ModelMatrix = glm::rotate(verticalFan1ModelMatrix, glm::radians(obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
@@ -1086,6 +1052,10 @@ void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) 
 
 	verticalFan1.update(verticalFan1Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
 
+
+
+
+	//----------------------------------
 	glm::vec3 verticalFan2Position = glm::vec3(-15.0f, 3.0f, -60.0f);
 	glm::mat4 verticalFanBar2ModelMatrix = glm::mat4(1.0f);
 	verticalFanBar2ModelMatrix = glm::translate(verticalFanBar2ModelMatrix, verticalFan2Position);
@@ -1094,7 +1064,7 @@ void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) 
 	glBindVertexArray(vaoVerticalFanBar);
 	glDrawElements(GL_TRIANGLES, modelVerticalFanBar.faces.size() * 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
-
+	//--------------------------------
 	glm::mat4 verticalFanCenter2ModelMatrix = glm::mat4(1.0f);
 	verticalFanCenter2ModelMatrix = glm::translate(verticalFanCenter2ModelMatrix, verticalFan2Position);
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanCenter2ModelMatrix));
@@ -1102,7 +1072,7 @@ void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) 
 	glBindVertexArray(vaoVerticalFanCenter);
 	glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
-
+	//-------------------------------
 	glm::mat4 verticalFan2ModelMatrix = glm::mat4(1.0f);
 	verticalFan2ModelMatrix = glm::translate(verticalFan2ModelMatrix, verticalFan2Position);
 	verticalFan2ModelMatrix = glm::rotate(verticalFan2ModelMatrix, glm::radians(obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
@@ -1113,6 +1083,12 @@ void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) 
 	glBindVertexArray(0);
 
 	verticalFan2.update(verticalFan2Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
+
+
+
+
+
+
 
 	glm::vec3 verticalFan3Position = glm::vec3(15.0f, 3.0f, -60.0f);
 	glm::mat4 verticalFanBar3ModelMatrix = glm::mat4(1.0f);
@@ -1142,6 +1118,14 @@ void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) 
 
 	verticalFan3.update(verticalFan3Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
 
+
+
+
+
+
+
+
+
 	glm::vec3 verticalFan4Position = glm::vec3(-7.5f, 3.0f, -60.0f);
 	glm::mat4 verticalFanBar4ModelMatrix = glm::mat4(1.0f);
 	verticalFanBar4ModelMatrix = glm::translate(verticalFanBar4ModelMatrix, verticalFan4Position);
@@ -1169,6 +1153,12 @@ void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) 
 	glBindVertexArray(0);
 
 	verticalFan4.update(verticalFan4Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
+
+
+
+
+
+
 
 	glm::vec3 verticalFan5Position = glm::vec3(7.5f, 3.0f, -60.0f);
 	glm::mat4 verticalFanBar5ModelMatrix = glm::mat4(1.0f);
@@ -1243,6 +1233,7 @@ BongGroup* JumpbarCenter = nullptr;
 Obstacle* Jumpbar1 = nullptr;
 Obstacle* Jumpbar2 = nullptr;
 Obstacle* Jumpbar3 = nullptr;
+VerticalFan* VerFan = nullptr;
 
 void main(int argc, char** argv) {
 	glutInit(&argc, argv);
@@ -1319,6 +1310,26 @@ void main(int argc, char** argv) {
 	Jumpbar3 = new Obstacle(glm::vec3(-10.5f, 0.0f, 94.93f));
 	InitPart("jumpBong/bar3.obj", Jumpbar3->model, Jumpbar3->vao, Jumpbar3->vbo, glm::vec3(0.576f, 0.078f, 1.0f));
 	Jumpbar3->SetAABB(barbar3);
+
+
+
+	// 세로팬
+	void InitVerticalFanBar() {
+		InitPart("verticalFan/bar.obj", modelVerticalFanBar, vaoVerticalFanBar, vboVerticalFanBar, glm::vec3(0.5f, 0.5f, 0.5f));
+	}
+	void InitVerticalFanCenter() {
+		InitPart("verticalFan/center.obj", modelVerticalFanCenter, vaoVerticalFanCenter, vboVerticalFanCenter, glm::vec3(1.0f, 0.4f, 0.7f));
+	}
+	void InitVerticalFan() {
+		InitPart("verticalFan/fan.obj", modelVerticalFan, vaoVerticalFan, vboVerticalFan, glm::vec3(1.0f, 0.4f, 0.7f));
+	}
+
+	VerFan = new VerticalFan(glm::vec3(0.0f, 3.0f, -60.0f));
+	InitPart("verticalFan/bar.obj", modelVerticalFanBar, vaoVerticalFanBar, vboVerticalFanBar, glm::vec3(0.5f, 0.5f, 0.5f));
+
+
+
+
 
 	//InitAllBongCheckBoxes();
 
