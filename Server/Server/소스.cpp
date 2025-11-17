@@ -135,7 +135,9 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 
     printf("클라이언트 %d번 접속 완료\n", client_id);
 	S2C_ClientOrder(client_sock, client_id);   //몇번째 클라인지 보내주기
+    //이 부분 수정 필요할 것 같음------ while 돌릴예정.
     S2C_isPlayerReady(client_sock);//3명 접속했는지 확인하고 맞으면 클라에게 보내기
+    //----------
 
     // TODO
     int receive_count = 0;
