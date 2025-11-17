@@ -70,6 +70,21 @@ bool S2C_Character(SOCKET sock, const character& char_info) {
     printf("[서버] 캐릭터 정보 전송 완료 (%d 바이트)\n", retval);
     return true;
 }
+
+int S2C_ClientOrder(SOCKET sock, int order) {   //클라에게 몇번째 클라인지 보내주는 함수
+    int retval;
+    int data = htonl(order); // 엔디안 변환(필수)
+
+    retval = send(sock, (char*)&data, sizeof(data), 0);
+    if (retval == SOCKET_ERROR)
+    {
+        err_display("send()");
+        return -1;
+    }
+
+    return retval;
+}
+
 // 클라이언트 스레드 함수
 DWORD WINAPI ClientThread(LPVOID arg) {
     SOCKET client_sock = *(SOCKET*)arg;
@@ -81,7 +96,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     LeaveCriticalSection(&g_cs);
 
     printf("클라이언트 %d번 접속 완료\n", client_id);
-
+	S2C_ClientOrder(client_sock, client_id);
     // TODO
     int receive_count = 0;
     while (true) {
