@@ -6,6 +6,16 @@
 #define SERVERPORT 9000
 #define MAX_CLIENTS 3
 
+
+/*  전달사항아닌 전달사항
+
+
+g_clientCount 이걸로만 판단하면 안될 것 같음. 들어왔다가 나갔을때 저 수가 줄어들게 해야할듯.
+그리고 재접 가능하게 할 것인지, 다 접속했을때 세명 다 레디 눌러야 시작하게 할 것인지>?
+접속하자마자 게임 시작은 약간 아쉬운 부분이 있을수도있을것같음. 그냥 의견임.
+
+*/
+
 CRITICAL_SECTION g_cs;  // 임계영역
 int g_clientCount = 0;
 
@@ -85,6 +95,34 @@ int S2C_ClientOrder(SOCKET sock, int order) {   //클라에게 몇번째 클라인지 보내�
     return retval;
 }
 
+bool IsAllPlayersReady()    //3명 모두 접속했니?       
+{
+    bool ready = false;
+
+    EnterCriticalSection(&g_cs);
+    if (g_clientCount >= 3)   // 원하는 최소 인원
+        ready = true;
+    LeaveCriticalSection(&g_cs);
+
+    return ready;
+}
+
+bool S2C_isPlayerReady(SOCKET sock) {  // 플레이어 모두 접속 완료 됐는지 전송 함수 
+    bool ready = IsAllPlayersReady();
+    int data = ready ? 1 : 0;
+
+    // 엔디안 변환
+    int send_data = htonl(data);
+
+    int retval = send(sock, (char*)&send_data, sizeof(send_data), 0);
+    if (retval == SOCKET_ERROR) {
+        err_display("send()");
+        return false;
+    }
+
+    return true;
+}
+
 // 클라이언트 스레드 함수
 DWORD WINAPI ClientThread(LPVOID arg) {
     SOCKET client_sock = *(SOCKET*)arg;
@@ -96,7 +134,9 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     LeaveCriticalSection(&g_cs);
 
     printf("클라이언트 %d번 접속 완료\n", client_id);
-	S2C_ClientOrder(client_sock, client_id);
+	S2C_ClientOrder(client_sock, client_id);   //몇번째 클라인지 보내주기
+    S2C_isPlayerReady(client_sock);//3명 접속했는지 확인하고 맞으면 클라에게 보내기
+
     // TODO
     int receive_count = 0;
     while (true) {
