@@ -58,10 +58,11 @@ public:
 	VerticalFan(glm::vec3 setp);
 	~VerticalFan() {};
 
-	Obstacle* FanBar;
-	Obstacle* FanCenter;
-	Obstacle* VFan;
+	Obstacle* FanBar = nullptr;
+	Obstacle* FanCenter = nullptr;
+	Obstacle* VFan = nullptr;
 	glm::vec3 Position = glm::vec3(0.0f, 0.0f, 0.0f); // 초기 위치
+	AABB CAABB{};
 
 	void Draw(GLuint shaderProgramID, GLint modelMatrixLocation);
 };

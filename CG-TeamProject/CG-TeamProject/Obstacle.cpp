@@ -102,6 +102,9 @@ VerticalFan::VerticalFan(glm::vec3 setBp, glm::vec3 setCp, glm::vec3 setFp)
 VerticalFan::VerticalFan(glm::vec3 setp)
 {
 	Position = setp;
+	FanBar = new Obstacle;
+	FanCenter = new Obstacle;
+	VFan = new Obstacle;
 }
 
 void VerticalFan::Draw(GLuint shaderPRogramID, GLint modelMatrixLocation)

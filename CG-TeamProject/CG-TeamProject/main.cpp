@@ -363,26 +363,6 @@ AABB rightBar5 = {
 	glm::vec3(16.93f, -0.64f, -62.86f),
 	glm::vec3(18.07f, 3.65f, -61.72f)
 };
-AABB verticalFan1 = {
-	glm::vec3(-17.33f, -0.39f, -60.46f),
-	glm::vec3(-12.67f, 6.39f, -59.54f)
-};
-AABB verticalFan2 = {
-	glm::vec3(-9.83f, -0.39f, -60.46f),
-	glm::vec3(-5.17f, 6.39f, -59.54f)
-};
-AABB verticalFan3 = {
-	glm::vec3(-2.33f, -0.39f, -60.46f),
-	glm::vec3(2.33f, 6.39f, -59.54f)
-};
-AABB verticalFan4 = {
-	glm::vec3(5.17f, -0.39f, -60.46f),
-	glm::vec3(9.83f, 6.39f, -59.54f)
-};
-AABB verticalFan5 = {
-	glm::vec3(12.67f, -0.39f, -60.46f),
-	glm::vec3(17.33f, 6.39f, -59.54f)
-};
 
 //// 캐릭터2
 //void InitCharacter2Acc() {
@@ -1024,99 +1004,65 @@ void DrawObstacleDoor(GLuint shaderPRogramID, GLint modelMatrixLocation) {
 }
 
 void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) {
-	glm::vec3 verticalFan1Position = glm::vec3(0.0f, 3.0f, -60.0f);
-	glm::mat4 verticalFanBar1ModelMatrix = glm::mat4(1.0f);	//체크박스 
-	verticalFanBar1ModelMatrix = glm::translate(verticalFanBar1ModelMatrix, verticalFan1Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar1ModelMatrix));
+	//glm::vec3 verticalFan1Position = glm::vec3(0.0f, 3.0f, -60.0f);
+	//glm::mat4 verticalFanBar1ModelMatrix = glm::mat4(1.0f);
+	//verticalFanBar1ModelMatrix = glm::translate(verticalFanBar1ModelMatrix, verticalFan1Position);
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar1ModelMatrix));
 
-	glBindVertexArray(vaoVerticalFanBar);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanBar.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+	//glBindVertexArray(vaoVerticalFanBar);
+	//glDrawElements(GL_TRIANGLES, modelVerticalFanBar.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
 
-	glm::mat4 verticalFanCenter1ModelMatrix = glm::mat4(1.0f);
-	verticalFanCenter1ModelMatrix = glm::translate(verticalFanCenter1ModelMatrix, verticalFan1Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanCenter1ModelMatrix));
+	//glm::mat4 verticalFanCenter1ModelMatrix = glm::mat4(1.0f);
+	//verticalFanCenter1ModelMatrix = glm::translate(verticalFanCenter1ModelMatrix, verticalFan1Position);
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanCenter1ModelMatrix));
 
-	glBindVertexArray(vaoVerticalFanCenter);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-	//----------------------------------
-	glm::mat4 verticalFan1ModelMatrix = glm::mat4(1.0f);
-	verticalFan1ModelMatrix = glm::translate(verticalFan1ModelMatrix, verticalFan1Position);
-	verticalFan1ModelMatrix = glm::rotate(verticalFan1ModelMatrix, glm::radians(obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFan1ModelMatrix));
+	//glBindVertexArray(vaoVerticalFanCenter);
+	//glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
+	////----------------------------------
+	//glm::mat4 verticalFan1ModelMatrix = glm::mat4(1.0f);
+	//verticalFan1ModelMatrix = glm::translate(verticalFan1ModelMatrix, verticalFan1Position);
+	//verticalFan1ModelMatrix = glm::rotate(verticalFan1ModelMatrix, glm::radians(obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFan1ModelMatrix));
 
-	glBindVertexArray(vaoVerticalFan);
-	glDrawElements(GL_TRIANGLES, modelVerticalFan.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+	//glBindVertexArray(vaoVerticalFan);
+	//glDrawElements(GL_TRIANGLES, modelVerticalFan.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
 
-	verticalFan1.update(verticalFan1Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
-
-
-
-
-	//----------------------------------
-	glm::vec3 verticalFan2Position = glm::vec3(-15.0f, 3.0f, -60.0f);
-	glm::mat4 verticalFanBar2ModelMatrix = glm::mat4(1.0f);
-	verticalFanBar2ModelMatrix = glm::translate(verticalFanBar2ModelMatrix, verticalFan2Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar2ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFanBar);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanBar.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-	//--------------------------------
-	glm::mat4 verticalFanCenter2ModelMatrix = glm::mat4(1.0f);
-	verticalFanCenter2ModelMatrix = glm::translate(verticalFanCenter2ModelMatrix, verticalFan2Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanCenter2ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFanCenter);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-	//-------------------------------
-	glm::mat4 verticalFan2ModelMatrix = glm::mat4(1.0f);
-	verticalFan2ModelMatrix = glm::translate(verticalFan2ModelMatrix, verticalFan2Position);
-	verticalFan2ModelMatrix = glm::rotate(verticalFan2ModelMatrix, glm::radians(obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFan2ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFan);
-	glDrawElements(GL_TRIANGLES, modelVerticalFan.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	verticalFan2.update(verticalFan2Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
+	//verticalFan1.update(verticalFan1Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
 
 
 
 
+	////----------------------------------
+	//glm::vec3 verticalFan2Position = glm::vec3(-15.0f, 3.0f, -60.0f);
+	//glm::mat4 verticalFanBar2ModelMatrix = glm::mat4(1.0f);
+	//verticalFanBar2ModelMatrix = glm::translate(verticalFanBar2ModelMatrix, verticalFan2Position);
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar2ModelMatrix));
 
+	//glBindVertexArray(vaoVerticalFanBar);
+	//glDrawElements(GL_TRIANGLES, modelVerticalFanBar.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
+	////--------------------------------
+	//glm::mat4 verticalFanCenter2ModelMatrix = glm::mat4(1.0f);
+	//verticalFanCenter2ModelMatrix = glm::translate(verticalFanCenter2ModelMatrix, verticalFan2Position);
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanCenter2ModelMatrix));
 
+	//glBindVertexArray(vaoVerticalFanCenter);
+	//glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
+	////-------------------------------
+	//glm::mat4 verticalFan2ModelMatrix = glm::mat4(1.0f);
+	//verticalFan2ModelMatrix = glm::translate(verticalFan2ModelMatrix, verticalFan2Position);
+	//verticalFan2ModelMatrix = glm::rotate(verticalFan2ModelMatrix, glm::radians(obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFan2ModelMatrix));
 
-	glm::vec3 verticalFan3Position = glm::vec3(15.0f, 3.0f, -60.0f);
-	glm::mat4 verticalFanBar3ModelMatrix = glm::mat4(1.0f);
-	verticalFanBar3ModelMatrix = glm::translate(verticalFanBar3ModelMatrix, verticalFan3Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar3ModelMatrix));
+	//glBindVertexArray(vaoVerticalFan);
+	//glDrawElements(GL_TRIANGLES, modelVerticalFan.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
 
-	glBindVertexArray(vaoVerticalFanBar);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanBar.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 verticalFanCenter3ModelMatrix = glm::mat4(1.0f);
-	verticalFanCenter3ModelMatrix = glm::translate(verticalFanCenter3ModelMatrix, verticalFan3Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanCenter3ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFanCenter);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 verticalFan3ModelMatrix = glm::mat4(1.0f);
-	verticalFan3ModelMatrix = glm::translate(verticalFan3ModelMatrix, verticalFan3Position);
-	verticalFan3ModelMatrix = glm::rotate(verticalFan3ModelMatrix, glm::radians(obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFan3ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFan);
-	glDrawElements(GL_TRIANGLES, modelVerticalFan.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	verticalFan3.update(verticalFan3Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
+	//verticalFan2.update(verticalFan2Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
 
 
 
@@ -1124,69 +1070,103 @@ void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) 
 
 
 
+	//glm::vec3 verticalFan3Position = glm::vec3(15.0f, 3.0f, -60.0f);
+	//glm::mat4 verticalFanBar3ModelMatrix = glm::mat4(1.0f);
+	//verticalFanBar3ModelMatrix = glm::translate(verticalFanBar3ModelMatrix, verticalFan3Position);
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar3ModelMatrix));
 
+	//glBindVertexArray(vaoVerticalFanBar);
+	//glDrawElements(GL_TRIANGLES, modelVerticalFanBar.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
 
-	glm::vec3 verticalFan4Position = glm::vec3(-7.5f, 3.0f, -60.0f);
-	glm::mat4 verticalFanBar4ModelMatrix = glm::mat4(1.0f);
-	verticalFanBar4ModelMatrix = glm::translate(verticalFanBar4ModelMatrix, verticalFan4Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar4ModelMatrix));
+	//glm::mat4 verticalFanCenter3ModelMatrix = glm::mat4(1.0f);
+	//verticalFanCenter3ModelMatrix = glm::translate(verticalFanCenter3ModelMatrix, verticalFan3Position);
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanCenter3ModelMatrix));
 
-	glBindVertexArray(vaoVerticalFanBar);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanBar.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+	//glBindVertexArray(vaoVerticalFanCenter);
+	//glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
 
-	glm::mat4 verticalFanCenter4ModelMatrix = glm::mat4(1.0f);
-	verticalFanCenter4ModelMatrix = glm::translate(verticalFanCenter4ModelMatrix, verticalFan4Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanCenter4ModelMatrix));
+	//glm::mat4 verticalFan3ModelMatrix = glm::mat4(1.0f);
+	//verticalFan3ModelMatrix = glm::translate(verticalFan3ModelMatrix, verticalFan3Position);
+	//verticalFan3ModelMatrix = glm::rotate(verticalFan3ModelMatrix, glm::radians(obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFan3ModelMatrix));
 
-	glBindVertexArray(vaoVerticalFanCenter);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+	//glBindVertexArray(vaoVerticalFan);
+	//glDrawElements(GL_TRIANGLES, modelVerticalFan.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
 
-	glm::mat4 verticalFan4ModelMatrix = glm::mat4(1.0f);
-	verticalFan4ModelMatrix = glm::translate(verticalFan4ModelMatrix, verticalFan4Position);
-	verticalFan4ModelMatrix = glm::rotate(verticalFan4ModelMatrix, glm::radians(-obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFan4ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFan);
-	glDrawElements(GL_TRIANGLES, modelVerticalFan.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	verticalFan4.update(verticalFan4Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
-
+	//verticalFan3.update(verticalFan3Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
 
 
 
 
 
 
-	glm::vec3 verticalFan5Position = glm::vec3(7.5f, 3.0f, -60.0f);
-	glm::mat4 verticalFanBar5ModelMatrix = glm::mat4(1.0f);
-	verticalFanBar5ModelMatrix = glm::translate(verticalFanBar5ModelMatrix, verticalFan5Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar5ModelMatrix));
 
-	glBindVertexArray(vaoVerticalFanBar);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanBar.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
 
-	glm::mat4 verticalFanCenter5ModelMatrix = glm::mat4(1.0f);
-	verticalFanCenter5ModelMatrix = glm::translate(verticalFanCenter5ModelMatrix, verticalFan5Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanCenter5ModelMatrix));
 
-	glBindVertexArray(vaoVerticalFanCenter);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+	//glm::vec3 verticalFan4Position = glm::vec3(-7.5f, 3.0f, -60.0f);
+	//glm::mat4 verticalFanBar4ModelMatrix = glm::mat4(1.0f);
+	//verticalFanBar4ModelMatrix = glm::translate(verticalFanBar4ModelMatrix, verticalFan4Position);
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar4ModelMatrix));
 
-	glm::mat4 verticalFan5ModelMatrix = glm::mat4(1.0f);
-	verticalFan5ModelMatrix = glm::translate(verticalFan5ModelMatrix, verticalFan5Position);
-	verticalFan5ModelMatrix = glm::rotate(verticalFan5ModelMatrix, glm::radians(-obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFan5ModelMatrix));
+	//glBindVertexArray(vaoVerticalFanBar);
+	//glDrawElements(GL_TRIANGLES, modelVerticalFanBar.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
 
-	glBindVertexArray(vaoVerticalFan);
-	glDrawElements(GL_TRIANGLES, modelVerticalFan.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+	//glm::mat4 verticalFanCenter4ModelMatrix = glm::mat4(1.0f);
+	//verticalFanCenter4ModelMatrix = glm::translate(verticalFanCenter4ModelMatrix, verticalFan4Position);
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanCenter4ModelMatrix));
 
-	verticalFan5.update(verticalFan5Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
+	//glBindVertexArray(vaoVerticalFanCenter);
+	//glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
+
+	//glm::mat4 verticalFan4ModelMatrix = glm::mat4(1.0f);
+	//verticalFan4ModelMatrix = glm::translate(verticalFan4ModelMatrix, verticalFan4Position);
+	//verticalFan4ModelMatrix = glm::rotate(verticalFan4ModelMatrix, glm::radians(-obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFan4ModelMatrix));
+
+	//glBindVertexArray(vaoVerticalFan);
+	//glDrawElements(GL_TRIANGLES, modelVerticalFan.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
+
+	//verticalFan4.update(verticalFan4Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
+
+
+
+
+
+
+
+	//glm::vec3 verticalFan5Position = glm::vec3(7.5f, 3.0f, -60.0f);
+	//glm::mat4 verticalFanBar5ModelMatrix = glm::mat4(1.0f);
+	//verticalFanBar5ModelMatrix = glm::translate(verticalFanBar5ModelMatrix, verticalFan5Position);
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar5ModelMatrix));
+
+	//glBindVertexArray(vaoVerticalFanBar);
+	//glDrawElements(GL_TRIANGLES, modelVerticalFanBar.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
+
+	//glm::mat4 verticalFanCenter5ModelMatrix = glm::mat4(1.0f);
+	//verticalFanCenter5ModelMatrix = glm::translate(verticalFanCenter5ModelMatrix, verticalFan5Position);
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanCenter5ModelMatrix));
+
+	//glBindVertexArray(vaoVerticalFanCenter);
+	//glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
+
+	//glm::mat4 verticalFan5ModelMatrix = glm::mat4(1.0f);
+	//verticalFan5ModelMatrix = glm::translate(verticalFan5ModelMatrix, verticalFan5Position);
+	//verticalFan5ModelMatrix = glm::rotate(verticalFan5ModelMatrix, glm::radians(-obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
+	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFan5ModelMatrix));
+
+	//glBindVertexArray(vaoVerticalFan);
+	//glDrawElements(GL_TRIANGLES, modelVerticalFan.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
+
+	//verticalFan5.update(verticalFan5Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
 AABB bong1 = {
@@ -1222,6 +1202,28 @@ AABB barbar3 = {
 	glm::vec3(10.83f,0.0399f,  -88.457f)   // max
 };
 
+AABB verticalFan1 = {
+	glm::vec3(-17.33f, -0.39f, -60.46f),
+	glm::vec3(-12.67f, 6.39f, -59.54f)
+};
+AABB verticalFan2 = {
+	glm::vec3(-9.83f, -0.39f, -60.46f),
+	glm::vec3(-5.17f, 6.39f, -59.54f)
+};
+AABB verticalFan3 = {
+	glm::vec3(-2.33f, -0.39f, -60.46f),
+	glm::vec3(2.33f, 6.39f, -59.54f)
+};
+AABB verticalFan4 = {
+	glm::vec3(5.17f, -0.39f, -60.46f),
+	glm::vec3(9.83f, 6.39f, -59.54f)
+};
+AABB verticalFan5 = {
+	glm::vec3(12.67f, -0.39f, -60.46f),
+	glm::vec3(17.33f, 6.39f, -59.54f)
+};
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 Player1* P1 = nullptr;
@@ -1234,6 +1236,10 @@ Obstacle* Jumpbar1 = nullptr;
 Obstacle* Jumpbar2 = nullptr;
 Obstacle* Jumpbar3 = nullptr;
 VerticalFan* VerFan = nullptr;
+VerticalFan* VerFan2 = nullptr;
+VerticalFan* VerFan3 = nullptr;
+VerticalFan* VerFan4 = nullptr;
+VerticalFan* VerFan5 = nullptr;
 
 void main(int argc, char** argv) {
 	glutInit(&argc, argv);
@@ -1313,20 +1319,21 @@ void main(int argc, char** argv) {
 
 
 
-	// 세로팬
-	void InitVerticalFanBar() {
-		InitPart("verticalFan/bar.obj", modelVerticalFanBar, vaoVerticalFanBar, vboVerticalFanBar, glm::vec3(0.5f, 0.5f, 0.5f));
-	}
-	void InitVerticalFanCenter() {
-		InitPart("verticalFan/center.obj", modelVerticalFanCenter, vaoVerticalFanCenter, vboVerticalFanCenter, glm::vec3(1.0f, 0.4f, 0.7f));
-	}
-	void InitVerticalFan() {
-		InitPart("verticalFan/fan.obj", modelVerticalFan, vaoVerticalFan, vboVerticalFan, glm::vec3(1.0f, 0.4f, 0.7f));
-	}
+	//// 세로팬
+	//void InitVerticalFanBar() {
+	//	InitPart("verticalFan/bar.obj", modelVerticalFanBar, vaoVerticalFanBar, vboVerticalFanBar, glm::vec3(0.5f, 0.5f, 0.5f));
+	//}
+	//void InitVerticalFanCenter() {
+	//}
+	//void InitVerticalFan() {
+	//}
 
 	VerFan = new VerticalFan(glm::vec3(0.0f, 3.0f, -60.0f));
-	InitPart("verticalFan/bar.obj", modelVerticalFanBar, vaoVerticalFanBar, vboVerticalFanBar, glm::vec3(0.5f, 0.5f, 0.5f));
 
+	InitPart("verticalFan/bar.obj", VerFan->FanBar->model, VerFan->FanBar->vao, VerFan->FanBar->vbo, glm::vec3(0.5f, 0.5f, 0.5f));
+	InitPart("verticalFan/center.obj", VerFan->FanCenter->model, VerFan->FanCenter->vao, VerFan->FanCenter->vbo, glm::vec3(1.0f, 0.4f, 0.7f));
+	InitPart("verticalFan/fan.obj", VerFan->VFan->model, VerFan->VFan->vao, VerFan->VFan->vbo, glm::vec3(1.0f, 0.4f, 0.7f));
+	VerFan->SetAABB(verticalFan1);
 
 
 
@@ -1339,9 +1346,9 @@ void main(int argc, char** argv) {
 	//InitDoorLeft();
 	//InitDoorRight();
 	//InitJumpbarbar3();
-	InitVerticalFanBar();
-	InitVerticalFanCenter();
-	InitVerticalFan();
+	//InitVerticalFanBar();
+	//InitVerticalFanCenter();
+	//InitVerticalFan();
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -1462,7 +1469,7 @@ GLvoid drawScene() {
 	Jumpbar1->JumpBarDraw(shaderProgramID, modelMatrixLocation);
 	Jumpbar2->JumpBarDraw(shaderProgramID, modelMatrixLocation);
 	Jumpbar3->JumpBarDraw(shaderProgramID, modelMatrixLocation);
-
+	VerFan->Draw(shaderProgramID, modelMatrixLocation);
 	//DrawObstacleHorizontalFan(shaderProgramID, modelMatrixLocation);
 	//DrawObstacleVerticalFan(shaderProgramID, modelMatrixLocation);
 	//DrawObstacleDoor(shaderProgramID, modelMatrixLocation);
