@@ -1275,8 +1275,7 @@ void SpecialKeyUp(int key, int x, int y) {
 		arrowKeyStates[key] = false;
 	}
 }
-
-GLvoid Timer(int value) {
+void MovingCharacter() {
 	if (moveKeyStates['w']) {
 		P1->Direction = glm::vec3(0.0f, 0.0f, -P1->MSpeed);
 		P1->RotationAngle = 0.0f;
@@ -1301,7 +1300,10 @@ GLvoid Timer(int value) {
 		P1->Direction = glm::vec3(0.0f, 0.0f, 0.0f);
 		P1->IsSwing = false;
 	}
-
+}
+GLvoid Timer(int value) {
+	
+	MovingCharacter();
 	AABB maps[] = { map1, map2, map3, map4, map5 };
 	P1->IsOnMap = false;
 	for (const auto& map : maps) {
