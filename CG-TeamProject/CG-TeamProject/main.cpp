@@ -302,67 +302,6 @@ AABB outdoor4 = {
 //	glm::vec3(-13.1f, -0.3f, -115.49f), // min
 //	glm::vec3(-0.9f, 4.1f, -114.51f)    // max
 //};
-// 세로팬
-AABB leftBar1 = {
-	glm::vec3(-18.12f, -0.64f, -62.86f),
-	glm::vec3(-16.98f, 3.65f, -61.72f)
-};
-AABB leftBar2 = {
-	glm::vec3(-10.62f, -0.64f, -62.86f),
-	glm::vec3(-9.48f, 3.65f, -61.72f)
-};
-AABB leftBar3 = {
-	glm::vec3(-3.12f, -0.64f, -62.86f),
-	glm::vec3(-1.98f, 3.65f, -61.72f)
-};
-AABB leftBar4 = {
-	glm::vec3(4.38f, -0.64f, -62.86f),
-	glm::vec3(5.52f, 3.65f, -61.72f)
-};
-AABB leftBar5 = {
-	glm::vec3(11.88f, -0.64f, -62.86f),
-	glm::vec3(13.02f, 3.65f, -61.72f)
-};
-AABB middleBar1 = {
-	glm::vec3(-17.17f, 3.51f, -62.86f),
-	glm::vec3(-12.89f, 3.64f, -61.72f)
-};
-AABB middleBar2 = {
-	glm::vec3(-9.67f, 3.51f, -62.86f),
-	glm::vec3(-5.39f, 3.64f, -61.72f)
-};
-AABB middleBar3 = {
-	glm::vec3(-2.17f, 3.51f, -62.86f),
-	glm::vec3(2.11f, 3.64f, -61.72f)
-};
-AABB middleBar4 = {
-	glm::vec3(5.33f, 3.51f, -62.86f),
-	glm::vec3(9.61f, 3.64f, -61.72f)
-};
-AABB middleBar5 = {
-	glm::vec3(12.83f, 3.51f, -62.86f),
-	glm::vec3(17.11f, 3.64f, -61.72f)
-};
-AABB rightBar1 = {
-	glm::vec3(-13.07f, -0.64f, -62.86f),
-	glm::vec3(-11.93f, 3.65f, -61.72f)
-};
-AABB rightBar2 = {
-	glm::vec3(-5.57f, -0.64f, -62.86f),
-	glm::vec3(-4.43f, 3.65f, -61.72f)
-};
-AABB rightBar3 = {
-	glm::vec3(1.93f, -0.64f, -62.86f),
-	glm::vec3(3.07f, 3.65f, -61.72f)
-};
-AABB rightBar4 = {
-	glm::vec3(9.43f, -0.64f, -62.86f),
-	glm::vec3(10.57f, 3.65f, -61.72f)
-};
-AABB rightBar5 = {
-	glm::vec3(16.93f, -0.64f, -62.86f),
-	glm::vec3(18.07f, 3.65f, -61.72f)
-};
 
 //// 캐릭터2
 //void InitCharacter2Acc() {
@@ -1223,6 +1162,67 @@ AABB verticalFan5 = {
 	glm::vec3(17.33f, 6.39f, -59.54f)
 };
 
+// 세로팬
+AABB leftBar1 = {
+	glm::vec3(-18.12f, -0.64f, -62.86f),
+	glm::vec3(-16.98f, 3.65f, -61.72f)
+};
+AABB leftBar2 = {
+	glm::vec3(-10.62f, -0.64f, -62.86f),
+	glm::vec3(-9.48f, 3.65f, -61.72f)
+};
+AABB leftBar3 = {
+	glm::vec3(-3.12f, -0.64f, -62.86f),
+	glm::vec3(-1.98f, 3.65f, -61.72f)
+};
+AABB leftBar4 = {
+	glm::vec3(4.38f, -0.64f, -62.86f),
+	glm::vec3(5.52f, 3.65f, -61.72f)
+};
+AABB leftBar5 = {
+	glm::vec3(11.88f, -0.64f, -62.86f),
+	glm::vec3(13.02f, 3.65f, -61.72f)
+};
+AABB middleBar1 = {
+	glm::vec3(-17.17f, 3.51f, -62.86f),
+	glm::vec3(-12.89f, 3.64f, -61.72f)
+};
+AABB middleBar2 = {
+	glm::vec3(-9.67f, 3.51f, -62.86f),
+	glm::vec3(-5.39f, 3.64f, -61.72f)
+};
+AABB middleBar3 = {
+	glm::vec3(-2.17f, 3.51f, -62.86f),
+	glm::vec3(2.11f, 3.64f, -61.72f)
+};
+AABB middleBar4 = {
+	glm::vec3(5.33f, 3.51f, -62.86f),
+	glm::vec3(9.61f, 3.64f, -61.72f)
+};
+AABB middleBar5 = {
+	glm::vec3(12.83f, 3.51f, -62.86f),
+	glm::vec3(17.11f, 3.64f, -61.72f)
+};
+AABB rightBar1 = {
+	glm::vec3(-13.07f, -0.64f, -62.86f),
+	glm::vec3(-11.93f, 3.65f, -61.72f)
+};
+AABB rightBar2 = {
+	glm::vec3(-5.57f, -0.64f, -62.86f),
+	glm::vec3(-4.43f, 3.65f, -61.72f)
+};
+AABB rightBar3 = {
+	glm::vec3(1.93f, -0.64f, -62.86f),
+	glm::vec3(3.07f, 3.65f, -61.72f)
+};
+AABB rightBar4 = {
+	glm::vec3(9.43f, -0.64f, -62.86f),
+	glm::vec3(10.57f, 3.65f, -61.72f)
+};
+AABB rightBar5 = {
+	glm::vec3(16.93f, -0.64f, -62.86f),
+	glm::vec3(18.07f, 3.65f, -61.72f)
+};
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1329,10 +1329,10 @@ void main(int argc, char** argv) {
 	//}
 
 	VerFan1 = new VerticalFan(glm::vec3(0.0f, 3.0f, -60.0f));
-	VerFan1 = new VerticalFan(glm::vec3(-15.0f, 3.0f, -60.0f));
-	VerFan1 = new VerticalFan(glm::vec3(15.0f, 3.0f, -60.0f));
-	VerFan1 = new VerticalFan(glm::vec3(-7.5f, 3.0f, -60.0f));
-	VerFan1 = new VerticalFan(glm::vec3(7.5f, 3.0f, -60.0f));
+	VerFan2 = new VerticalFan(glm::vec3(-15.0f, 3.0f, -60.0f));
+	VerFan3 = new VerticalFan(glm::vec3(15.0f, 3.0f, -60.0f));
+	VerFan4 = new VerticalFan(glm::vec3(-7.5f, 3.0f, -60.0f));
+	VerFan5 = new VerticalFan(glm::vec3(7.5f, 3.0f, -60.0f));
 	InitPart("verticalFan/bar.obj", VerFan1->FanBar->model, VerFan1->FanBar->vao, VerFan1->FanBar->vbo, glm::vec3(0.5f, 0.5f, 0.5f));
 	InitPart("verticalFan/center.obj", VerFan1->FanCenter->model, VerFan1->FanCenter->vao, VerFan1->FanCenter->vbo, glm::vec3(1.0f, 0.4f, 0.7f));
 	InitPart("verticalFan/fan.obj", VerFan1->VFan->model, VerFan1->VFan->vao, VerFan1->VFan->vbo, glm::vec3(1.0f, 0.4f, 0.7f));
@@ -1479,7 +1479,11 @@ GLvoid drawScene() {
 	Jumpbar1->JumpBarDraw(shaderProgramID, modelMatrixLocation);
 	Jumpbar2->JumpBarDraw(shaderProgramID, modelMatrixLocation);
 	Jumpbar3->JumpBarDraw(shaderProgramID, modelMatrixLocation);
-	VerFan->Draw(shaderProgramID, modelMatrixLocation);
+	VerFan1->Draw(shaderProgramID, modelMatrixLocation);
+	VerFan2->Draw(shaderProgramID, modelMatrixLocation);
+	VerFan3->Draw(shaderProgramID, modelMatrixLocation);
+	VerFan4->Draw(shaderProgramID, modelMatrixLocation);
+	VerFan5->Draw(shaderProgramID, modelMatrixLocation);
 	//DrawObstacleHorizontalFan(shaderProgramID, modelMatrixLocation);
 	//DrawObstacleVerticalFan(shaderProgramID, modelMatrixLocation);
 	//DrawObstacleDoor(shaderProgramID, modelMatrixLocation);
