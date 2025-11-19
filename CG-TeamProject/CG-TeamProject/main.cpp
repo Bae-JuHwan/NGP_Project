@@ -49,7 +49,7 @@ GLfloat BongMove = 0.1f; // 이동 속도
 GLfloat MaxBongMove = 1.6f; // 최대 이동 거리
 GLfloat obstacleRotation = 0.0f;
 GLfloat DoorMove = 0.05f;
-GLfloat MaxDoorMove = 1.7f;\
+GLfloat MaxDoorMove = 1.7f; \
 //
 //glm::mat4 bong1ModelMatrix = glm::mat4(1.0f);
 //glm::mat4 bong2ModelMatrix = glm::mat4(1.0f);
@@ -220,7 +220,7 @@ AABB map5 = {
 //void InitDoorRight() {
 //	InitPart("frogDoor/rightdoorgroup.obj", modelRightdoor, vaoRightdoor, vboRightdoor, glm::vec3(1.0f, 0.078f, 0.576f));
 //}
- 
+
 // 봉
 //AABB bong1 = {
 //	glm::vec3(-15.74f , 0.0f, -33.25f), // min
@@ -1235,7 +1235,7 @@ BongGroup* JumpbarCenter = nullptr;
 Obstacle* Jumpbar1 = nullptr;
 Obstacle* Jumpbar2 = nullptr;
 Obstacle* Jumpbar3 = nullptr;
-VerticalFan* VerFan = nullptr;
+VerticalFan* VerFan1 = nullptr;
 VerticalFan* VerFan2 = nullptr;
 VerticalFan* VerFan3 = nullptr;
 VerticalFan* VerFan4 = nullptr;
@@ -1328,12 +1328,22 @@ void main(int argc, char** argv) {
 	//void InitVerticalFan() {
 	//}
 
-	VerFan = new VerticalFan(glm::vec3(0.0f, 3.0f, -60.0f));
+	VerFan1 = new VerticalFan(glm::vec3(0.0f, 3.0f, -60.0f));
+	VerFan1 = new VerticalFan(glm::vec3(-15.0f, 3.0f, -60.0f));
+	VerFan1 = new VerticalFan(glm::vec3(15.0f, 3.0f, -60.0f));
+	VerFan1 = new VerticalFan(glm::vec3(-7.5f, 3.0f, -60.0f));
+	VerFan1 = new VerticalFan(glm::vec3(7.5f, 3.0f, -60.0f));
+	InitPart("verticalFan/bar.obj", VerFan1->FanBar->model, VerFan1->FanBar->vao, VerFan1->FanBar->vbo, glm::vec3(0.5f, 0.5f, 0.5f));
+	InitPart("verticalFan/center.obj", VerFan1->FanCenter->model, VerFan1->FanCenter->vao, VerFan1->FanCenter->vbo, glm::vec3(1.0f, 0.4f, 0.7f));
+	InitPart("verticalFan/fan.obj", VerFan1->VFan->model, VerFan1->VFan->vao, VerFan1->VFan->vbo, glm::vec3(1.0f, 0.4f, 0.7f));
 
-	InitPart("verticalFan/bar.obj", VerFan->FanBar->model, VerFan->FanBar->vao, VerFan->FanBar->vbo, glm::vec3(0.5f, 0.5f, 0.5f));
-	InitPart("verticalFan/center.obj", VerFan->FanCenter->model, VerFan->FanCenter->vao, VerFan->FanCenter->vbo, glm::vec3(1.0f, 0.4f, 0.7f));
-	InitPart("verticalFan/fan.obj", VerFan->VFan->model, VerFan->VFan->vao, VerFan->VFan->vbo, glm::vec3(1.0f, 0.4f, 0.7f));
-	VerFan->SetAABB(verticalFan1);
+	VerticalFan* Fans[] = { VerFan2,VerFan3,VerFan4,VerFan5 };
+	for (VerticalFan* fan : Fans) {
+		fan->FanBar = VerFan1->FanBar;
+		fan->FanCenter = VerFan1->FanCenter;
+		fan->VFan = VerFan1->VFan;
+	}
+	VerFan1->SetAABB(verticalFan1);
 
 
 
@@ -1875,7 +1885,7 @@ GLvoid Timer(int value) {
 
 
 	int i = 0;
-	for (const auto& bar : Bars) {	
+	for (const auto& bar : Bars) {
 		bar->RotationAngle += 2.0f;
 		if (bar->RotationAngle >= 360.0f) {
 			bar->RotationAngle -= 360.0f;
