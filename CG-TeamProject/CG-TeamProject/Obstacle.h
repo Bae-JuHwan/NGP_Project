@@ -48,6 +48,10 @@ public:
 	HorizontalFan(glm::vec3 setp);
 	~HorizontalFan() {};
 
+	Obstacle* Pink = nullptr;
+	Obstacle* Purple = nullptr;
+	AABB CAABB{};
+
 	void Draw(GLuint shaderProgramID, GLint modelMatrixLocation);
 };
 

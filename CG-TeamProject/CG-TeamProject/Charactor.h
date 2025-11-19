@@ -128,7 +128,6 @@ public:
 
 	glm::vec3 InitialPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 
-
 	int SwingDirection{ 1 };
 
 	//팔다리 움직임 각도

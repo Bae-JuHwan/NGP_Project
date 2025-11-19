@@ -64,28 +64,31 @@ void BongGroup::JumpBarCenterDraw(GLuint shaderProgramID, GLint modelMatrixLocat
 HorizontalFan::HorizontalFan(glm::vec3 setp)
 {
 	Position = setp;
+	Pink = new Obstacle;
+	Purple = new Obstacle;
 }
 
 void HorizontalFan::Draw(GLuint shaderPRogramID, GLint modelMatrixLocation) 
 {
 	glm::mat4 HorizontalFanPink1ModelMatrix = glm::mat4(1.0f);
 	HorizontalFanPink1ModelMatrix = glm::translate(HorizontalFanPink1ModelMatrix, Position);
-	HorizontalFanPink1ModelMatrix = glm::rotate(HorizontalFanPink1ModelMatrix, glm::radians(RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+	HorizontalFanPink1ModelMatrix = glm::rotate(HorizontalFanPink1ModelMatrix, glm::radians(Pink->RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(HorizontalFanPink1ModelMatrix));
 
-	glBindVertexArray(vao);
-	glDrawElements(GL_TRIANGLES, model.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(Pink->vao);
+	glDrawElements(GL_TRIANGLES, Pink->model.faces.size() * 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	//glm::mat4 HorizontalFanPurple1ModelMatrix = glm::mat4(1.0f);
-	//HorizontalFanPurple1ModelMatrix = glm::translate(HorizontalFanPurple1ModelMatrix, Position);
-	//HorizontalFanPurple1ModelMatrix = glm::rotate(HorizontalFanPurple1ModelMatrix, glm::radians(RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
-	//glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(HorizontalFanPink1ModelMatrix));
+	glm::mat4 HorizontalFanPurple1ModelMatrix = glm::mat4(1.0f);
+	HorizontalFanPurple1ModelMatrix = glm::translate(HorizontalFanPurple1ModelMatrix, Position);
+	HorizontalFanPurple1ModelMatrix = glm::rotate(HorizontalFanPurple1ModelMatrix, glm::radians(Purple->RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(HorizontalFanPink1ModelMatrix));
 
-	//glBindVertexArray(vaoCheckBox);
-	//glDrawElements(GL_TRIANGLES, modelCheckBox.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	//glBindVertexArray(0);
+	glBindVertexArray(Purple->vao);
+	glDrawElements(GL_TRIANGLES, Purple->model.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
 
+	CAABB.update(Position, glm::vec3(-6.1f, -0.3f, -0.49f), glm::vec3(6.1f, 4.4f, 0.49f));
 }
 
 
