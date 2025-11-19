@@ -1260,6 +1260,7 @@ void main(int argc, char** argv) {
 	InitPoint();
 
 	//mapcheckbox
+	//mapcheckbox
 	InitCheckBoxMap1();
 	InitCheckBoxMap2();
 	InitCheckBoxMap3();
@@ -1336,14 +1337,22 @@ void main(int argc, char** argv) {
 	InitPart("verticalFan/bar.obj", VerFan1->FanBar->model, VerFan1->FanBar->vao, VerFan1->FanBar->vbo, glm::vec3(0.5f, 0.5f, 0.5f));
 	InitPart("verticalFan/center.obj", VerFan1->FanCenter->model, VerFan1->FanCenter->vao, VerFan1->FanCenter->vbo, glm::vec3(1.0f, 0.4f, 0.7f));
 	InitPart("verticalFan/fan.obj", VerFan1->VFan->model, VerFan1->VFan->vao, VerFan1->VFan->vbo, glm::vec3(1.0f, 0.4f, 0.7f));
+	InitPart("verticalFan/fan.obj", VerFan4->VFan->model, VerFan4->VFan->vao, VerFan4->VFan->vbo, glm::vec3(1.0f, 0.4f, 0.7f));
 
 	VerticalFan* Fans[] = { VerFan2,VerFan3,VerFan4,VerFan5 };
 	for (VerticalFan* fan : Fans) {
 		fan->FanBar = VerFan1->FanBar;
 		fan->FanCenter = VerFan1->FanCenter;
-		fan->VFan = VerFan1->VFan;
+		if (fan == VerFan1 || fan==VerFan2 ||fan==VerFan3)
+			fan->VFan = VerFan1->VFan;
+		else
+			fan->VFan = VerFan4->VFan;
 	}
 	VerFan1->SetAABB(verticalFan1);
+	VerFan2->SetAABB(verticalFan2);
+	VerFan3->SetAABB(verticalFan3);
+	VerFan4->SetAABB(verticalFan4);
+	VerFan5->SetAABB(verticalFan5);
 
 
 
@@ -1696,9 +1705,6 @@ GLvoid Timer(int value) {
 		Bong2->Direction.x = 1;
 	}
 
-	//if (isObstacleRotate) {
-	//	obstacleRotation += 2.0f;
-	//}
 	Bong1->CAABB.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
 	Bong2->CAABB.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
 	//bong3.update(BongGroup1Position, glm::vec3(-3.169f, 0.0f, -33.25f), glm::vec3(-1.169f, 3.6f, -31.25f));
@@ -1706,6 +1712,20 @@ GLvoid Timer(int value) {
 	//bong5.update(BongGroup1Position, glm::vec3(9.27f, 0.0f, -33.25f), glm::vec3(11.27f, 3.6f, -31.25f));
 	//bong6.update(BongGroup2Position, glm::vec3(14.945f, 0.0f, -33.25f), glm::vec3(16.945f, 3.6f, -31.25f));
 
+		// 세로팬 회전
+	VerticalFan* verticalFans[] = { VerFan1,VerFan2,VerFan3,VerFan4,VerFan5 };
+	if (isObstacleRotate) {
+		obstacleRotation += 2.0f;
+		for (int i = 0; i < 5; i++) {
+			if (i < 3) {
+				verticalFans[i]->VFan->RotationAngle = obstacleRotation;
+			}
+			else {
+				verticalFans[i]->VFan->RotationAngle = -obstacleRotation;
+			}
+			//std::cout << "fan " << i << ": " << verticalFans[i]->VFan->RotationAngle << std::endl;
+		}
+	}
 
 	// 문짝 움직이기
 	LeftdoorGroupPosition.x += LeftdoorGroupDirection.x * DoorMove;
