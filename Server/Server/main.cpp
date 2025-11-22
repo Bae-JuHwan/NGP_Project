@@ -1,6 +1,7 @@
-#include"Common.h"
+#include "Common.h"
 #include <gtc/matrix_transform.hpp>
 #include <gl/glew.h>
+#include "obstacle.h"
 #pragma comment(lib, "ws2_32.lib")
 
 #define SERVERPORT 9000
@@ -165,7 +166,18 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         // 임계영역 진입 - 데이터 저장
         EnterCriticalSection(&g_cs);
         // 여기에 클라이언트 정보 저장 (나중에 구현)
+
+        g_rotatingObstacle.angle += 1.0f; // 회전 각도 1도 증가 (예시)
+        g_movingObstacle.position += g_movingObstacle.direction;
         LeaveCriticalSection(&g_cs);
+
+        if (!S2C_MovingObstacle(client_sock, g_movingObstacle)) {
+            printf("[경고] 클라이언트 %d에게 MovingObstacle 전송 실패\n", client_id);
+        }
+
+        if (!S2C_RotatingObstacle(client_sock, g_rotatingObstacle)) {
+            printf("[경고] 클라이언트 %d에게 RotatingObstacle 전송 실패\n", client_id);
+        }
     }
 
     closesocket(client_sock);
