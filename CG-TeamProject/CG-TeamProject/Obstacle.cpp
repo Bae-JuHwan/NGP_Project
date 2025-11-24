@@ -15,20 +15,19 @@ BongGroup::BongGroup(glm::vec3 setp, glm::vec3 setd, GLfloat setMS, GLfloat setM
 	RotationAngle = setA;
 }
 
-
 void BongGroup::Draw(GLuint shaderProgramID, GLint modelMatrixLocation)
 {
-	glm::mat4 finalBong1ModelMatrix = ModelMatrix;
-	ModelMatrix = glm::translate(glm::mat4(1.0f), Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalBong1ModelMatrix));
+	// 1. Model Matrix 전달
+	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(this->ModelMatrix));
 
+	// 2. 봉 모델 그리기
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, model.faces.size() * 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	//체크박스 그리기
-	glm::mat4 bongCheckBox1ModelMatrix = glm::translate(glm::mat4(1.0f), Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(bongCheckBox1ModelMatrix));
+	// 3. 체크박스 렌더링 (체크박스도 ModelMatrix를 사용해야 함)
+	// 체크박스 위치를 봉과 동일하게 이동시키기 위해 동일한 행렬을 다시 전달
+	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(this->ModelMatrix));
 
 	glBindVertexArray(vaoCheckBox);
 	glDrawElements(GL_TRIANGLES, modelCheckBox.faces.size() * 3, GL_UNSIGNED_INT, 0);

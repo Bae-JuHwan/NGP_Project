@@ -6,8 +6,11 @@
 #include <iostream>
 #include <set>
 #include "stdafx.h"
-#include"Common.h"
+#include "Common.h"
 #include "Obstacle.h"
+#include "obstacle_network.h"
+
+CRITICAL_SECTION g_cs_client;
 
 char* SERVERIP = (char*)"127.0.0.1";
 #define SERVERPORT 9000
@@ -93,6 +96,7 @@ bool recv_character() {
 	}
 	return true;
 }
+
 // 네트워크 초기화
 bool InitNetworkConnection() {
 	WSADATA wsa;
@@ -1063,6 +1067,8 @@ void main(int argc, char** argv) {
 	InitCheckBoxMap4();
 	InitCheckBoxMap5();
 
+	InitializeCriticalSection(&g_cs_client);
+
 	std::cout << "캐릭터 생성중...." << std::endl;
 	P1 = new Player1();
 	P2 = new Player1();
@@ -1138,6 +1144,7 @@ void main(int argc, char** argv) {
 	glDisable(GL_CULL_FACE);
 
 	glutMainLoop();
+	DeleteCriticalSection(&g_cs_client);
 }
 
 // 캐릭터
@@ -1373,32 +1380,49 @@ GLvoid Timer(int value) {
 		}
 	}
 
-	//봉 움직이기
-	//Bong1->Position.x += BongGroup1Direction.x * BongMove;
-	Bong1->Position.x += Bong1->Direction.x * Bong1->MoveSpeed;
+	////봉 움직이기
+	////Bong1->Position.x += BongGroup1Direction.x * BongMove;
+	//Bong1->Position.x += Bong1->Direction.x * Bong1->MoveSpeed;
 
-	if (Bong1->Position.x >= Bong1->MaxMoveDistance) {
-		Bong1->Direction.x = -1; // 왼쪽으로 이동
-	}
-	else if (Bong1->Position.x <= -Bong1->MaxMoveDistance) {
-		Bong1->Direction.x = 1;  // 오른쪽으로 이동
-	}
+	//if (Bong1->Position.x >= Bong1->MaxMoveDistance) {
+	//	Bong1->Direction.x = -1; // 왼쪽으로 이동
+	//}
+	//else if (Bong1->Position.x <= -Bong1->MaxMoveDistance) {
+	//	Bong1->Direction.x = 1;  // 오른쪽으로 이동
+	//}
 
-	// 봉 그룹 2 움직이기 (반대 방향)
-	Bong2->Position.x += Bong2->Direction.x * Bong2->MoveSpeed;
-	if (Bong2->Position.x >= Bong2->MaxMoveDistance) {
-		Bong2->Direction.x = -1;
-	}
-	else if (Bong2->Position.x <= -Bong2->MaxMoveDistance) {
-		Bong2->Direction.x = 1;
-	}
+	//// 봉 그룹 2 움직이기 (반대 방향)
+	//Bong2->Position.x += Bong2->Direction.x * Bong2->MoveSpeed;
+	//if (Bong2->Position.x >= Bong2->MaxMoveDistance) {
+	//	Bong2->Direction.x = -1;
+	//}
+	//else if (Bong2->Position.x <= -Bong2->MaxMoveDistance) {
+	//	Bong2->Direction.x = 1;
+	//}
 
 	//if (isObstacleRotate) {
 	//	obstacleRotation += 2.0f;
 	//}
-	Bong1->CAABB.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
-	Bong2->CAABB.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
+	//Bong1->CAABB.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
+	//Bong2->CAABB.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
+	if (Socket != INVALID_SOCKET) {
+		recv_BongObstacle(Socket);
+	}
 
+	EnterCriticalSection(&g_cs_client);
+	// 전역 변수 g_bongObstacle을 BongGroup 객체에 반영
+	if (Bong1 && Bong2) {
+		Bong1->Position = g_bongObstacle.pos1;
+		Bong2->Position = g_bongObstacle.pos2;
+	}
+	LeaveCriticalSection(&g_cs_client);
+
+	if (Bong1) {
+		Bong1->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong1->Position);
+	}
+	if (Bong2) {
+		Bong2->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong2->Position);
+	}
 
 	// 문짝 움직이기
 	LeftdoorGroupPosition.x += LeftdoorGroupDirection.x * DoorMove;

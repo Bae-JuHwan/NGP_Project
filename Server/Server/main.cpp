@@ -5,8 +5,6 @@
 #pragma comment(lib, "ws2_32.lib")
 
 #define SERVERPORT 9000
-#define MAX_CLIENTS 3
-
 
 
 /*  전달사항아닌 전달사항
@@ -135,6 +133,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 	g_clients[client_id - 1].sock = client_sock;
 	g_clients[client_id - 1].id = client_id;
 	g_clients[client_id - 1].isActive = true;
+
     LeaveCriticalSection(&g_cs);
 
     printf("클라이언트 %d번 접속 완료\n", client_id);
@@ -187,29 +186,24 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             }
         }
         LeaveCriticalSection(&g_cs);
-
-
-        // 임계영역 진입 - 데이터 저장
-        //EnterCriticalSection(&g_cs);
-        //// 여기에 클라이언트 정보 저장 (나중에 구현)
-
-        //g_rotatingObstacle.angle += 1.0f; // 회전 각도 1도 증가 (예시)
-        //g_movingObstacle.position += g_movingObstacle.direction;
-
-        //if (!S2C_MovingObstacle(client_sock, g_movingObstacle)) {
-        //    printf("[경고] 클라이언트 %d에게 MovingObstacle 전송 실패\n", client_id);
-        //}
-
-        //if (!S2C_RotatingObstacle(client_sock, g_rotatingObstacle)) {
-        //    printf("[경고] 클라이언트 %d에게 RotatingObstacle 전송 실패\n", client_id);
-        //}
-	
-        //LeaveCriticalSection(&g_cs);
-
     }
 
     closesocket(client_sock);
     printf("클라이언트 %d번 연결 종료\n", client_id);
+    return 0;
+}
+
+DWORD WINAPI GameLogicThread(LPVOID arg) {
+    while (1) {
+        EnterCriticalSection(&g_cs);
+
+        UpdateBongObstacle();
+        Broadcast_BongObstacle(g_bongObstacle);
+
+        LeaveCriticalSection(&g_cs);
+
+        Sleep(16); // 60 FPS 주기로 실행
+    }
     return 0;
 }
 
@@ -251,6 +245,16 @@ int main() {
     }
 
     printf("서버가 포트 %d에서 대기 중...\n", SERVERPORT);
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+        g_client_list[i] = INVALID_SOCKET;
+    }
+
+    HANDLE hGameThread = CreateThread(NULL, 0, GameLogicThread, NULL, 0, NULL);
+    if (hGameThread == NULL) {
+        printf("게임 로직 스레드 생성 실패\n");
+        return 1;
+    }
+    CloseHandle(hGameThread);
 
     while (1) {
         client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);

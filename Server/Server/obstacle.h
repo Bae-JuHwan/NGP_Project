@@ -6,21 +6,18 @@
 
 // 장애물 구조체
 #pragma pack(1)
-struct MovingObstacle {
-    glm::vec3 position;
-    glm::vec3 direction;
-};
 
-struct RotatingObstacle {
-    glm::vec3 position;
-    GLfloat angle;
+// 서버 -> 클라 첫번째 장애물(봉) 보내기 구조체
+struct obstacle_Bong {
+    glm::vec3 pos1;
+    glm::vec3 dir1;
+    glm::vec3 pos2;
+    glm::vec3 dir2;
 };
 #pragma pack()
 
-extern MovingObstacle g_movingObstacle;
-extern RotatingObstacle g_rotatingObstacle;
+extern obstacle_Bong g_bongObstacle;
 
-// 장애물 관련 함수 원형 선언
-bool S2C_MovingObstacle(SOCKET sock, const MovingObstacle& obs_info);
-bool S2C_RotatingObstacle(SOCKET sock, const RotatingObstacle& obs_info);
-// void UpdateObstacleState();
+bool S2C_BongObstacle(SOCKET sock, const obstacle_Bong& obs_info);
+void UpdateBongObstacle();
+bool Broadcast_BongObstacle(const obstacle_Bong& obs_info);

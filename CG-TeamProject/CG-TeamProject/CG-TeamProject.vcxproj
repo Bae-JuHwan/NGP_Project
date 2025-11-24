@@ -133,11 +133,13 @@
     <ClCompile Include="Charactor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Obstacle.cpp" />
+    <ClCompile Include="obstacle_network.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Charactor.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Obstacle.h" />
+    <ClInclude Include="obstacle_network.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="헤더.h" />
   </ItemGroup>

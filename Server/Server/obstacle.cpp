@@ -1,47 +1,59 @@
-#include "obstacle.h"
+ï»¿#include "obstacle.h"
 #include "Common.h"
 
-MovingObstacle g_movingObstacle = { glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f) };
-RotatingObstacle g_rotatingObstacle = { glm::vec3(0.0f, 0.0f, 0.0f), 0.0f };
+obstacle_Bong g_bongObstacle;
 
-bool S2C_MovingObstacle(SOCKET sock, const MovingObstacle& obs_info) {
-    if (sock == INVALID_SOCKET) {
-        printf("[°æ°í] ¼ÒÄÏÀÌ À¯È¿ÇÏÁö ¾Ê½À´Ï´Ù\n");
-        return false;
-    }
+SOCKET g_client_list[MAX_CLIENTS] = { INVALID_SOCKET, };
 
-    // Å¬¶óÇÑÅ× Àå¾Ö¹° Á¤º¸ Àü¼Û
-    int retval = send(sock, (char*)&obs_info, sizeof(MovingObstacle), 0);
+bool S2C_BongObstacle(SOCKET sock, const obstacle_Bong& obs_info)
+{
+	if (sock == INVALID_SOCKET) {
+		printf("[ê²½ê³ ] ì†Œì¼“ì´ ìœ íš¨í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤\n");
+		return false;
+	}
 
-    if (retval == SOCKET_ERROR) {
-        err_display("send() - S2C_MovingObstacle");
-        return false;
-    }
+	int retval = send(sock, (char*)&obs_info, sizeof(obstacle_Bong), 0);
 
-    if (retval != sizeof(MovingObstacle)) {
-        printf("[°æ°í] Àü¼ÛµÈ µ¥ÀÌÅÍ Å©±â ºÒÀÏÄ¡ (¿¹»ó : %zu, ½ÇÁ¦ : %d)\n", sizeof(MovingObstacle), retval);
-    }
+	if (retval == SOCKET_ERROR) {
+		err_display("send() - S2C_BongObstacle");
+		return false;
+	}
 
-    return true;
+	if (retval != sizeof(obstacle_Bong)) {
+		printf("[ê²½ê³ ] ë´‰ ìž¥ì• ë¬¼ ì „ì†¡ í¬ê¸° ë¶ˆì¼ì¹˜ (ì˜ˆìƒ : %zu, ì‹¤ì œ : %d)\n", sizeof(obstacle_Bong), retval);
+	}
+
+	return true;
 }
 
-bool S2C_RotatingObstacle(SOCKET sock, const RotatingObstacle& obs_info) {
-    if (sock == INVALID_SOCKET) {
-        printf("[°æ°í] ¼ÒÄÏÀÌ À¯È¿ÇÏÁö ¾Ê½À´Ï´Ù\n");
-        return false;
-    }
+void UpdateBongObstacle()
+{
+	float MoveSpeed = 0.1f;
+	float MaxMoveDistance = 1.6f;
 
-    // Å¬¶óÇÑÅ× Àå¾Ö¹° Á¤º¸ Àü¼Û
-    int retval = send(sock, (char*)&obs_info, sizeof(RotatingObstacle), 0);
+	// ë´‰ ê·¸ë£¹1
+	g_bongObstacle.pos1 += g_bongObstacle.dir1 * MoveSpeed;
 
-    if (retval == SOCKET_ERROR) {
-        err_display("send() - S2C_RotatingObstacle");
-        return false;
-    }
+	if (g_bongObstacle.pos1.x >= MaxMoveDistance)
+		g_bongObstacle.dir1.x = -1;
+	else if (g_bongObstacle.pos1.x <= -MaxMoveDistance)
+		g_bongObstacle.dir1.x = 1;
 
-    if (retval != sizeof(RotatingObstacle)) {
-        printf("[°æ°í] Àü¼ÛµÈ µ¥ÀÌÅÍ Å©±â ºÒÀÏÄ¡ (¿¹»ó : %zu, ½ÇÁ¦ : %d)\n", sizeof(RotatingObstacle), retval);
-    }
+	// ë´‰ ê·¸ë£¹2
+	g_bongObstacle.pos2 += g_bongObstacle.dir2 * MoveSpeed;
 
-    return true;
+	if (g_bongObstacle.pos2.x >= MaxMoveDistance)
+		g_bongObstacle.dir2.x = -1;
+	else if (g_bongObstacle.pos2.x <= -MaxMoveDistance)
+		g_bongObstacle.dir2.x = 1;
+}
+
+bool Broadcast_BongObstacle(const obstacle_Bong& obs_info)
+{
+	for (int i = 0; i < MAX_CLIENTS; i++) {
+		if (g_client_list[i] != INVALID_SOCKET) {
+			S2C_BongObstacle(g_client_list[i], obs_info);
+		}
+	}
+	return true;
 }
