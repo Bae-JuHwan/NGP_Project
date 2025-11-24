@@ -167,39 +167,44 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             printf("  isCollision: %s\n", received_char.isCollision ? "true" : "false");
             printf("\n");
         }
-        // 임계영역 진입 - 데이터 저장
-        EnterCriticalSection(&g_cs);
-        // 여기에 클라이언트 정보 저장 (나중에 구현)
-
-        g_rotatingObstacle.angle += 1.0f; // 회전 각도 1도 증가 (예시)
-        g_movingObstacle.position += g_movingObstacle.direction;
-
-        if (!S2C_MovingObstacle(client_sock, g_movingObstacle)) {
-            printf("[경고] 클라이언트 %d에게 MovingObstacle 전송 실패\n", client_id);
-        }
-
-        if (!S2C_RotatingObstacle(client_sock, g_rotatingObstacle)) {
-            printf("[경고] 클라이언트 %d에게 RotatingObstacle 전송 실패\n", client_id);
-        }
-		g_clients[client_id - 1].charInfo = received_char;
-        LeaveCriticalSection(&g_cs);
+        
 
         EnterCriticalSection(&g_cs);
-		// 다른 클라이언트들에게 캐릭터 정보 전송
-        for(int i = 0; i < MAX_CLIENTS; i++) {
+
+        g_clients[client_id - 1].charInfo = received_char; //캐릭터 정보 저장
+        // 다른 클라이언트들에게 캐릭터 정보 전송
+        for (int i = 0; i < MAX_CLIENTS; i++) {
             if (i != client_id - 1 && g_clients[i].isActive) { // 자기 자신 제외
                 if (!S2C_Character(g_clients[i].sock, received_char)) {
                     printf("클라이언트 %d번에게 캐릭터 정보 전송 실패\n", g_clients[i].id);
                 }
                 else {
                     if (send_count[i] % 100 == 0) {
-                        printf("[서버] 클라이언트 %d 캐릭터 정보 전송 완료 송신 %d회 \n", g_clients[client_id - 1].id , send_count);
+                        printf("[서버] 클라이언트 %d 캐릭터 정보 전송 완료 송신 %d회 \n", g_clients[client_id - 1].id, send_count);
                         send_count[i]++;
                     }
                 }
             }
-		}
+        }
         LeaveCriticalSection(&g_cs);
+
+
+        // 임계영역 진입 - 데이터 저장
+        //EnterCriticalSection(&g_cs);
+        //// 여기에 클라이언트 정보 저장 (나중에 구현)
+
+        //g_rotatingObstacle.angle += 1.0f; // 회전 각도 1도 증가 (예시)
+        //g_movingObstacle.position += g_movingObstacle.direction;
+
+        //if (!S2C_MovingObstacle(client_sock, g_movingObstacle)) {
+        //    printf("[경고] 클라이언트 %d에게 MovingObstacle 전송 실패\n", client_id);
+        //}
+
+        //if (!S2C_RotatingObstacle(client_sock, g_rotatingObstacle)) {
+        //    printf("[경고] 클라이언트 %d에게 RotatingObstacle 전송 실패\n", client_id);
+        //}
+	
+        //LeaveCriticalSection(&g_cs);
 
     }
 
