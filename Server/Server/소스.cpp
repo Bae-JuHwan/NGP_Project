@@ -7,6 +7,7 @@
 #define MAX_CLIENTS 3
 
 
+
 /*  전달사항아닌 전달사항
 
 
@@ -35,7 +36,8 @@ struct ClientInfo {
     character charInfo;
     bool isActive;
 };
-
+// 캐릭터 정보 저장하기 위해서 클라이언트 정보 구조체 배열
+ClientInfo g_clients[MAX_CLIENTS];
 // 충돌 처리 함수 (아직 미구현)
 bool CheckCollision(const character& ch) {
     return false; // 임시 반환
@@ -76,8 +78,6 @@ bool S2C_Character(SOCKET sock, const character& char_info) {
         printf("[경고] 전송된 데이터 크기 불일치 (예상: %zu, 실제: %d)\n", sizeof(character), retval);
     }
 
-    // 전송 성공
-    printf("[서버] 캐릭터 정보 전송 완료 (%d 바이트)\n", retval);
     return true;
 }
 
@@ -131,6 +131,9 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 
     EnterCriticalSection(&g_cs);
     client_id = ++g_clientCount;
+	g_clients[client_id - 1].sock = client_sock;
+	g_clients[client_id - 1].id = client_id;
+	g_clients[client_id - 1].isActive = true;
     LeaveCriticalSection(&g_cs);
 
     printf("클라이언트 %d번 접속 완료\n", client_id);
@@ -141,6 +144,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 
     // TODO
     int receive_count = 0;
+    int send_count[MAX_CLIENTS];
     while (true) {
         character received_char;
 
@@ -153,7 +157,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 
         // 수신한 데이터 출력
         if (receive_count % 100 == 0) {
-            printf("\n=== [클라이언트 %d] 수신 %d회 ===\n", client_id, receive_count);
+            printf("\n=== [클라이언트 %d] 수신 %d회 ===\n", g_clients[client_id - 1].id, receive_count);
             printf("  Position: (%.2f, %.2f, %.2f)\n",
                 received_char.position.x, received_char.position.y, received_char.position.z);
             printf("  Direction: (%.2f, %.2f, %.2f)\n",
@@ -164,8 +168,26 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         }
         // 임계영역 진입 - 데이터 저장
         EnterCriticalSection(&g_cs);
-        // 여기에 클라이언트 정보 저장 (나중에 구현)
+		g_clients[client_id - 1].charInfo = received_char;
         LeaveCriticalSection(&g_cs);
+
+        EnterCriticalSection(&g_cs);
+		// 다른 클라이언트들에게 캐릭터 정보 전송
+        for(int i = 0; i < MAX_CLIENTS; i++) {
+            if (i != client_id - 1 && g_clients[i].isActive) { // 자기 자신 제외
+                if (!S2C_Character(g_clients[i].sock, received_char)) {
+                    printf("클라이언트 %d번에게 캐릭터 정보 전송 실패\n", g_clients[i].id);
+                }
+                else {
+                    if (send_count[i] % 100 == 0) {
+                        printf("[서버] 클라이언트 %d 캐릭터 정보 전송 완료 송신 %d회 \n", g_clients[client_id - 1].id , send_count);
+                        send_count[i]++;
+                    }
+                }
+            }
+		}
+        LeaveCriticalSection(&g_cs);
+
     }
 
     closesocket(client_sock);
