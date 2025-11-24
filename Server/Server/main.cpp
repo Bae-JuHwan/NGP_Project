@@ -169,12 +169,10 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         }
         // ÀÓ°è¿µ¿ª ÁøÀÔ - µ¥ÀÌÅÍ ÀúÀå
         EnterCriticalSection(&g_cs);
-<<<<<<< HEAD:Server/Server/main.cpp
         // ¿©±â¿¡ Å¬¶óÀÌ¾ğÆ® Á¤º¸ ÀúÀå (³ªÁß¿¡ ±¸Çö)
 
         g_rotatingObstacle.angle += 1.0f; // È¸Àü °¢µµ 1µµ Áõ°¡ (¿¹½Ã)
         g_movingObstacle.position += g_movingObstacle.direction;
-        LeaveCriticalSection(&g_cs);
 
         if (!S2C_MovingObstacle(client_sock, g_movingObstacle)) {
             printf("[°æ°í] Å¬¶óÀÌ¾ğÆ® %d¿¡°Ô MovingObstacle Àü¼Û ½ÇÆĞ\n", client_id);
@@ -183,7 +181,6 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         if (!S2C_RotatingObstacle(client_sock, g_rotatingObstacle)) {
             printf("[°æ°í] Å¬¶óÀÌ¾ğÆ® %d¿¡°Ô RotatingObstacle Àü¼Û ½ÇÆĞ\n", client_id);
         }
-=======
 		g_clients[client_id - 1].charInfo = received_char;
         LeaveCriticalSection(&g_cs);
 
@@ -204,7 +201,6 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 		}
         LeaveCriticalSection(&g_cs);
 
->>>>>>> develop/S2C_Char:Server/Server/ì†ŒìŠ¤.cpp
     }
 
     closesocket(client_sock);

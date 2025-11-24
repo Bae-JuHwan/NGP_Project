@@ -1347,8 +1347,10 @@ GLvoid Timer(int value) {
 	// AABB 업데이트
 	P1->CAABB.update(P1->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 
-	// 캐릭터 업데이트를 계속 해줌
+	// 다른 캐릭터 업데이트를 계속 해줌
 	UpdatePlayer();
+
+
 	// 팔 흔들림 업데이트
 	if (P1->IsSwing) {
 		P1->ArmLegSwingAngle += P1->SwingDirection * 2.0f;
