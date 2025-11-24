@@ -8,6 +8,7 @@
 #define MAX_CLIENTS 3
 
 
+
 /*  Àü´Ş»çÇ×¾Æ´Ñ Àü´Ş»çÇ×
 
 
@@ -36,7 +37,8 @@ struct ClientInfo {
     character charInfo;
     bool isActive;
 };
-
+// Ä³¸¯ÅÍ Á¤º¸ ÀúÀåÇÏ±â À§ÇØ¼­ Å¬¶óÀÌ¾ğÆ® Á¤º¸ ±¸Á¶Ã¼ ¹è¿­
+ClientInfo g_clients[MAX_CLIENTS];
 // Ãæµ¹ Ã³¸® ÇÔ¼ö (¾ÆÁ÷ ¹Ì±¸Çö)
 bool CheckCollision(const character& ch) {
     return false; // ÀÓ½Ã ¹İÈ¯
@@ -77,8 +79,6 @@ bool S2C_Character(SOCKET sock, const character& char_info) {
         printf("[°æ°í] Àü¼ÛµÈ µ¥ÀÌÅÍ Å©±â ºÒÀÏÄ¡ (¿¹»ó: %zu, ½ÇÁ¦: %d)\n", sizeof(character), retval);
     }
 
-    // Àü¼Û ¼º°ø
-    printf("[¼­¹ö] Ä³¸¯ÅÍ Á¤º¸ Àü¼Û ¿Ï·á (%d ¹ÙÀÌÆ®)\n", retval);
     return true;
 }
 
@@ -132,6 +132,9 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 
     EnterCriticalSection(&g_cs);
     client_id = ++g_clientCount;
+	g_clients[client_id - 1].sock = client_sock;
+	g_clients[client_id - 1].id = client_id;
+	g_clients[client_id - 1].isActive = true;
     LeaveCriticalSection(&g_cs);
 
     printf("Å¬¶óÀÌ¾ğÆ® %d¹ø Á¢¼Ó ¿Ï·á\n", client_id);
@@ -142,6 +145,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 
     // TODO
     int receive_count = 0;
+    int send_count[MAX_CLIENTS];
     while (true) {
         character received_char;
 
@@ -154,7 +158,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 
         // ¼ö½ÅÇÑ µ¥ÀÌÅÍ Ãâ·Â
         if (receive_count % 100 == 0) {
-            printf("\n=== [Å¬¶óÀÌ¾ğÆ® %d] ¼ö½Å %dÈ¸ ===\n", client_id, receive_count);
+            printf("\n=== [Å¬¶óÀÌ¾ğÆ® %d] ¼ö½Å %dÈ¸ ===\n", g_clients[client_id - 1].id, receive_count);
             printf("  Position: (%.2f, %.2f, %.2f)\n",
                 received_char.position.x, received_char.position.y, received_char.position.z);
             printf("  Direction: (%.2f, %.2f, %.2f)\n",
@@ -165,6 +169,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         }
         // ÀÓ°è¿µ¿ª ÁøÀÔ - µ¥ÀÌÅÍ ÀúÀå
         EnterCriticalSection(&g_cs);
+<<<<<<< HEAD:Server/Server/main.cpp
         // ¿©±â¿¡ Å¬¶óÀÌ¾ğÆ® Á¤º¸ ÀúÀå (³ªÁß¿¡ ±¸Çö)
 
         g_rotatingObstacle.angle += 1.0f; // È¸Àü °¢µµ 1µµ Áõ°¡ (¿¹½Ã)
@@ -178,6 +183,28 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         if (!S2C_RotatingObstacle(client_sock, g_rotatingObstacle)) {
             printf("[°æ°í] Å¬¶óÀÌ¾ğÆ® %d¿¡°Ô RotatingObstacle Àü¼Û ½ÇÆĞ\n", client_id);
         }
+=======
+		g_clients[client_id - 1].charInfo = received_char;
+        LeaveCriticalSection(&g_cs);
+
+        EnterCriticalSection(&g_cs);
+		// ´Ù¸¥ Å¬¶óÀÌ¾ğÆ®µé¿¡°Ô Ä³¸¯ÅÍ Á¤º¸ Àü¼Û
+        for(int i = 0; i < MAX_CLIENTS; i++) {
+            if (i != client_id - 1 && g_clients[i].isActive) { // ÀÚ±â ÀÚ½Å Á¦¿Ü
+                if (!S2C_Character(g_clients[i].sock, received_char)) {
+                    printf("Å¬¶óÀÌ¾ğÆ® %d¹ø¿¡°Ô Ä³¸¯ÅÍ Á¤º¸ Àü¼Û ½ÇÆĞ\n", g_clients[i].id);
+                }
+                else {
+                    if (send_count[i] % 100 == 0) {
+                        printf("[¼­¹ö] Å¬¶óÀÌ¾ğÆ® %d Ä³¸¯ÅÍ Á¤º¸ Àü¼Û ¿Ï·á ¼Û½Å %dÈ¸ \n", g_clients[client_id - 1].id , send_count);
+                        send_count[i]++;
+                    }
+                }
+            }
+		}
+        LeaveCriticalSection(&g_cs);
+
+>>>>>>> develop/S2C_Char:Server/Server/ì†ŒìŠ¤.cpp
     }
 
     closesocket(client_sock);

@@ -21,6 +21,9 @@ struct character {
 };
 #pragma pack()
 
+Player1* P1 = nullptr;
+Player1* P2 = nullptr;
+Player1* P3 = nullptr;
 // 다른 클라이언트들의 캐릭터 정보 저장
 #define MAX_OTHER_PLAYERS 2
 character otherPlayers[MAX_OTHER_PLAYERS];
@@ -37,7 +40,17 @@ void C2S_Character(SOCKET sock, const character& char_info)
 	}
 
 }
-
+// 캐릭터 정보 업데이트
+void UpdatePlayer() {
+	P2->Position = otherPlayers[0].position;
+	P2->Direction = otherPlayers[0].direction;
+	// 모델 매트릭스 업데이트
+	P2->ModelMatrix = glm::translate(glm::mat4(1.0f), P2->Position);
+	P2->ModelMatrix = glm::rotate(P2->ModelMatrix, glm::radians(P2->RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+	P2->ArmLegSwingAngle = otherPlayers[0].ArmLegSwingAngle;
+	// AABB 업데이트
+	P2->CAABB.update(P2->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
+}
 int recv_count = 0;
 // 서버로부터 다른 캐릭터 정보 수신
 bool recv_character() {
@@ -52,7 +65,7 @@ bool recv_character() {
 	// 서버로부터 캐릭터 정보 패킷 수신
 	int retval = recv(Socket, (char*)&received_char, sizeof(character), 0);
 	recv_count++;
-
+	otherPlayers[0] = received_char; // 첫 번째 플레이어 정보 저장
 	if (retval == SOCKET_ERROR) {
 		int err = WSAGetLastError();
 		if (err != WSAEWOULDBLOCK) {
@@ -116,6 +129,7 @@ bool InitNetworkConnection() {
 
 	return true;
 }
+
 // 네트워크 정리
 void CleanupNetworkConnection() {
 	if (Socket != INVALID_SOCKET) {
@@ -1018,7 +1032,7 @@ void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) 
 	verticalFan5.update(verticalFan5Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
 }
 
-Player1* P1 = nullptr;
+
 BongGroup* Bong1 = nullptr;
 BongGroup* Bong2 = nullptr;
 HorizontalFan* PinkFan1 = nullptr;
@@ -1051,6 +1065,8 @@ void main(int argc, char** argv) {
 
 	std::cout << "캐릭터 생성중...." << std::endl;
 	P1 = new Player1();
+	P2 = new Player1();
+	P3 = new Player1();
 
 
 	//장애물
@@ -1093,16 +1109,7 @@ void main(int argc, char** argv) {
 	InitPart("horizontalFan/purple.obj", PurpleFan1->model, PurpleFan1->vao, PurpleFan1->vbo, glm::vec3(0.5f, 0.0f, 0.5f));
 
 
-	//InitBong1();
-
-	//InitBong2();
-	//InitAllBongCheckBoxes();
-
-	//InitHorizontalFanPink();
-	//InitHorizontalFanPurple();
-	//InitDoorOut();
-	//InitDoorLeft();
-	//InitDoorRight();
+	
 	InitJumpbarCenter();
 	InitJumpbarbargroup1();
 	InitJumpbarbargroup2();
@@ -1229,6 +1236,10 @@ GLvoid drawScene() {
 	Bong1->Draw(shaderProgramID, modelMatrixLocation);
 	Bong2->Draw(shaderProgramID, modelMatrixLocation);
 	P1->Draw(shaderProgramID, modelMatrixLocation);
+
+	// p2 위치 동기화
+	P2->Draw(shaderProgramID, modelMatrixLocation);
+
 	//상대 캐릭터도 받아서 그려야함.
 	PinkFan1->Draw(shaderProgramID, modelMatrixLocation);
 	PurpleFan1->Draw(shaderProgramID, modelMatrixLocation);
@@ -1336,6 +1347,8 @@ GLvoid Timer(int value) {
 	// AABB 업데이트
 	P1->CAABB.update(P1->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 
+	// 캐릭터 업데이트를 계속 해줌
+	UpdatePlayer();
 	// 팔 흔들림 업데이트
 	if (P1->IsSwing) {
 		P1->ArmLegSwingAngle += P1->SwingDirection * 2.0f;
@@ -1634,16 +1647,6 @@ GLvoid Timer(int value) {
 	P1->Position += P1->Direction;
 	//character2Position += character2Direction;
 
-
-	// 서버로부터 정보를 받는 로직인데 아직 구현을 덜했음
-	//int recv_count = 0;
-	//while (recv_character()) {
-	//	recv_count++;
-	//	if (recv_count > 10) break;  // 무한 루프 방지
-	//}
-
-
-
 	//전송 로직
 	if (Socket != INVALID_SOCKET && P1 != nullptr) {
 		character myCharacter;
@@ -1654,6 +1657,13 @@ GLvoid Timer(int value) {
 
 		C2S_Character(Socket, myCharacter);
 	}
+
+	if (!recv_character()) {
+		std::cout << "recive failed" << std::endl;
+	}
+
+
+	
 
 	// 화면 갱신
 	glutPostRedisplay();
