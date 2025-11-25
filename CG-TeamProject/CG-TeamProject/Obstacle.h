@@ -70,3 +70,23 @@ public:
 
 	void Draw(GLuint shaderProgramID, GLint modelMatrixLocation);
 };
+
+class Door :public Obstacle
+{
+public:
+	Door(glm::vec3 setBp, glm::vec3 setCp, glm::vec3 setFp);
+	Door(glm::vec3 setp);
+	~Door() {};
+
+	Obstacle* LeftD = nullptr;
+	Obstacle* Center = nullptr;
+	Obstacle* RightD = nullptr;
+
+	glm::mat4 LeftdoorModelMatrix = glm::mat4(1.0f);
+	glm::mat4 RightdoorModelMatrix = glm::mat4(1.0f);
+
+	glm::vec3 Position = glm::vec3(0.0f, 0.0f, 0.0f); // 초기 위치
+	AABB CAABB{};
+
+	void Draw(GLuint shaderProgramID, GLint modelMatrixLocation);
+};

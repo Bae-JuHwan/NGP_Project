@@ -58,12 +58,6 @@ GLfloat MaxDoorMove = 1.7f; \
 //glm::vec3 BongGroup2Position = glm::vec3(0.0f, 0.0f, 0.0f);
 //glm::vec3 BongGroup2Direction = glm::vec3(-1.0f, 0.0f, 0.0f);
 
-glm::mat4 LeftdoorModelMatrix = glm::mat4(1.0f);
-glm::mat4 RightdoorModelMatrix = glm::mat4(1.0f);
-glm::vec3 LeftdoorGroupPosition = glm::vec3(0.0f, 0.0f, 0.0f); // 초기 위치
-glm::vec3 LeftdoorGroupDirection = glm::vec3(-1.0f, 0.0f, 0.0f); // 초기 이동 방향 (왼쪽)
-glm::vec3 RightdoorGroupPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::vec3 RightdoorGroupDirection = glm::vec3(1.0f, 0.0f, 0.0f);
 
 
 bool moveKeyStates[256] = { false }; // 이동 키 상태
@@ -210,17 +204,6 @@ AABB map5 = {
 //	InitPart("horizontalFan/purple.obj", modelHorizontalFanPurple, vaoHorizontalFanPurple, vboHorizontalFanPurple, glm::vec3(0.5f, 0.0f, 0.5f));
 //}
 
-//// 개구리문
-//void InitDoorOut() {
-//	InitPart("frogDoor/outsidegroup.obj", modelDoorOut, vaoDoorOut, vboDoorOut, glm::vec3(0.576f, 0.078f, 1.0f));
-//}
-//void InitDoorLeft() {
-//	InitPart("frogDoor/leftdoorgroup.obj", modelLeftdoor, vaoLeftdoor, vboLeftdoor, glm::vec3(1.0f, 0.078f, 0.576f));
-//}
-//void InitDoorRight() {
-//	InitPart("frogDoor/rightdoorgroup.obj", modelRightdoor, vaoRightdoor, vboRightdoor, glm::vec3(1.0f, 0.078f, 0.576f));
-//}
-
 // 봉
 //AABB bong1 = {
 //	glm::vec3(-15.74f , 0.0f, -33.25f), // min
@@ -248,46 +231,7 @@ AABB map5 = {
 //};
 
 // 문
-AABB leftdoor1 = {
-	glm::vec3(-8.475f, -0.76f, -159.129f), // min
-	glm::vec3(-6.4f,  2.4f,  -158.53f)   // max
-};
-AABB leftdoor2 = {
-	glm::vec3(-2.168f, -0.76f, -159.129f), // min
-	glm::vec3(-0.09f,  2.4f,  -158.53f)   // max
-};
-AABB leftdoor3 = {
-	glm::vec3(4.227f, -0.76f, -159.129f), // min
-	glm::vec3(6.297f,  2.4f,  -158.53f)   // max
-};
-AABB rightdoor1 = {
-	glm::vec3(6.408f, -0.76f, -159.129f), // min
-	glm::vec3(4.38f,  2.4f,  -158.53f)   // max
-};
-AABB rightdoor2 = {
-	glm::vec3(-0.1f, -0.76f, -159.129f), // min
-	glm::vec3(1.926f,  2.4f,  -158.53f)   // max
-};
-AABB rightdoor3 = {
-	glm::vec3(6.294f, -0.76f, -159.129f), // min
-	glm::vec3(8.322f,  2.4f,  -158.53f)   // max
-};
-AABB outdoor1 = {
-	glm::vec3(-9.546f, -0.6f,-160.437f), // min
-	glm::vec3(-8.346f,  2.6, -158.4f)   // max
-};
-AABB outdoor2 = {
-	glm::vec3(-4.344f, -0.6f,-160.437f), // min
-	glm::vec3(-2.144f,  2.6, -158.4f)   // max
-};
-AABB outdoor3 = {
-	glm::vec3(2.004f, -0.6f,-160.437f), // min
-	glm::vec3(4.304f,  2.6, -158.4f)   // max
-};
-AABB outdoor4 = {
-	glm::vec3(8.295f, -0.6f,-160.437f), // min
-	glm::vec3(9.495f,  2.6, -158.4f)   // max
-};
+
 
 //// 가로팬
 //AABB horizontalFan1 = {
@@ -391,87 +335,7 @@ AABB outdoor4 = {
 //	character2Position + glm::vec3(-0.70f, 0.0f, -0.72f),
 //	character2Position + glm::vec3(0.70f, 1.84f, 0.63f)
 //};
-//
-//// 캐릭터3
-//void InitCharacter3Body() {
-//	InitPart("Character3/body.obj", modelCharacter3Body, vaoCharacter3Body, vboCharacter3Body, glm::vec3(1.0f, 0.0f, 0.0f));
-//}
-//void InitCharacter3Face() {
-//	InitPart("Character3/face.obj", modelCharacter3Face, vaoCharacter3Face, vboCharacter3Face, glm::vec3(1.0f, 1.0f, 1.0f));
-//}
-//void InitCharacter3Eyes() {
-//	InitPart("Character3/eyes.obj", modelCharacter3Eyes, vaoCharacter3Eyes, vboCharacter3Eyes, glm::vec3(0.0f, 0.0f, 0.0f));
-//}
-//void InitCharacter3LeftArm() {
-//	InitPart("Character3/leftArm.obj", modelCharacter3LeftArm, vaoCharacter3LeftArm, vboCharacter3LeftArm, glm::vec3(1.0f, 0.0f, 0.0f));
-//}
-//void InitCharacter3RightArm() {
-//	InitPart("Character3/rightArm.obj", modelCharacter3RightArm, vaoCharacter3RightArm, vboCharacter3RightArm, glm::vec3(1.0f, 0.0f, 0.0f));
-//}
-//void InitCharacter3LeftFoot() {
-//	InitPart("Character3/leftFoot.obj", modelCharacter3LeftFoot, vaoCharacter3LeftFoot, vboCharacter3LeftFoot, glm::vec3(1.0f, 0.0f, 0.0f));
-//}
-//void InitCharacter3RightFoot() {
-//	InitPart("Character3/rightFoot.obj", modelCharacter3RightFoot, vaoCharacter3RightFoot, vboCharacter3RightFoot, glm::vec3(1.0f, 0.0f, 0.0f));
-//}
 
-//체크박스
-//std::vector<float> Character3CheckBox = {
-//	// Bottom
-//-0.47f, 0.f, 0.42f,
-//-0.47f, 0.f, -0.48f,
-//0.47f, 0.f, -0.48f,
-//0.47f, 0.f, 0.42f,
-//
-//// Top
-//-0.47f, 1.84f, 0.42f,
-//-0.47f, 1.84f, -0.48f,
-//0.47f, 1.84f, -0.48f,
-//0.47f, 1.84f, 0.42f,
-//
-//// Front
-//-0.47f, 0.f, -0.48f,
-//-0.47f, 1.84f, -0.48f,
-//0.47f, 1.84f, -0.48f,
-//0.47f, 0.f, -0.48f,
-//
-//// Back face
-//-0.47f, 0.f, 0.42f,
-//-0.47f, 1.84f, 0.42f,
-//0.47f, 1.84f, 0.42f,
-//0.47f, 0.f, 0.42f,
-//
-//// Left face
-//-0.47f, 0.f, 0.42f,
-//-0.47f, 0.f, -0.48f,
-//-0.47f, 1.84f, -0.48f,
-//-0.47f, 1.84f, 0.42f,
-//
-//// Right face
-//0.47f, 0.f, 0.42f,
-//0.47f, 0.f, -0.48f,
-//0.47f, 1.84f, -0.48f,
-//0.47f, 1.84f, 0.42f,
-//};
-
-//void InitCharacter3CheckBox() {
-//	glGenVertexArrays(1, &vaoCharacter3CheckBox);
-//	glBindVertexArray(vaoCharacter3CheckBox);
-//
-//	glGenBuffers(1, vboCharacter3CheckBox);
-//
-//	glBindBuffer(GL_ARRAY_BUFFER, vboCharacter3CheckBox[0]);
-//	glBufferData(GL_ARRAY_BUFFER, Character3CheckBox.size() * sizeof(float), Character3CheckBox.data(), GL_STATIC_DRAW);
-//
-//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-//	glEnableVertexAttribArray(0);
-//
-//	glBindVertexArray(0);
-//}
-//AABB character3 = {
-//	character3Position + glm::vec3(-0.70f, 0.0f, -0.72f),
-//	character3Position + glm::vec3(0.70f, 1.84f, 0.63f)
-//};
 
 // 맵 충돌박스
 std::vector<float> CheckBoxVerticesMap1 = {
@@ -917,30 +781,30 @@ void DrawObstacleHorizontalFan(GLuint shaderPRogramID, GLint modelMatrixLocation
 
 	horizontalFan3.update(horizontalFan3Position, glm::vec3(-6.1f, -0.3f, -0.49f), glm::vec3(6.1f, 4.4f, 0.49f));*/
 }
-void DrawObstacleDoor(GLuint shaderPRogramID, GLint modelMatrixLocation) {
-	glm::mat4 DooroutModelMatrix = glm::mat4(1.0f);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(DooroutModelMatrix));
-
-	glBindVertexArray(vaoDoorOut);
-	glDrawElements(GL_TRIANGLES, modelDoorOut.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 finalLeftdoorModelMatrix = LeftdoorModelMatrix;
-	LeftdoorModelMatrix = glm::translate(glm::mat4(1.0f), LeftdoorGroupPosition);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalLeftdoorModelMatrix));
-
-	glBindVertexArray(vaoLeftdoor);
-	glDrawElements(GL_TRIANGLES, modelLeftdoor.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 finalRightdoorModelMatrix = RightdoorModelMatrix;
-	RightdoorModelMatrix = glm::translate(glm::mat4(1.0f), RightdoorGroupPosition);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalRightdoorModelMatrix));
-
-	glBindVertexArray(vaoRightdoor);
-	glDrawElements(GL_TRIANGLES, modelRightdoor.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-}
+//void DrawObstacleDoor(GLuint shaderPRogramID, GLint modelMatrixLocation) {
+//	glm::mat4 DooroutModelMatrix = glm::mat4(1.0f);
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(DooroutModelMatrix));
+//
+//	glBindVertexArray(vaoDoorOut);
+//	glDrawElements(GL_TRIANGLES, modelDoorOut.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	glm::mat4 finalLeftdoorModelMatrix = LeftdoorModelMatrix;
+//	LeftdoorModelMatrix = glm::translate(glm::mat4(1.0f), LeftdoorGroupPosition);
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalLeftdoorModelMatrix));
+//
+//	glBindVertexArray(vaoLeftdoor);
+//	glDrawElements(GL_TRIANGLES, modelLeftdoor.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//
+//	glm::mat4 finalRightdoorModelMatrix = RightdoorModelMatrix;
+//	RightdoorModelMatrix = glm::translate(glm::mat4(1.0f), RightdoorGroupPosition);
+//	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalRightdoorModelMatrix));
+//
+//	glBindVertexArray(vaoRightdoor);
+//	glDrawElements(GL_TRIANGLES, modelRightdoor.faces.size() * 3, GL_UNSIGNED_INT, 0);
+//	glBindVertexArray(0);
+//}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 AABB bong1 = {
@@ -1074,6 +938,47 @@ AABB horizontalFan3 = {
 	glm::vec3(-0.9f, 4.1f, -114.51f)    // max
 };
 
+AABB leftdoor1 = {
+	glm::vec3(-8.475f, -0.76f, -159.129f), // min
+	glm::vec3(-6.4f,  2.4f,  -158.53f)   // max
+};
+AABB leftdoor2 = {
+	glm::vec3(-2.168f, -0.76f, -159.129f), // min
+	glm::vec3(-0.09f,  2.4f,  -158.53f)   // max
+};
+AABB leftdoor3 = {
+	glm::vec3(4.227f, -0.76f, -159.129f), // min
+	glm::vec3(6.297f,  2.4f,  -158.53f)   // max
+};
+AABB rightdoor1 = {
+	glm::vec3(6.408f, -0.76f, -159.129f), // min
+	glm::vec3(4.38f,  2.4f,  -158.53f)   // max
+};
+AABB rightdoor2 = {
+	glm::vec3(-0.1f, -0.76f, -159.129f), // min
+	glm::vec3(1.926f,  2.4f,  -158.53f)   // max
+};
+AABB rightdoor3 = {
+	glm::vec3(6.294f, -0.76f, -159.129f), // min
+	glm::vec3(8.322f,  2.4f,  -158.53f)   // max
+};
+AABB outdoor1 = {
+	glm::vec3(-9.546f, -0.6f,-160.437f), // min
+	glm::vec3(-8.346f,  2.6, -158.4f)   // max
+};
+AABB outdoor2 = {
+	glm::vec3(-4.344f, -0.6f,-160.437f), // min
+	glm::vec3(-2.144f,  2.6, -158.4f)   // max
+};
+AABB outdoor3 = {
+	glm::vec3(2.004f, -0.6f,-160.437f), // min
+	glm::vec3(4.304f,  2.6, -158.4f)   // max
+};
+AABB outdoor4 = {
+	glm::vec3(8.295f, -0.6f,-160.437f), // min
+	glm::vec3(9.495f,  2.6, -158.4f)   // max
+};
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 Player1* P1 = nullptr;
@@ -1091,7 +996,7 @@ VerticalFan* VerFan2 = nullptr;
 VerticalFan* VerFan3 = nullptr;
 VerticalFan* VerFan4 = nullptr;
 VerticalFan* VerFan5 = nullptr;
-
+Door* flogDoor = nullptr;
 void main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -1110,7 +1015,6 @@ void main(int argc, char** argv) {
 	InitEndPoint();
 	InitPoint();
 
-	//mapcheckbox
 	//mapcheckbox
 	InitCheckBoxMap1();
 	InitCheckBoxMap2();
@@ -1144,8 +1048,6 @@ void main(int argc, char** argv) {
 	HorFan1->CAABB = horizontalFan1;
 	HorFan2->CAABB = horizontalFan2;
 	HorFan3->CAABB = horizontalFan3;
-
-	//PinkFan1->SetAABB(horizontalFan1);
 
 
 	JumpbarCenter = new BongGroup(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
@@ -1191,6 +1093,18 @@ void main(int argc, char** argv) {
 	VerFan5->SetAABB(verticalFan5);
 
 
+	glm::mat4 LeftdoorModelMatrix = glm::mat4(1.0f);
+	glm::mat4 RightdoorModelMatrix = glm::mat4(1.0f);
+	glm::vec3 LeftdoorGroupPosition = glm::vec3(0.0f, 0.0f, 0.0f); // 초기 위치
+	glm::vec3 LeftdoorGroupDirection = glm::vec3(-1.0f, 0.0f, 0.0f); // 초기 이동 방향 (왼쪽)
+	glm::vec3 RightdoorGroupPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 RightdoorGroupDirection = glm::vec3(1.0f, 0.0f, 0.0f);
+	// 개구리문
+
+	flogDoor=new Door(glm::vec3(0.0f, 0.0f, 0.0f));
+	InitPart("frogDoor/outsidegroup.obj", flogDoor->Center->model, flogDoor->Center->vao, flogDoor->Center->vbo, glm::vec3(0.576f, 0.078f, 1.0f));
+	InitPart("frogDoor/leftdoorgroup.obj", flogDoor->LeftD->model, flogDoor->LeftD->vao, flogDoor->LeftD->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
+	InitPart("frogDoor/rightdoorgroup.obj", flogDoor->RightD->model, flogDoor->RightD->vao, flogDoor->RightD->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
 
 
 	//InitAllBongCheckBoxes();
@@ -1325,10 +1239,8 @@ GLvoid drawScene() {
 	VerFan3->Draw(shaderProgramID, modelMatrixLocation);
 	VerFan4->Draw(shaderProgramID, modelMatrixLocation);
 	VerFan5->Draw(shaderProgramID, modelMatrixLocation);
-	//DrawObstacleHorizontalFan(shaderProgramID, modelMatrixLocation);
-	//DrawObstacleVerticalFan(shaderProgramID, modelMatrixLocation);
+	flogDoor->Draw(shaderProgramID, modelMatrixLocation);
 	//DrawObstacleDoor(shaderProgramID, modelMatrixLocation);
-	//DrawObstacleJumpbar(shaderProgramID, modelMatrixLocation);
 	glutSwapBuffers();
 }
 
@@ -1547,77 +1459,77 @@ GLvoid Timer(int value) {
 	//bong5.update(BongGroup1Position, glm::vec3(9.27f, 0.0f, -33.25f), glm::vec3(11.27f, 3.6f, -31.25f));
 	//bong6.update(BongGroup2Position, glm::vec3(14.945f, 0.0f, -33.25f), glm::vec3(16.945f, 3.6f, -31.25f));
 
-	// 문짝 움직이기
-	LeftdoorGroupPosition.x += LeftdoorGroupDirection.x * DoorMove;
-	if (LeftdoorGroupPosition.x >= 0.0) {
-		LeftdoorGroupDirection.x = -1; // 왼쪽으로 이동
-	}
-	else if (LeftdoorGroupPosition.x <= -MaxDoorMove) {
-		LeftdoorGroupDirection.x = 1;  // 오른쪽으로 이동
-	}
-	RightdoorGroupPosition.x += RightdoorGroupDirection.x * DoorMove;
-	if (RightdoorGroupPosition.x >= MaxDoorMove) {
-		RightdoorGroupDirection.x = -1;
-	}
-	else if (RightdoorGroupPosition.x <= -0.0) {
-		RightdoorGroupDirection.x = 1;
-	}
-	leftdoor1.update(LeftdoorGroupPosition, glm::vec3(-8.475f, -0.76f, -159.129f), glm::vec3(-6.4f, 2.4f, -158.53f));
-	leftdoor2.update(LeftdoorGroupPosition, glm::vec3(-2.168f, -0.76f, -159.129f), glm::vec3(-0.09f, 2.4f, -158.53f));
-	leftdoor3.update(LeftdoorGroupPosition, glm::vec3(4.227f, -0.76f, -159.129f), glm::vec3(6.297f, 2.4f, -158.53f));
-	rightdoor1.update(RightdoorGroupPosition, glm::vec3(6.408f, -0.76f, -159.129f), glm::vec3(4.38f, 2.4f, -158.53f));
-	rightdoor2.update(RightdoorGroupPosition, glm::vec3(-0.1f, -0.76f, -159.129f), glm::vec3(1.926f, 2.4f, -158.53f));
-	rightdoor3.update(RightdoorGroupPosition, glm::vec3(6.294f, -0.76f, -159.129f), glm::vec3(8.322f, 2.4f, -158.53f));
-	AABB leftDoors[] = { leftdoor1, leftdoor2, leftdoor3 };
-	AABB rightDoors[] = { rightdoor1, rightdoor2, rightdoor3 };
+	//// 문짝 움직이기
+	//LeftdoorGroupPosition.x += LeftdoorGroupDirection.x * DoorMove;
+	//if (LeftdoorGroupPosition.x >= 0.0) {
+	//	LeftdoorGroupDirection.x = -1; // 왼쪽으로 이동
+	//}
+	//else if (LeftdoorGroupPosition.x <= -MaxDoorMove) {
+	//	LeftdoorGroupDirection.x = 1;  // 오른쪽으로 이동
+	//}
+	//RightdoorGroupPosition.x += RightdoorGroupDirection.x * DoorMove;
+	//if (RightdoorGroupPosition.x >= MaxDoorMove) {
+	//	RightdoorGroupDirection.x = -1;
+	//}
+	//else if (RightdoorGroupPosition.x <= -0.0) {
+	//	RightdoorGroupDirection.x = 1;
+	//}
+	//leftdoor1.update(LeftdoorGroupPosition, glm::vec3(-8.475f, -0.76f, -159.129f), glm::vec3(-6.4f, 2.4f, -158.53f));
+	//leftdoor2.update(LeftdoorGroupPosition, glm::vec3(-2.168f, -0.76f, -159.129f), glm::vec3(-0.09f, 2.4f, -158.53f));
+	//leftdoor3.update(LeftdoorGroupPosition, glm::vec3(4.227f, -0.76f, -159.129f), glm::vec3(6.297f, 2.4f, -158.53f));
+	//rightdoor1.update(RightdoorGroupPosition, glm::vec3(6.408f, -0.76f, -159.129f), glm::vec3(4.38f, 2.4f, -158.53f));
+	//rightdoor2.update(RightdoorGroupPosition, glm::vec3(-0.1f, -0.76f, -159.129f), glm::vec3(1.926f, 2.4f, -158.53f));
+	//rightdoor3.update(RightdoorGroupPosition, glm::vec3(6.294f, -0.76f, -159.129f), glm::vec3(8.322f, 2.4f, -158.53f));
+	//AABB leftDoors[] = { leftdoor1, leftdoor2, leftdoor3 };
+	//AABB rightDoors[] = { rightdoor1, rightdoor2, rightdoor3 };
 
-	// 캐릭터1과 문짝 충돌 처리
-	for (const auto& door : leftDoors) {
-		if (checkCollision(P1->CAABB, door)) {
-			float overlapX = std::min(P1->CAABB.max.x, door.max.x) - std::max(P1->CAABB.min.x, door.min.x);
-			float overlapZ = std::min(P1->CAABB.max.z, door.max.z) - std::max(P1->CAABB.min.z, door.min.z);
+	//// 캐릭터1과 문짝 충돌 처리
+	//for (const auto& door : leftDoors) {
+	//	if (checkCollision(P1->CAABB, door)) {
+	//		float overlapX = std::min(P1->CAABB.max.x, door.max.x) - std::max(P1->CAABB.min.x, door.min.x);
+	//		float overlapZ = std::min(P1->CAABB.max.z, door.max.z) - std::max(P1->CAABB.min.z, door.min.z);
 
-			if (overlapX < overlapZ) {
-				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > door.min.x) {
-					P1->Direction.x = 0.0f;
-				}
-				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < door.max.x) {
-					P1->Direction.x = 0.0f;
-				}
-			}
-			else {
-				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > door.min.z) {
-					P1->Direction.z = 0.0f;
-				}
-				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < door.max.z) {
-					P1->Direction.z = 0.0f;
-				}
-			}
-		}
-	}
-	for (const auto& door : rightDoors) {
-		if (checkCollision(P1->CAABB, door)) {
-			float overlapX = std::min(P1->CAABB.max.x, door.max.x) - std::max(P1->CAABB.min.x, door.min.x);
-			float overlapZ = std::min(P1->CAABB.max.z, door.max.z) - std::max(P1->CAABB.min.z, door.min.z);
+	//		if (overlapX < overlapZ) {
+	//			if (P1->Direction.x > 0.0f && P1->CAABB.max.x > door.min.x) {
+	//				P1->Direction.x = 0.0f;
+	//			}
+	//			else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < door.max.x) {
+	//				P1->Direction.x = 0.0f;
+	//			}
+	//		}
+	//		else {
+	//			if (P1->Direction.z > 0.0f && P1->CAABB.max.z > door.min.z) {
+	//				P1->Direction.z = 0.0f;
+	//			}
+	//			else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < door.max.z) {
+	//				P1->Direction.z = 0.0f;
+	//			}
+	//		}
+	//	}
+	//}
+	//for (const auto& door : rightDoors) {
+	//	if (checkCollision(P1->CAABB, door)) {
+	//		float overlapX = std::min(P1->CAABB.max.x, door.max.x) - std::max(P1->CAABB.min.x, door.min.x);
+	//		float overlapZ = std::min(P1->CAABB.max.z, door.max.z) - std::max(P1->CAABB.min.z, door.min.z);
 
-			if (overlapX < overlapZ) {
-				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > door.min.x) {
-					P1->Direction.x = 0.0f;
-				}
-				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < door.max.x) {
-					P1->Direction.x = 0.0f;
-				}
-			}
-			else {
-				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > door.min.z) {
-					P1->Direction.z = 0.0f;
-				}
-				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < door.max.z) {
-					P1->Direction.z = 0.0f;
-				}
-			}
-		}
-	}
+	//		if (overlapX < overlapZ) {
+	//			if (P1->Direction.x > 0.0f && P1->CAABB.max.x > door.min.x) {
+	//				P1->Direction.x = 0.0f;
+	//			}
+	//			else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < door.max.x) {
+	//				P1->Direction.x = 0.0f;
+	//			}
+	//		}
+	//		else {
+	//			if (P1->Direction.z > 0.0f && P1->CAABB.max.z > door.min.z) {
+	//				P1->Direction.z = 0.0f;
+	//			}
+	//			else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < door.max.z) {
+	//				P1->Direction.z = 0.0f;
+	//			}
+	//		}
+	//	}
+	//}
 
 	AABB outdoors[] = { outdoor1, outdoor2, outdoor3, outdoor4 };
 	for (const auto& outdoor : outdoors) {
@@ -1672,7 +1584,7 @@ GLvoid Timer(int value) {
 	HorizontalFan* horizontalFans[] = { HorFan1, HorFan2, HorFan3 };
 
 	for (int i = 0; i < 3; i++) {
-		if (i !=1) {
+		if (i != 1) {
 			horizontalFans[i]->Pink->RotationAngle = obstacleRotation;
 			horizontalFans[i]->Purple->RotationAngle = obstacleRotation;
 		}

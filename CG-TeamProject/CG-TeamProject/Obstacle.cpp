@@ -143,3 +143,45 @@ void VerticalFan::Draw(GLuint shaderPRogramID, GLint modelMatrixLocation)
 	VFan->CAABB.update(Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
 
 }
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+Door::Door(glm::vec3 setp)
+{
+	Position = setp;
+	RightD = new Obstacle;
+	LeftD = new Obstacle;
+	Center = new Obstacle;
+}
+Door::Door(glm::vec3 setBp, glm::vec3 setCp, glm::vec3 setFp)
+{
+	LeftD = new Obstacle(setBp);
+	Center = new Obstacle(setCp);
+	RightD = new Obstacle(setFp);
+}
+
+void Door::Draw(GLuint shaderProgramID, GLint modelMatrixLocation)
+{
+	//FanBar < ¿ÞÂÊ¹®
+	glm::mat4 DooroutModelMatrix = glm::mat4(1.0f);
+	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(DooroutModelMatrix));
+
+	glBindVertexArray(Center->vao);
+	glDrawElements(GL_TRIANGLES, Center->model.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+
+	glm::mat4 finalLeftdoorModelMatrix = LeftdoorModelMatrix;
+	LeftdoorModelMatrix = glm::translate(glm::mat4(1.0f), LeftD->Position);
+	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalLeftdoorModelMatrix));
+
+	glBindVertexArray(LeftD->vao);
+	glDrawElements(GL_TRIANGLES, LeftD->model.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+
+	glm::mat4 finalRightdoorModelMatrix = RightdoorModelMatrix;
+	RightdoorModelMatrix = glm::translate(glm::mat4(1.0f), RightD->Position);
+	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalRightdoorModelMatrix));
+
+	glBindVertexArray(RightD->vao);
+	glDrawElements(GL_TRIANGLES, RightD->model.faces.size() * 3, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
