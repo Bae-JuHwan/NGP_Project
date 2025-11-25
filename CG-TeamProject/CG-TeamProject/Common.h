@@ -1,0 +1,22 @@
+#pragma once
+#define _CRT_SECURE_NO_WARNINGS // 구형 C 함수 사용 시 경고 끄기
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // 구형 소켓 API 사용 시 경고 끄기
+#define MAX_CLIENTS 3
+
+#include <winsock2.h> // 윈속2 메인 헤더
+#include <ws2tcpip.h> // 윈속2 확장 헤더
+
+#include <tchar.h> // _T(), ...
+#include <stdio.h> // printf(), ...
+#include <stdlib.h> // exit(), ...
+#include <string.h> // strncpy(), ...
+#include<iostream>
+#pragma comment(lib, "ws2_32") // ws2_32.lib 링크
+
+extern SOCKET g_client_list[MAX_CLIENTS];
+
+void err_quit(const char* msg);
+
+void err_display(const char* msg);
+
+void err_display(int errcode);

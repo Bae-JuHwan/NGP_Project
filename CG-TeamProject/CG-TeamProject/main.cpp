@@ -6,7 +6,7 @@
 #include <iostream>
 #include <set>
 #include "Obstacle.h"
-
+#include "Common.h"
 
 // 맵
 GLuint vaoBottom, vaoArrowAndPillar, vaoEndPoint, vaoPoint;
