@@ -1,9 +1,10 @@
 #pragma once
 
 #include <WinSock2.h>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <gl/glew.h>
-
+#include "Common.h"
+#include"stdafx.h"
 // 장애물 구조체
 #pragma pack(1)
 
@@ -20,4 +21,4 @@ extern obstacle_Bong g_bongObstacle;
 
 bool S2C_BongObstacle(SOCKET sock, const obstacle_Bong& obs_info);
 void UpdateBongObstacle();
-bool Broadcast_BongObstacle(const obstacle_Bong& obs_info);
+bool Broadcast_BongObstacle(const obstacle_Bong& obs_info , ClientInfo g_client_list[MAX_CLIENTS]);

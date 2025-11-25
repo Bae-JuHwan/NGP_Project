@@ -1,7 +1,8 @@
 #include "Common.h"
-#include <gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <gl/glew.h>
 #include "obstacle.h"
+#include"stdafx.h"
 #pragma comment(lib, "ws2_32.lib")
 
 #define SERVERPORT 9000
@@ -19,22 +20,7 @@ g_clientCount 이걸로만 판단하면 안될 것 같음. 들어왔다가 나갔을때 저 수가 줄어들
 CRITICAL_SECTION g_cs;  // 임계영역
 int g_clientCount = 0;
 
-// 캐릭터 구조체
-#pragma pack(1)
-struct character {
-    glm::vec3 position;
-    glm::vec3 direction;
-    GLfloat ArmLegSwingAngle;
-    bool isCollision;
-};
-#pragma pack()
-// 클라이언트 정보 구조체 추가
-struct ClientInfo {
-    SOCKET sock;
-    int id;
-    character charInfo;
-    bool isActive;
-};
+
 // 캐릭터 정보 저장하기 위해서 클라이언트 정보 구조체 배열
 ClientInfo g_clients[MAX_CLIENTS];
 // 충돌 처리 함수 (아직 미구현)
@@ -45,6 +31,7 @@ bool CheckCollision(const character& ch) {
 // 클라이언트로부터 캐릭터 정보 받기
 bool recv_character(SOCKET sock, character& ch) {
     int retval = recv(sock, (char*)&ch, sizeof(character), 0);
+    printf("전송받은  데이터 크기 %d)\n", retval);
     if (retval == SOCKET_ERROR) {
         err_display("recv() - recv_character");
         return false;
@@ -85,6 +72,7 @@ int S2C_ClientOrder(SOCKET sock, int order) {   //클라에게 몇번째 클라인지 보내�
     int data = htonl(order); // 엔디안 변환(필수)
 
     retval = send(sock, (char*)&data, sizeof(data), 0);
+    printf("전송된 데이터 크기 %d)\n", retval);
     if (retval == SOCKET_ERROR)
     {
         err_display("send()");
@@ -137,19 +125,37 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     LeaveCriticalSection(&g_cs);
 
     printf("클라이언트 %d번 접속 완료\n", client_id);
-	S2C_ClientOrder(client_sock, client_id);   //몇번째 클라인지 보내주기
+
+
+	//S2C_ClientOrder(client_sock, client_id);   //몇번째 클라인지 보내주기
     //이 부분 수정 필요할 것 같음------ while 돌릴예정.
-    S2C_isPlayerReady(client_sock);//3명 접속했는지 확인하고 맞으면 클라에게 보내기
+
+    //S2C_isPlayerReady(client_sock);//3명 접속했는지 확인하고 맞으면 클라에게 보내기
     //----------
 
     // TODO
     int receive_count = 0;
     int send_count[MAX_CLIENTS];
     while (true) {
+        
+        printf("장애물 전송 로직 \n");
+
+        EnterCriticalSection(&g_cs);
+        UpdateBongObstacle();
+        LeaveCriticalSection(&g_cs);
+
+        Broadcast_BongObstacle(g_bongObstacle , g_clients);
+        printf("장애물 전송 로직 끝 \n");
+       
+
+        //Sleep(16); // 60 FPS 주기로 실행
         character received_char;
 
+
+        
         // 클라이언트로부터 캐릭터 정보 수신
         if (!recv_character(client_sock, received_char)) {
+            std::cout << "캐릭터 정보 수신 실패" << '\n';
             break;  // 수신 실패 시 루프 종료
         }
 
@@ -166,10 +172,8 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             printf("  isCollision: %s\n", received_char.isCollision ? "true" : "false");
             printf("\n");
         }
-        
-
+ 
         EnterCriticalSection(&g_cs);
-
         g_clients[client_id - 1].charInfo = received_char; //캐릭터 정보 저장
         // 다른 클라이언트들에게 캐릭터 정보 전송
         for (int i = 0; i < MAX_CLIENTS; i++) {
@@ -198,7 +202,7 @@ DWORD WINAPI GameLogicThread(LPVOID arg) {
         EnterCriticalSection(&g_cs);
 
         UpdateBongObstacle();
-        Broadcast_BongObstacle(g_bongObstacle);
+        /*Broadcast_BongObstacle(g_bongObstacle);*/
 
         LeaveCriticalSection(&g_cs);
 
@@ -249,12 +253,12 @@ int main() {
         g_client_list[i] = INVALID_SOCKET;
     }
 
-    HANDLE hGameThread = CreateThread(NULL, 0, GameLogicThread, NULL, 0, NULL);
+   /* HANDLE hGameThread = CreateThread(NULL, 0, GameLogicThread, NULL, 0, NULL);
     if (hGameThread == NULL) {
         printf("게임 로직 스레드 생성 실패\n");
         return 1;
     }
-    CloseHandle(hGameThread);
+    CloseHandle(hGameThread);*/
 
     while (1) {
         client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);

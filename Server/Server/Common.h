@@ -11,8 +11,24 @@
 #include <stdlib.h> // exit(), ...
 #include <string.h> // strncpy(), ...
 #include<iostream>
+#include"stdafx.h"
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
-
+// 캐릭터 구조체
+#pragma pack(1)
+struct character {
+    glm::vec3 position;
+    glm::vec3 direction;
+    GLfloat ArmLegSwingAngle;
+    bool isCollision;
+};
+#pragma pack()
+// 클라이언트 정보 구조체 추가
+struct ClientInfo {
+    SOCKET sock;
+    int id;
+    character charInfo;
+    bool isActive;
+};
 extern SOCKET g_client_list[MAX_CLIENTS];
 
 void err_quit(const char* msg);

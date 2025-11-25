@@ -23,6 +23,7 @@ bool recv_BongObstacle(SOCKET sock) {
 
         total_received += retval;
         remaining -= retval;
+        printf("\n[수신] 장애물 정보 수신 완료 (%d 바이트)\n", retval);
     }
 
     EnterCriticalSection(&g_cs_client);

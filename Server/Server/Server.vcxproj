@@ -130,6 +130,7 @@
   <ItemGroup>
     <ClInclude Include="Common.h" />
     <ClInclude Include="obstacle.h" />
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

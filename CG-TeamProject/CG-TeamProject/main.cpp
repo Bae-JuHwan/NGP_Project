@@ -1406,7 +1406,9 @@ GLvoid Timer(int value) {
 	//Bong1->CAABB.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
 	//Bong2->CAABB.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
 	if (Socket != INVALID_SOCKET) {
-		recv_BongObstacle(Socket);
+		if (!recv_BongObstacle(Socket)) {
+			std::cout << "recv_Bong Error" << '\n';
+		}
 	}
 
 	EnterCriticalSection(&g_cs_client);

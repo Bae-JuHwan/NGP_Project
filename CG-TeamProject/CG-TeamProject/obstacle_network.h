@@ -1,6 +1,6 @@
 #pragma once
 #include <WinSock2.h>
-#include <glm.hpp>
+#include"stdafx.h"
 
 #pragma pack(1)
 struct obstacle_Bong {
