@@ -18,6 +18,12 @@ void Obstacle::JumpBarDraw(GLuint shaderProgramID, GLint modelMatrixLocation)
 	glBindVertexArray(0);
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////
+
+Obstacle3::Obstacle3(glm::vec3 setp)
+{
+	Position = setp;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 BongGroup::BongGroup(glm::vec3 setp, glm::vec3 setd, GLfloat setMS, GLfloat setMMS, GLfloat setA)
@@ -148,15 +154,18 @@ void VerticalFan::Draw(GLuint shaderPRogramID, GLint modelMatrixLocation)
 Door::Door(glm::vec3 setp)
 {
 	Position = setp;
-	RightD = new Obstacle;
-	LeftD = new Obstacle;
-	Center = new Obstacle;
+	RightD = new Obstacle3;
+	LeftD = new Obstacle3;
+	Center = new Obstacle3;
+
+	LeftD->Direction = glm::vec3(-1.0f, 0.0f, 0.0f);
+	RightD->Direction = glm::vec3(1.0f, 0.0f, 0.0f);
 }
 Door::Door(glm::vec3 setBp, glm::vec3 setCp, glm::vec3 setFp)
 {
-	LeftD = new Obstacle(setBp);
-	Center = new Obstacle(setCp);
-	RightD = new Obstacle(setFp);
+	LeftD = new Obstacle3(setBp);
+	Center = new Obstacle3(setCp);
+	RightD = new Obstacle3(setFp);
 
 	LeftD->Direction= glm::vec3(-1.0f, 0.0f, 0.0f);
 	RightD->Direction = glm::vec3(1.0f, 0.0f, 0.0f);

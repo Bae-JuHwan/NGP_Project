@@ -938,6 +938,7 @@ AABB horizontalFan3 = {
 	glm::vec3(-0.9f, 4.1f, -114.51f)    // max
 };
 
+// 문
 AABB leftdoor1 = {
 	glm::vec3(-8.475f, -0.76f, -159.129f), // min
 	glm::vec3(-6.4f,  2.4f,  -158.53f)   // max
@@ -1105,7 +1106,8 @@ void main(int argc, char** argv) {
 	InitPart("frogDoor/outsidegroup.obj", flogDoor->Center->model, flogDoor->Center->vao, flogDoor->Center->vbo, glm::vec3(0.576f, 0.078f, 1.0f));
 	InitPart("frogDoor/leftdoorgroup.obj", flogDoor->LeftD->model, flogDoor->LeftD->vao, flogDoor->LeftD->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
 	InitPart("frogDoor/rightdoorgroup.obj", flogDoor->RightD->model, flogDoor->RightD->vao, flogDoor->RightD->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
-
+	flogDoor->LeftD->SetAABB(leftdoor1,leftdoor2,leftdoor3);
+	flogDoor->RightD->SetAABB(rightdoor1, rightdoor2, rightdoor3);
 
 	//InitAllBongCheckBoxes();
 
@@ -1459,27 +1461,28 @@ GLvoid Timer(int value) {
 	//bong5.update(BongGroup1Position, glm::vec3(9.27f, 0.0f, -33.25f), glm::vec3(11.27f, 3.6f, -31.25f));
 	//bong6.update(BongGroup2Position, glm::vec3(14.945f, 0.0f, -33.25f), glm::vec3(16.945f, 3.6f, -31.25f));
 
-	//// 문짝 움직이기
-	//LeftdoorGroupPosition.x += LeftdoorGroupDirection.x * DoorMove;
-	//if (LeftdoorGroupPosition.x >= 0.0) {
-	//	LeftdoorGroupDirection.x = -1; // 왼쪽으로 이동
-	//}
-	//else if (LeftdoorGroupPosition.x <= -MaxDoorMove) {
-	//	LeftdoorGroupDirection.x = 1;  // 오른쪽으로 이동
-	//}
-	//RightdoorGroupPosition.x += RightdoorGroupDirection.x * DoorMove;
-	//if (RightdoorGroupPosition.x >= MaxDoorMove) {
-	//	RightdoorGroupDirection.x = -1;
-	//}
-	//else if (RightdoorGroupPosition.x <= -0.0) {
-	//	RightdoorGroupDirection.x = 1;
-	//}
-	//leftdoor1.update(LeftdoorGroupPosition, glm::vec3(-8.475f, -0.76f, -159.129f), glm::vec3(-6.4f, 2.4f, -158.53f));
-	//leftdoor2.update(LeftdoorGroupPosition, glm::vec3(-2.168f, -0.76f, -159.129f), glm::vec3(-0.09f, 2.4f, -158.53f));
-	//leftdoor3.update(LeftdoorGroupPosition, glm::vec3(4.227f, -0.76f, -159.129f), glm::vec3(6.297f, 2.4f, -158.53f));
-	//rightdoor1.update(RightdoorGroupPosition, glm::vec3(6.408f, -0.76f, -159.129f), glm::vec3(4.38f, 2.4f, -158.53f));
-	//rightdoor2.update(RightdoorGroupPosition, glm::vec3(-0.1f, -0.76f, -159.129f), glm::vec3(1.926f, 2.4f, -158.53f));
-	//rightdoor3.update(RightdoorGroupPosition, glm::vec3(6.294f, -0.76f, -159.129f), glm::vec3(8.322f, 2.4f, -158.53f));
+	// 문짝 움직이기
+	flogDoor->LeftD->Position.x += flogDoor->LeftD->Direction.x * DoorMove;
+	if (flogDoor->LeftD->Position.x >= 0.0) {
+		flogDoor->LeftD->Direction.x = -1; // 왼쪽으로 이동
+	}
+	else if (flogDoor->LeftD->Position.x <= -MaxDoorMove) {
+		flogDoor->LeftD->Direction.x = 1;  // 오른쪽으로 이동
+	}
+	flogDoor->RightD->Position.x += flogDoor->RightD->Direction.x * DoorMove;
+	if (flogDoor->RightD->Position.x >= MaxDoorMove) {
+		flogDoor->RightD->Direction.x = -1;
+	}
+	else if (flogDoor->RightD->Position.x <= -0.0) {
+		flogDoor->RightD->Direction.x = 1;
+	}
+	// 문짝 AABB 업데이트
+	flogDoor->LeftD->CAABB1.update(flogDoor->LeftD->Position, glm::vec3(-8.475f, -0.76f, -159.129f), glm::vec3(-6.4f, 2.4f, -158.53f));
+	flogDoor->LeftD->CAABB2.update(flogDoor->LeftD->Position, glm::vec3(-2.168f, -0.76f, -159.129f), glm::vec3(-0.09f, 2.4f, -158.53f));
+	flogDoor->LeftD->CAABB3.update(flogDoor->LeftD->Position, glm::vec3(4.227f, -0.76f, -159.129f), glm::vec3(6.297f, 2.4f, -158.53f));
+	flogDoor->RightD->CAABB1.update(flogDoor->RightD->Position, glm::vec3(6.408f, -0.76f, -159.129f), glm::vec3(4.38f, 2.4f, -158.53f));
+	flogDoor->RightD->CAABB2.update(flogDoor->RightD->Position, glm::vec3(-0.1f, -0.76f, -159.129f), glm::vec3(1.926f, 2.4f, -158.53f));
+	flogDoor->RightD->CAABB3.update(flogDoor->RightD->Position, glm::vec3(6.294f, -0.76f, -159.129f), glm::vec3(8.322f, 2.4f, -158.53f));
 	//AABB leftDoors[] = { leftdoor1, leftdoor2, leftdoor3 };
 	//AABB rightDoors[] = { rightdoor1, rightdoor2, rightdoor3 };
 
@@ -1581,6 +1584,7 @@ GLvoid Timer(int value) {
 		obstacleRotation,                // 회전 각도
 		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
 	);
+
 	HorizontalFan* horizontalFans[] = { HorFan1, HorFan2, HorFan3 };
 
 	for (int i = 0; i < 3; i++) {

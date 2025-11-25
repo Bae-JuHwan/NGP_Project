@@ -30,6 +30,20 @@ public:
 	void JumpBarDraw(GLuint shaderProgramID, GLint modelMatrixLocation);
 };
 
+class Obstacle3 :public Obstacle
+{
+public:
+	Obstacle3() {};
+	Obstacle3(glm::vec3 setp);
+	~Obstacle3() {};
+
+	AABB CAABB1{};
+	AABB CAABB2{};
+	AABB CAABB3{};
+
+	void SetAABB(AABB seta, AABB setb, AABB setc) { CAABB1 = seta; CAABB2 = setb; CAABB3 = setc; }
+};
+
 class BongGroup :public Obstacle
 {
 public:
@@ -78,15 +92,12 @@ public:
 	Door(glm::vec3 setp);
 	~Door() {};
 
-	Obstacle* LeftD = nullptr;
-	Obstacle* Center = nullptr;
-	Obstacle* RightD = nullptr;
+	Obstacle3* LeftD = nullptr;
+	Obstacle3* Center = nullptr;
+	Obstacle3* RightD = nullptr;
 
 	glm::mat4 LeftdoorModelMatrix = glm::mat4(1.0f);
 	glm::mat4 RightdoorModelMatrix = glm::mat4(1.0f);
-
-	glm::vec3 Position = glm::vec3(0.0f, 0.0f, 0.0f); // 초기 위치
-	AABB CAABB{};
 
 	void Draw(GLuint shaderProgramID, GLint modelMatrixLocation);
 };
