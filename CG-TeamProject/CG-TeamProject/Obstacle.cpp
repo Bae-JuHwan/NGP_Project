@@ -157,6 +157,9 @@ Door::Door(glm::vec3 setBp, glm::vec3 setCp, glm::vec3 setFp)
 	LeftD = new Obstacle(setBp);
 	Center = new Obstacle(setCp);
 	RightD = new Obstacle(setFp);
+
+	LeftD->Direction= glm::vec3(-1.0f, 0.0f, 0.0f);
+	RightD->Direction = glm::vec3(1.0f, 0.0f, 0.0f);
 }
 
 void Door::Draw(GLuint shaderProgramID, GLint modelMatrixLocation)
