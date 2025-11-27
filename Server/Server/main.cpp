@@ -2,11 +2,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <gl/glew.h>
 #include "obstacle.h"
-#include"stdafx.h"
+#include "stdafx.h"
 #pragma comment(lib, "ws2_32.lib")
 
 #define SERVERPORT 9000
-
 
 /*  전달사항아닌 전달사항
 
@@ -142,9 +141,8 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 
         EnterCriticalSection(&g_cs);
         UpdateBongObstacle();
-        LeaveCriticalSection(&g_cs);
-
         Broadcast_BongObstacle(g_bongObstacle , g_clients);
+        LeaveCriticalSection(&g_cs);
         printf("장애물 전송 로직 끝 \n");
        
 
@@ -197,20 +195,6 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     return 0;
 }
 
-DWORD WINAPI GameLogicThread(LPVOID arg) {
-    while (1) {
-        EnterCriticalSection(&g_cs);
-
-        UpdateBongObstacle();
-        /*Broadcast_BongObstacle(g_bongObstacle);*/
-
-        LeaveCriticalSection(&g_cs);
-
-        Sleep(16); // 60 FPS 주기로 실행
-    }
-    return 0;
-}
-
 int main() {
     WSADATA wsa;
     SOCKET listen_sock, client_sock;
@@ -252,13 +236,6 @@ int main() {
     for (int i = 0; i < MAX_CLIENTS; i++) {
         g_client_list[i] = INVALID_SOCKET;
     }
-
-   /* HANDLE hGameThread = CreateThread(NULL, 0, GameLogicThread, NULL, 0, NULL);
-    if (hGameThread == NULL) {
-        printf("게임 로직 스레드 생성 실패\n");
-        return 1;
-    }
-    CloseHandle(hGameThread);*/
 
     while (1) {
         client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);

@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <gl/glew.h>
 #include "Common.h"
-#include"stdafx.h"
+//#include "stdafx.h"
 // 장애물 구조체
 #pragma pack(1)
 
