@@ -92,7 +92,7 @@ int S2C_ClientOrder(SOCKET sock, int order) {   //클라에게 몇번째 클라인지 보내�
         err_display("send()");
         return -1;
     }
-
+	printf("클라이언트에게 %d번쨰 클라인것을 전송\n", order);
     return retval;
 }
 
@@ -168,6 +168,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             printf("  isCollision: %s\n", received_char.isCollision ? "true" : "false");
             printf("\n");
         }
+        
         // 임계영역 진입 - 데이터 저장
         EnterCriticalSection(&g_cs);
 		g_clients[client_id - 1].charInfo = received_char;
@@ -194,7 +195,9 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 
     closesocket(client_sock);
     printf("클라이언트 %d번 연결 종료\n", client_id);
+    EnterCriticalSection(&g_cs);
     g_clientCount--;
+    LeaveCriticalSection(&g_cs);
     return 0;
 }
 

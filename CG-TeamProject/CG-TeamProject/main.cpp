@@ -65,45 +65,45 @@ void UpdatePlayer() {
 int recv_count = 0;
 // 서버로부터 다른 캐릭터 정보 수신
 bool recv_character() {
-	// 소켓이 유효한지 확인
 	if (Socket == INVALID_SOCKET) {
 		printf("[경고] 소켓이 유효하지 않습니다\n");
 		return false;
 	}
 
-	character received_char;
+	int bytesToRead = sizeof(otherPlayers);
+	char* buf = (char*)otherPlayers;
+	int totalRecv = 0;
 
-	// 서버로부터 캐릭터 정보 패킷 수신
-	int retval = recv(Socket, (char*)&received_char, sizeof(character), 0);
-	recv_count++;
-	int Id = received_char.ID -1 ;
-	otherPlayers[Id] = received_char; // 플레이어 정보 저장
-
-	if (retval == SOCKET_ERROR) {
-		int err = WSAGetLastError();
-		if (err != WSAEWOULDBLOCK) {
-			printf("[에러] recv_character() 실패 - 에러코드: %d\n", err);
+	while (totalRecv < bytesToRead) {
+		int retval = recv(Socket, buf + totalRecv, bytesToRead - totalRecv, 0);
+		if (retval == SOCKET_ERROR) {
+			int err = WSAGetLastError();
+			if (err != WSAEWOULDBLOCK) {
+				printf("[에러] recv_characters() 실패 - 에러코드: %d\n", err);
+				return false;
+			}
+			return false;  // 데이터 없음
+		}
+		if (retval == 0) {
+			printf("[경고] 서버와의 연결이 종료되었습니다\n");
 			return false;
 		}
-		return false;  // 데이터 없음
+		totalRecv += retval;
 	}
 
-	if (retval == 0) {
-		printf("[경고] 서버와의 연결이 종료되었습니다\n");
-		return false;
-	}
-
-	// 수신 출력
+	recv_count++;
+	// 출력 확인 (옵션)
 	if (recv_count % 100 == 0) {
-		printf("\n[수신] 다른 클라이언트 정보 수신 완료 (%d 바이트)\n", retval);
-		std::cout << "받은 ID: " << received_char.ID << std::endl;
-		printf("  Position: (%.2f, %.2f, %.2f)\n",
-			received_char.position.x, received_char.position.y, received_char.position.z);
-		printf("  Direction: (%.2f, %.2f, %.2f)\n",
-			received_char.direction.x, received_char.direction.y, received_char.direction.z);
-		printf("  ArmLegSwingAngle: %.2f\n", received_char.ArmLegSwingAngle);
-		printf("  isCollision: %s\n\n", received_char.isCollision ? "true" : "false");
-
+		for (int i = 0; i < MAX_OTHER_PLAYERS; ++i) {
+			printf("\n[수신] 클라이언트 정보 수신 완료 (%d 바이트)\n", (int)bytesToRead);
+			std::cout << "받은 ID: " << otherPlayers[i].ID << std::endl;
+			printf("  Position: (%.2f, %.2f, %.2f)\n",
+				otherPlayers[i].position.x, otherPlayers[i].position.y, otherPlayers[i].position.z);
+			printf("  Direction: (%.2f, %.2f, %.2f)\n",
+				otherPlayers[i].direction.x, otherPlayers[i].direction.y, otherPlayers[i].direction.z);
+			printf("  ArmLegSwingAngle: %.2f\n", otherPlayers[i].ArmLegSwingAngle);
+			printf("  isCollision: %s\n\n", otherPlayers[i].isCollision ? "true" : "false");
+		}
 	}
 	return true;
 }
@@ -1418,17 +1418,11 @@ GLvoid Timer(int value) {
 	// AABB 업데이트
 	P1->CAABB.update(P1->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 
+	// 이동 처리
+	P1->Position += P1->Direction;
+	//character2Position += character2Direction;
 
-	//다른 캐릭터들 정보를 받음
-	for (int i = 0; i < MAX_OTHER_PLAYERS; ++i) {
-		if (!recv_character()) {
-			std::cout << "recive failed" << std::endl;
-		}
-	}
 	
-	// 캐릭터 업데이트를 계속 해줌
-	UpdatePlayer();
-
 	// 팔 흔들림 업데이트
 	if (P1->IsSwing) {
 		P1->ArmLegSwingAngle += P1->SwingDirection * 2.0f;
@@ -1450,6 +1444,33 @@ GLvoid Timer(int value) {
 			if (P1->ArmLegSwingAngle > 0.0f) P1->ArmLegSwingAngle = 0.0f;
 		}
 	}
+
+
+	//전송 로직
+	if (Socket != INVALID_SOCKET && P1 != nullptr) {
+		character myCharacter;
+		myCharacter.ID = P1->ID;
+		myCharacter.position = P1->Position;
+		myCharacter.direction = P1->Direction;
+		myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
+		myCharacter.isCollision = false;  // 필요시 나중에 수정
+
+		C2S_Character(Socket, myCharacter);
+	}
+
+	//다른 캐릭터들 정보를 받음
+
+	if (!recv_character()) {
+		std::cout << "recive failed" << std::endl;
+	}
+
+
+	// 캐릭터 업데이트를 계속 해줌
+	UpdatePlayer();
+
+
+
+
 
 	//봉 움직이기
 	//Bong1->Position.x += BongGroup1Direction.x * BongMove;
@@ -1722,22 +1743,6 @@ GLvoid Timer(int value) {
 	}
 
 
-	// 이동 처리
-	//character1Position += P1.Direction;
-	P1->Position += P1->Direction;
-	//character2Position += character2Direction;
-
-	//전송 로직
-	if (Socket != INVALID_SOCKET && P1 != nullptr) {
-		character myCharacter;
-		myCharacter.ID = P1->ID;
-		myCharacter.position = P1->Position;
-		myCharacter.direction = P1->Direction;
-		myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
-		myCharacter.isCollision = false;  // 필요시 나중에 수정
-
-		C2S_Character(Socket, myCharacter);
-	}
 
 
 
