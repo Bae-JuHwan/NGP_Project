@@ -125,7 +125,7 @@ public:
 
 
 	int SwingDirection{ 1 };
-
+	int ID{ 0 };
 	//팔다리 움직임 각도
 	GLfloat RotationAngle{ 0.0f };
 	GLfloat ArmLegSwingAngle{ 0.0f };

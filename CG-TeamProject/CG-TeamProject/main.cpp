@@ -14,6 +14,7 @@ char* SERVERIP = (char*)"127.0.0.1";
 SOCKET Socket = INVALID_SOCKET; //전역 변수로 소켓 선언
 #pragma pack(1)
 struct character {
+	int ID;
 	glm::vec3 position;
 	glm::vec3 direction;
 	GLfloat ArmLegSwingAngle;
@@ -50,6 +51,16 @@ void UpdatePlayer() {
 	P2->ArmLegSwingAngle = otherPlayers[0].ArmLegSwingAngle;
 	// AABB 업데이트
 	P2->CAABB.update(P2->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
+
+	//P3 업데이트
+	P3->Position = otherPlayers[1].position;	
+	P3->Direction = otherPlayers[1].direction;
+	// 모델 매트릭스 업데이트
+	P3->ModelMatrix = glm::translate(glm::mat4(1.0f), P3->Position);
+	P3->ModelMatrix = glm::rotate(P3->ModelMatrix, glm::radians(P3->RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+	P3->ArmLegSwingAngle = otherPlayers[1].ArmLegSwingAngle;
+	// AABB 업데이트
+	P3->CAABB.update(P3->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 }
 int recv_count = 0;
 // 서버로부터 다른 캐릭터 정보 수신
@@ -65,7 +76,9 @@ bool recv_character() {
 	// 서버로부터 캐릭터 정보 패킷 수신
 	int retval = recv(Socket, (char*)&received_char, sizeof(character), 0);
 	recv_count++;
-	otherPlayers[0] = received_char; // 첫 번째 플레이어 정보 저장
+	int Id = received_char.ID -1 ;
+	otherPlayers[Id] = received_char; // 플레이어 정보 저장
+
 	if (retval == SOCKET_ERROR) {
 		int err = WSAGetLastError();
 		if (err != WSAEWOULDBLOCK) {
@@ -83,6 +96,7 @@ bool recv_character() {
 	// 수신 출력
 	if (recv_count % 100 == 0) {
 		printf("\n[수신] 다른 클라이언트 정보 수신 완료 (%d 바이트)\n", retval);
+		std::cout << "받은 ID: " << received_char.ID << std::endl;
 		printf("  Position: (%.2f, %.2f, %.2f)\n",
 			received_char.position.x, received_char.position.y, received_char.position.z);
 		printf("  Direction: (%.2f, %.2f, %.2f)\n",
@@ -91,6 +105,56 @@ bool recv_character() {
 		printf("  isCollision: %s\n\n", received_char.isCollision ? "true" : "false");
 
 	}
+	return true;
+}
+//번호 받고 캐릭터 번호에 따라 만들기
+ bool InitCharByNum() {
+	// 1. 내 번호 받기
+	int data = 0;
+	int retval = recv(Socket, (char*)&data, sizeof(data), 0);
+	if (retval <= 0) {
+		printf("서버에서 내 번호 받기 실패\n");
+		return false;
+	}
+	int order = ntohl(data); // 네트워크 엔디안 변환
+	glm::vec3 P1Color;
+	glm::vec3 P2Color;
+	glm::vec3 P3Color;
+
+	std::cout << order << "번 째 캐릭터 입니다." << std::endl;
+	glm::vec3 RedColor = glm::vec3(1.0f, 0.0f, 0.0f);
+	glm::vec3 YellowColor = glm::vec3(1.0f, 1.0f, 0.0f);
+	glm::vec3 BlueColor = glm::vec3(0.0f, 0.0f, 1.0f);
+	switch (order) {
+	case 1:
+	{
+		P1Color = YellowColor;
+		P2Color = RedColor;
+		P3Color = BlueColor;
+		break;
+	}
+	case 2:
+	{
+		P1Color = RedColor;
+		P2Color = YellowColor;
+		P3Color = BlueColor;
+		break;
+	}
+	case 3:
+	{
+		P1Color = BlueColor;
+		P2Color = RedColor;
+		P3Color = YellowColor;
+		break;
+	}
+	}
+	//컨트롤 하는 캐릭터
+	P1 = new Player1(P1Color);
+	P1->ID = order -1;
+	//다른 캐릭터들
+	P2 = new Player1(P2Color);
+	P3 = new Player1(P3Color);
+
 	return true;
 }
 // 네트워크 초기화
@@ -1121,31 +1185,22 @@ void main(int argc, char** argv) {
 		return;
 	}
 	printf("[클라이언트] 서버 연결 성공!\n");
-	glm::vec3 myColor;
+
 
 
 	std::cout << "캐릭터 생성중...." << std::endl;
-	int order;
-	recv(sock, (char*)&order, sizeof(order), 0);
-	order = ntohl(order); // 엔디안 변환
-	glm::vec3 RedColor = glm::vec3(1.0f, 0.0f, 0.0f);
-	glm::vec3 YellowColor = glm::vec3(1.0f, 1.0f, 0.0f);
-	glm::vec3 BlueColor = glm::vec3(0.0f, 0.0f, 1.0f);
-	switch (order) {
-	case 1: myColor = RedColor; break;    // Red
-	case 2: myColor = YellowColor; break; // Yellow
-	case 3: myColor = BlueColor; break;   // Blue
+	if (!InitCharByNum())
+	{
+		std::cerr << "캐릭터 초기화 실패!" << std::endl;
+		return;
 	}
-	P1 = new Player1(myColor);
-	P1 = new Player1(YellowColor);
-	P2 = new Player1(RedColor);
-	P3 = new Player1(BlueColor);
+	
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
 	glutKeyboardFunc(Keyboard);
 	glutKeyboardUpFunc(KeyboardUp);
-	glutKeyboardUpFunc(KeyboardUp);
+
 	glutSpecialFunc(SpecialKey);
 	glutSpecialUpFunc(SpecialKeyUp);
 	glutTimerFunc(16, Timer, 0);
@@ -1255,8 +1310,10 @@ GLvoid drawScene() {
 
 	// p2 위치 동기화
 	P2->Draw(shaderProgramID, modelMatrixLocation);
+	// p3 위치 동기화
+	P3->Draw(shaderProgramID, modelMatrixLocation);
 
-	//상대 캐릭터도 받아서 그려야함.
+
 	PinkFan1->Draw(shaderProgramID, modelMatrixLocation);
 	PurpleFan1->Draw(shaderProgramID, modelMatrixLocation);
 	glutSwapBuffers();
@@ -1361,8 +1418,17 @@ GLvoid Timer(int value) {
 	// AABB 업데이트
 	P1->CAABB.update(P1->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 
+
+	//다른 캐릭터들 정보를 받음
+	for (int i = 0; i < MAX_OTHER_PLAYERS; ++i) {
+		if (!recv_character()) {
+			std::cout << "recive failed" << std::endl;
+		}
+	}
+	
 	// 캐릭터 업데이트를 계속 해줌
 	UpdatePlayer();
+
 	// 팔 흔들림 업데이트
 	if (P1->IsSwing) {
 		P1->ArmLegSwingAngle += P1->SwingDirection * 2.0f;
@@ -1664,6 +1730,7 @@ GLvoid Timer(int value) {
 	//전송 로직
 	if (Socket != INVALID_SOCKET && P1 != nullptr) {
 		character myCharacter;
+		myCharacter.ID = P1->ID;
 		myCharacter.position = P1->Position;
 		myCharacter.direction = P1->Direction;
 		myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
@@ -1672,9 +1739,7 @@ GLvoid Timer(int value) {
 		C2S_Character(Socket, myCharacter);
 	}
 
-	if (!recv_character()) {
-		std::cout << "recive failed" << std::endl;
-	}
+
 
 
 	
