@@ -145,7 +145,7 @@ public:
 class Player1 : public Charactor
 {
 public:
-	Player1();
+	Player1(glm::vec3 vc);
 	~Player1();
 
 private:

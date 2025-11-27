@@ -144,7 +144,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 
     // TODO
     int receive_count = 0;
-    int send_count[MAX_CLIENTS];
+    int send_count[MAX_CLIENTS]{};
     while (true) {
         character received_char;
 

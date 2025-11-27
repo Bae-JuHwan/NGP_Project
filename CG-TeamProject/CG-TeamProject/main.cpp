@@ -1063,10 +1063,7 @@ void main(int argc, char** argv) {
 	InitCheckBoxMap4();
 	InitCheckBoxMap5();
 
-	std::cout << "캐릭터 생성중...." << std::endl;
-	P1 = new Player1();
-	P2 = new Player1();
-	P3 = new Player1();
+
 
 
 	//장애물
@@ -1124,6 +1121,25 @@ void main(int argc, char** argv) {
 		return;
 	}
 	printf("[클라이언트] 서버 연결 성공!\n");
+	glm::vec3 myColor;
+
+
+	std::cout << "캐릭터 생성중...." << std::endl;
+	int order;
+	recv(sock, (char*)&order, sizeof(order), 0);
+	order = ntohl(order); // 엔디안 변환
+	glm::vec3 RedColor = glm::vec3(1.0f, 0.0f, 0.0f);
+	glm::vec3 YellowColor = glm::vec3(1.0f, 1.0f, 0.0f);
+	glm::vec3 BlueColor = glm::vec3(0.0f, 0.0f, 1.0f);
+	switch (order) {
+	case 1: myColor = RedColor; break;    // Red
+	case 2: myColor = YellowColor; break; // Yellow
+	case 3: myColor = BlueColor; break;   // Blue
+	}
+	P1 = new Player1(myColor);
+	P1 = new Player1(YellowColor);
+	P2 = new Player1(RedColor);
+	P3 = new Player1(BlueColor);
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
