@@ -44,7 +44,7 @@ public:
 	void SetAABB(AABB seta, AABB setb, AABB setc) { CAABB1 = seta; CAABB2 = setb; CAABB3 = setc; }
 };
 
-class BongGroup :public Obstacle
+class BongGroup :public Obstacle3
 {
 public:
 	BongGroup(glm::vec3 setp, glm::vec3 setd, GLfloat setMS, GLfloat setMMS, GLfloat setA);

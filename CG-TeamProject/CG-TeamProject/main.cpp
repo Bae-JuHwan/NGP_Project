@@ -17,11 +17,6 @@ Model modelBottom, modelArrowAndPillar, modelEndPoint, modelPoint;
 //GLuint vaoCharacter2Acc, vaoCharacter2Body, vaoCharacter2Clothes, vaoCharacter2Hair, vaoCharacter2LeftLeg, vaoCharacter2RightLeg, vaoCharacter2LeftArm, vaoCharacter2RightArm, vaoCharacter2Eye, vaoCharacter2Face;
 //GLuint vboCharacter2Acc[2], vboCharacter2Body[2], vboCharacter2Clothes[2], vboCharacter2Hair[2], vboCharacter2LeftLeg[2], vboCharacter2RightLeg[2], vboCharacter2LeftArm[2], vboCharacter2RightArm[2], vboCharacter2Eye[2], vboCharacter2Face[2];
 //Model modelCharacter2Acc, modelCharacter2Body, modelCharacter2Hair, modelCharacter2Clothes, modelCharacter2LeftLeg, modelCharacter2RightLeg, modelCharacter2LeftArm, modelCharacter2RightArm, modelCharacter2Eye, modelCharacter2Face;
-//
-//// 캐릭터3
-//GLuint vaoCharacter3Body, vaoCharacter3Face, vaoCharacter3Eyes, vaoCharacter3LeftArm, vaoCharacter3RightArm, vaoCharacter3LeftFoot, vaoCharacter3RightFoot;
-//GLuint vboCharacter3Body[2], vboCharacter3Face[2], vboCharacter3Eyes[2], vboCharacter3LeftArm[2], vboCharacter3RightArm[2], vboCharacter3LeftFoot[2], vboCharacter3RightFoot[2];
-//Model modelCharacter3Body, modelCharacter3Face, modelCharacter3Eyes, modelCharacter3LeftArm, modelCharacter3RightArm, modelCharacter3LeftFoot, modelCharacter3RightFoot;
 
 //장애물
 GLuint vaoHorizontalFanPink, vaoHorizontalFanPurple, vaoDoorOut, vaoLeftdoor, vaoRightdoor, vaoJumpBarCenter, vaoJumpBarbargroup1, vaoJumpBarbargroup2, vaoJumpBarbargroup3, vaoVerticalFanBar,
@@ -102,7 +97,6 @@ void InitPoint();
 
 //체크박스 추가
 //void InitCharacter2CheckBox();
-//void InitCharacter3CheckBox();
 
 //// 캐릭터2
 //void InitCharacter2Acc();
@@ -115,25 +109,7 @@ void InitPoint();
 //void InitCharacter2RightArm();
 //void InitCharacter2Eye();
 //void InitCharacter2Face();
-//
-//// 캐릭터3
-//void InitCharacter3Body();
-//void InitCharacter3Face();
-//void InitCharacter3Eyes();
-//void InitCharacter3LeftArm();
-//void InitCharacter3RightArm();
-//void InitCharacter3LeftFoot();
-//void InitCharacter3RightFoot();
 
-
-// 가로팬
-//void InitHorizontalFanPink();
-void InitHorizontalFanPurple();
-
-// 세로팬
-void InitVerticalFanBar();
-void InitVerticalFanCenter();
-void InitVerticalFan();
 
 GLuint make_shaderProgram();
 GLvoid drawScene();
@@ -204,31 +180,6 @@ AABB map5 = {
 //	InitPart("horizontalFan/purple.obj", modelHorizontalFanPurple, vaoHorizontalFanPurple, vboHorizontalFanPurple, glm::vec3(0.5f, 0.0f, 0.5f));
 //}
 
-// 봉
-//AABB bong1 = {
-//	glm::vec3(-15.74f , 0.0f, -33.25f), // min
-//	glm::vec3(-13.74f,  3.6f,  -31.25f)  // max
-//};
-//AABB bong2 = {
-//	glm::vec3(-9.47f, 0.0f, -33.25f), // min
-//	glm::vec3(-7.47f ,  3.6f,  -31.25f)  // max
-//};
-//AABB bong3 = {
-//	glm::vec3(-3.169f + BongGroup1Position.x, 0.0f, -33.25f), // min
-//	glm::vec3(-1.169f + BongGroup1Position.x,  3.6f,  -31.25f)  // max
-//};
-//AABB bong4 = {
-//	glm::vec3(3.045f , 0.0f, -33.25f), // min
-//	glm::vec3(5.045f,  3.6f,  -31.25f)  // max
-//};
-//AABB bong5 = {
-//	glm::vec3(9.27f , 0.0f, -33.25f), // min
-//	glm::vec3(11.27f ,  3.6f,  -31.25f)  // max
-//};
-//AABB bong6 = {
-//	glm::vec3(14.945f , 0.0f, -33.25f), // min
-//	glm::vec3(16.945f ,  3.6f,  -31.25f)  // max
-//};
 
 // 문
 
@@ -807,26 +758,42 @@ void DrawObstacleHorizontalFan(GLuint shaderPRogramID, GLint modelMatrixLocation
 //}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
+
 AABB bong1 = {
-		glm::vec3(-15.74f , 0.0f, -33.25f), // min
-		glm::vec3(-13.74f,  3.6f,  -31.25f)  // max
+	glm::vec3(-15.74f , 0.0f, -33.25f), // min
+	glm::vec3(-13.74f,  3.6f,  -31.25f)  // max
 };
 AABB bong2 = {
 	glm::vec3(-9.47f, 0.0f, -33.25f), // min
 	glm::vec3(-7.47f ,  3.6f,  -31.25f)  // max
 };
+AABB bong3 = { };
+AABB bong4 = {
+	glm::vec3(3.045f , 0.0f, -33.25f), // min
+	glm::vec3(5.045f,  3.6f,  -31.25f)  // max
+};
+AABB bong5 = {
+	glm::vec3(9.27f , 0.0f, -33.25f), // min
+	glm::vec3(11.27f ,  3.6f,  -31.25f)  // max
+};
+AABB bong6 = {
+	glm::vec3(14.945f , 0.0f, -33.25f), // min
+	glm::vec3(16.945f ,  3.6f,  -31.25f)  // max
+};
+
+
 AABB barcenter1 = {
 		glm::vec3(-10.2f, 0.0f, -94.93f), // min
 		glm::vec3(-9.0f, 0.76f,  -93.73f)   // max
 };
-//AABB barcenter2 = {
-//	glm::vec3(-0.29f, 0.0f, -94.93f), // min
-//	glm::vec3(0.9f, 0.76f,  -93.73f)   // max
-//};
-//AABB barcenter3 = {
-//	glm::vec3(10.03f, 0.0f, -94.93f), // min
-//	glm::vec3(11.23f, 0.76f,  -93.73f)   // max
-//};
+AABB barcenter2 = {
+	glm::vec3(-0.29f, 0.0f, -94.93f), // min
+	glm::vec3(0.9f, 0.76f,  -93.73f)   // max
+};
+AABB barcenter3 = {
+	glm::vec3(10.03f, 0.0f, -94.93f), // min
+	glm::vec3(11.23f, 0.76f,  -93.73f)   // max
+};
 AABB barbar1 = {
 	glm::vec3(-9.8f, -0.36f, -94.457f), // min
 	glm::vec3(-9.4f,0.0399f,  -88.457f)   // max
@@ -1030,11 +997,15 @@ void main(int argc, char** argv) {
 
 	Bong1 = new BongGroup(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
 	InitPart("bong/bonggroup1.obj", Bong1->model, Bong1->vao, Bong1->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
-	Bong1->SetAABB(bong1);
+	Bong1->SetAABB(bong1, bong2, bong3);
 
+	bong3 = {
+glm::vec3(-3.169f + Bong1->Position.x, 0.0f, -33.25f), // min
+glm::vec3(-1.169f + Bong1->Position.x,  3.6f,  -31.25f)  // max
+	};
 	Bong2 = new BongGroup(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
 	InitPart("bong/bonggroup2.obj", Bong2->model, Bong2->vao, Bong2->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
-	Bong2->SetAABB(bong2);
+	Bong2->SetAABB(bong4, bong5, bong6);
 
 	HorFan1 = new HorizontalFan(glm::vec3(0.0f, -0.3f, -140.0f));
 	HorFan2 = new HorizontalFan(glm::vec3(7.0f, -0.3f, -115.0f));
@@ -1053,7 +1024,7 @@ void main(int argc, char** argv) {
 
 	JumpbarCenter = new BongGroup(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
 	InitPart("jumpBong/centergroup.obj", JumpbarCenter->model, JumpbarCenter->vao, JumpbarCenter->vbo, glm::vec3(0.576f, 0.078f, 1.0f));
-	JumpbarCenter->SetAABB(barcenter1);
+	JumpbarCenter->SetAABB(barcenter1, barcenter2, barcenter3);
 	//3개 aabb더 추가해야함. 
 
 	Jumpbar1 = new Obstacle(glm::vec3(9.5f, 0.0f, 94.93f));
@@ -1102,11 +1073,11 @@ void main(int argc, char** argv) {
 	glm::vec3 RightdoorGroupDirection = glm::vec3(1.0f, 0.0f, 0.0f);
 	// 개구리문
 
-	flogDoor=new Door(glm::vec3(0.0f, 0.0f, 0.0f));
+	flogDoor = new Door(glm::vec3(0.0f, 0.0f, 0.0f));
 	InitPart("frogDoor/outsidegroup.obj", flogDoor->Center->model, flogDoor->Center->vao, flogDoor->Center->vbo, glm::vec3(0.576f, 0.078f, 1.0f));
 	InitPart("frogDoor/leftdoorgroup.obj", flogDoor->LeftD->model, flogDoor->LeftD->vao, flogDoor->LeftD->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
 	InitPart("frogDoor/rightdoorgroup.obj", flogDoor->RightD->model, flogDoor->RightD->vao, flogDoor->RightD->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
-	flogDoor->LeftD->SetAABB(leftdoor1,leftdoor2,leftdoor3);
+	flogDoor->LeftD->SetAABB(leftdoor1, leftdoor2, leftdoor3);
 	flogDoor->RightD->SetAABB(rightdoor1, rightdoor2, rightdoor3);
 
 	//InitAllBongCheckBoxes();
