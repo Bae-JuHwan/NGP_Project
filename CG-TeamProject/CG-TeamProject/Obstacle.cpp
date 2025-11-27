@@ -18,14 +18,11 @@ void Obstacle::JumpBarDraw(GLuint shaderProgramID, GLint modelMatrixLocation)
 	glBindVertexArray(0);
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////
-
 Obstacle3::Obstacle3(glm::vec3 setp)
 {
 	Position = setp;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////
 BongGroup::BongGroup(glm::vec3 setp, glm::vec3 setd, GLfloat setMS, GLfloat setMMS, GLfloat setA)
 {
 	Position = setp;
@@ -41,7 +38,6 @@ void BongGroup::Draw(GLuint shaderProgramID, GLint modelMatrixLocation)
 	ModelMatrix = glm::translate(glm::mat4(1.0f), Position);
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalModelMatrix));
 
-	// 2. ºÀ ¸ðµ¨ ±×¸®±â
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, model.faces.size() * 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
@@ -65,8 +61,6 @@ void BongGroup::JumpBarCenterDraw(GLuint shaderProgramID, GLint modelMatrixLocat
 	glBindVertexArray(0);
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////////////
 HorizontalFan::HorizontalFan(glm::vec3 setp)
 {
 	Position = setp;
@@ -74,7 +68,7 @@ HorizontalFan::HorizontalFan(glm::vec3 setp)
 	Purple = new Obstacle;
 }
 
-void HorizontalFan::Draw(GLuint shaderPRogramID, GLint modelMatrixLocation) 
+void HorizontalFan::Draw(GLuint shaderPRogramID, GLint modelMatrixLocation)
 {
 	glm::mat4 HorizontalFanPink1ModelMatrix = glm::mat4(1.0f);
 	HorizontalFanPink1ModelMatrix = glm::translate(HorizontalFanPink1ModelMatrix, Position);
@@ -97,16 +91,12 @@ void HorizontalFan::Draw(GLuint shaderPRogramID, GLint modelMatrixLocation)
 	CAABB.update(Position, glm::vec3(-6.1f, -0.3f, -0.49f), glm::vec3(6.1f, 4.4f, 0.49f));
 }
 
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-
 VerticalFan::VerticalFan(glm::vec3 setBp, glm::vec3 setCp, glm::vec3 setFp)
 {
-	FanBar=new Obstacle(setBp);
-	FanCenter=new Obstacle(setCp);
+	FanBar = new Obstacle(setBp);
+	FanCenter = new Obstacle(setCp);
 	VFan = new Obstacle(setFp);
 }
-
 
 VerticalFan::VerticalFan(glm::vec3 setp)
 {
@@ -118,7 +108,6 @@ VerticalFan::VerticalFan(glm::vec3 setp)
 
 void VerticalFan::Draw(GLuint shaderPRogramID, GLint modelMatrixLocation)
 {
-
 	glm::mat4 verticalFanBar1ModelMatrix = glm::mat4(1.0f);
 	verticalFanBar1ModelMatrix = glm::translate(verticalFanBar1ModelMatrix, Position);
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar1ModelMatrix));
@@ -149,7 +138,6 @@ void VerticalFan::Draw(GLuint shaderPRogramID, GLint modelMatrixLocation)
 	VFan->CAABB.update(Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
 
 }
-/////////////////////////////////////////////////////////////////////////////////////////////
 
 Door::Door(glm::vec3 setp)
 {
@@ -167,7 +155,7 @@ Door::Door(glm::vec3 setBp, glm::vec3 setCp, glm::vec3 setFp)
 	Center = new Obstacle3(setCp);
 	RightD = new Obstacle3(setFp);
 
-	LeftD->Direction= glm::vec3(-1.0f, 0.0f, 0.0f);
+	LeftD->Direction = glm::vec3(-1.0f, 0.0f, 0.0f);
 	RightD->Direction = glm::vec3(1.0f, 0.0f, 0.0f);
 }
 

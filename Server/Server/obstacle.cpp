@@ -3,7 +3,6 @@
 
 obstacle_Bong g_bongObstacle;
 
-SOCKET g_client_list[MAX_CLIENTS] = { INVALID_SOCKET, };
 bool S2C_BongObstacle(SOCKET sock, const obstacle_Bong& obs_info)
 {
 	if (sock == INVALID_SOCKET) {
@@ -12,7 +11,7 @@ bool S2C_BongObstacle(SOCKET sock, const obstacle_Bong& obs_info)
 	}
 
 	int retval = send(sock, (char*)&obs_info, sizeof(obstacle_Bong), 0);
-	printf(" 봉 장애물 전송 %d)\n",  retval);
+	printf("봉 장애물 전송 %d)\n",  retval);
 	if (retval == SOCKET_ERROR) {
 		err_display("send() - S2C_BongObstacle");
 		return false;
@@ -47,11 +46,11 @@ void UpdateBongObstacle()
 		g_bongObstacle.dir2.x = 1;
 }
 
-bool Broadcast_BongObstacle(const obstacle_Bong& obs_info , ClientInfo g_client_list[MAX_CLIENTS])
+bool Broadcast_BongObstacle(const obstacle_Bong& obs_info , ClientInfo g_clients[MAX_CLIENTS])
 {
 	for (int i = 0; i < MAX_CLIENTS; i++) {
-		if (g_client_list[i].isActive) {
-			S2C_BongObstacle(g_client_list[i].sock, obs_info);
+		if (g_clients[i].isActive) {
+			S2C_BongObstacle(g_clients[i].sock, obs_info);
 			std::cout << i << "번 째 클라이언트 봉 정보 송신" << "\n";
 		}
 		else {

@@ -29,7 +29,7 @@ struct ClientInfo {
     character charInfo;
     bool isActive;
 };
-extern SOCKET g_client_list[MAX_CLIENTS];
+extern ClientInfo g_clients[MAX_CLIENTS];
 
 void err_quit(const char* msg);
 

@@ -360,7 +360,7 @@ void DrawMapCheckBox(GLuint shaderProgramID, GLint modelMatrixLocation) {
 
 
 
-Player1* P1 = nullptr;
+//Player1* P1 = nullptr;
 BongGroup* Bong1 = nullptr;
 BongGroup* Bong2 = nullptr;
 HorizontalFan* HorFan1 = nullptr;
@@ -781,6 +781,10 @@ GLvoid Timer(int value) {
 	//if (isObstacleRotate) {
 	//	obstacleRotation += 2.0f;
 	//}
+
+	//Bong1->CAABB.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
+	//Bong2->CAABB.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
+
 	if (Socket != INVALID_SOCKET) {
 		if (!recv_BongObstacle(Socket)) {
 			std::cout << "recv_Bong Error" << '\n';
@@ -797,10 +801,8 @@ GLvoid Timer(int value) {
 
 	EnterCriticalSection(&g_cs_client);
 	// 전역 변수 g_bongObstacle을 BongGroup 객체에 반영
-	if (Bong1 && Bong2) {
-		Bong1->Position = g_bongObstacle.pos1;
-		Bong2->Position = g_bongObstacle.pos2;
-	}
+	Bong1->Position = g_bongObstacle.pos1;
+	Bong2->Position = g_bongObstacle.pos2;
 	LeaveCriticalSection(&g_cs_client);
 
 	if (Bong1) {
