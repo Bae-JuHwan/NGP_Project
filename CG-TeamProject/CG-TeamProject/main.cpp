@@ -1,20 +1,19 @@
-#define _CRT_SECURE_NO_WARNINGS
+Ôªø#define _CRT_SECURE_NO_WARNINGS
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctime>
 #include <cstdlib>
 #include <iostream>
 #include <set>
-#include "stdafx.h"
+#include "AABB.h"
 #include "Common.h"
-#include "Obstacle.h"
 #include "obstacle_network.h"
 
 CRITICAL_SECTION g_cs_client;
 
 char* SERVERIP = (char*)"127.0.0.1";
 #define SERVERPORT 9000
-SOCKET Socket = INVALID_SOCKET; //¿¸ø™ ∫Øºˆ∑Œ º“ƒœ º±æ
+SOCKET Socket = INVALID_SOCKET; //Ï†ÑÏó≠ Î≥ÄÏàòÎ°ú ÏÜåÏºì ÏÑ†Ïñ∏
 #pragma pack(1)
 struct character {
 	glm::vec3 position;
@@ -27,15 +26,15 @@ struct character {
 Player1* P1 = nullptr;
 Player1* P2 = nullptr;
 Player1* P3 = nullptr;
-// ¥Ÿ∏• ≈¨∂Û¿Ãæ∆ÆµÈ¿« ƒ≥∏Ø≈Õ ¡§∫∏ ¿˙¿Â
+// Îã§Î•∏ ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏Îì§Ïùò Ï∫êÎ¶≠ÌÑ∞ Ï†ïÎ≥¥ Ï†ÄÏû•
 #define MAX_OTHER_PLAYERS 2
 character otherPlayers[MAX_OTHER_PLAYERS];
 bool otherPlayersActive[MAX_OTHER_PLAYERS] = { false, false };
 
-// ƒ≥∏Ø≈Õ ¡§∫∏∏¶ º≠πˆø° ¿¸º€«œ¥¬ «‘ºˆ
+// Ï∫êÎ¶≠ÌÑ∞ Ï†ïÎ≥¥Î•º ÏÑúÎ≤ÑÏóê Ï†ÑÏÜ°ÌïòÎäî Ìï®Ïàò
 void C2S_Character(SOCKET sock, const character& char_info)
 {
-	// 3. º≠πˆø° ∆–≈∂ ¿¸º€
+	// 3. ÏÑúÎ≤ÑÏóê Ìå®ÌÇ∑ Ï†ÑÏÜ°
 	int retval = send(sock, (char*)&char_info, sizeof(char_info), 0);
 	if (retval == SOCKET_ERROR) {
 		err_display("send() - C2S_Character, position");
@@ -43,49 +42,49 @@ void C2S_Character(SOCKET sock, const character& char_info)
 	}
 
 }
-// ƒ≥∏Ø≈Õ ¡§∫∏ æ˜µ•¿Ã∆Æ
+// Ï∫êÎ¶≠ÌÑ∞ Ï†ïÎ≥¥ ÏóÖÎç∞Ïù¥Ìä∏
 void UpdatePlayer() {
 	P2->Position = otherPlayers[0].position;
 	P2->Direction = otherPlayers[0].direction;
-	// ∏µ® ∏≈∆Æ∏ØΩ∫ æ˜µ•¿Ã∆Æ
+	// Î™®Îç∏ Îß§Ìä∏Î¶≠Ïä§ ÏóÖÎç∞Ïù¥Ìä∏
 	P2->ModelMatrix = glm::translate(glm::mat4(1.0f), P2->Position);
 	P2->ModelMatrix = glm::rotate(P2->ModelMatrix, glm::radians(P2->RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
 	P2->ArmLegSwingAngle = otherPlayers[0].ArmLegSwingAngle;
-	// AABB æ˜µ•¿Ã∆Æ
+	// AABB ÏóÖÎç∞Ïù¥Ìä∏
 	P2->CAABB.update(P2->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 }
 int recv_count = 0;
-// º≠πˆ∑Œ∫Œ≈Õ ¥Ÿ∏• ƒ≥∏Ø≈Õ ¡§∫∏ ºˆΩ≈
+// ÏÑúÎ≤ÑÎ°úÎ∂ÄÌÑ∞ Îã§Î•∏ Ï∫êÎ¶≠ÌÑ∞ Ï†ïÎ≥¥ ÏàòÏã†
 bool recv_character() {
-	// º“ƒœ¿Ã ¿Ø»ø«—¡ˆ »Æ¿Œ
+	// ÏÜåÏºìÏù¥ Ïú†Ìö®ÌïúÏßÄ ÌôïÏù∏
 	if (Socket == INVALID_SOCKET) {
-		printf("[∞Ê∞Ì] º“ƒœ¿Ã ¿Ø»ø«œ¡ˆ æ Ω¿¥œ¥Ÿ\n");
+		printf("[Í≤ΩÍ≥†] ÏÜåÏºìÏù¥ Ïú†Ìö®ÌïòÏßÄ ÏïäÏäµÎãàÎã§\n");
 		return false;
 	}
 
 	character received_char;
 
-	// º≠πˆ∑Œ∫Œ≈Õ ƒ≥∏Ø≈Õ ¡§∫∏ ∆–≈∂ ºˆΩ≈
+	// ÏÑúÎ≤ÑÎ°úÎ∂ÄÌÑ∞ Ï∫êÎ¶≠ÌÑ∞ Ï†ïÎ≥¥ Ìå®ÌÇ∑ ÏàòÏã†
 	int retval = recv(Socket, (char*)&received_char, sizeof(character), 0);
 	recv_count++;
-	otherPlayers[0] = received_char; // √π π¯¬∞ «√∑π¿ÃæÓ ¡§∫∏ ¿˙¿Â
+	otherPlayers[0] = received_char; // Ï≤´ Î≤àÏß∏ ÌîåÎ†àÏù¥Ïñ¥ Ï†ïÎ≥¥ Ï†ÄÏû•
 	if (retval == SOCKET_ERROR) {
 		int err = WSAGetLastError();
 		if (err != WSAEWOULDBLOCK) {
-			printf("[ø°∑Ø] recv_character() Ω«∆– - ø°∑Øƒ⁄µÂ: %d\n", err);
+			printf("[ÏóêÎü¨] recv_character() Ïã§Ìå® - ÏóêÎü¨ÏΩîÎìú: %d\n", err);
 			return false;
 		}
-		return false;  // µ•¿Ã≈Õ æ¯¿Ω
+		return false;  // Îç∞Ïù¥ÌÑ∞ ÏóÜÏùå
 	}
 
 	if (retval == 0) {
-		printf("[∞Ê∞Ì] º≠πˆøÕ¿« ø¨∞·¿Ã ¡æ∑·µ«æ˙Ω¿¥œ¥Ÿ\n");
+		printf("[Í≤ΩÍ≥†] ÏÑúÎ≤ÑÏôÄÏùò Ïó∞Í≤∞Ïù¥ Ï¢ÖÎ£åÎêòÏóàÏäµÎãàÎã§\n");
 		return false;
 	}
 
-	// ºˆΩ≈ √‚∑¬
+	// ÏàòÏã† Ï∂úÎ†•
 	if (recv_count % 100 == 0) {
-		printf("\n[ºˆΩ≈] ¥Ÿ∏• ≈¨∂Û¿Ãæ∆Æ ¡§∫∏ ºˆΩ≈ øœ∑· (%d πŸ¿Ã∆Æ)\n", retval);
+		printf("\n[ÏàòÏã†] Îã§Î•∏ ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏ Ï†ïÎ≥¥ ÏàòÏã† ÏôÑÎ£å (%d Î∞îÏù¥Ìä∏)\n", retval);
 		printf("  Position: (%.2f, %.2f, %.2f)\n",
 			received_char.position.x, received_char.position.y, received_char.position.z);
 		printf("  Direction: (%.2f, %.2f, %.2f)\n",
@@ -97,31 +96,31 @@ bool recv_character() {
 	return true;
 }
 
-// ≥◊∆Æøˆ≈© √ ±‚»≠
+// ÎÑ§Ìä∏ÏõåÌÅ¨ Ï¥àÍ∏∞Ìôî
 bool InitNetworkConnection() {
 	WSADATA wsa;
 
-	// Winsock √ ±‚»≠
+	// Winsock Ï¥àÍ∏∞Ìôî
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
 		err_quit("WSAStartup()");
 		return false;
 	}
 
-	// º“ƒœ ª˝º∫
+	// ÏÜåÏºì ÏÉùÏÑ±
 	Socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (Socket == INVALID_SOCKET) {
 		err_quit("socket()");
 		return false;
 	}
 
-	// º≠πˆ ¡÷º“ º≥¡§
+	// ÏÑúÎ≤Ñ Ï£ºÏÜå ÏÑ§Ï†ï
 	struct sockaddr_in serveraddr;
 	memset(&serveraddr, 0, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
 	inet_pton(AF_INET, SERVERIP, &serveraddr.sin_addr);
 	serveraddr.sin_port = htons(SERVERPORT);
 
-	// º≠πˆø° ø¨∞·
+	// ÏÑúÎ≤ÑÏóê Ïó∞Í≤∞
 	int retval = connect(Socket, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) {
 		err_display("connect()");
@@ -134,7 +133,7 @@ bool InitNetworkConnection() {
 	return true;
 }
 
-// ≥◊∆Æøˆ≈© ¡§∏Æ
+// ÎÑ§Ìä∏ÏõåÌÅ¨ Ï†ïÎ¶¨
 void CleanupNetworkConnection() {
 	if (Socket != INVALID_SOCKET) {
 		closesocket(Socket);
@@ -142,53 +141,28 @@ void CleanupNetworkConnection() {
 	}
 	WSACleanup();
 }
-// ∏ 
+// Îßµ
 GLuint vaoBottom, vaoArrowAndPillar, vaoEndPoint, vaoPoint;
 GLuint vboBottom[2], vboArrowAndPillar[2], vboEndPoint[2], vboPoint[2];
 Model modelBottom, modelArrowAndPillar, modelEndPoint, modelPoint;
 
 
-//¿Âæ÷π∞
-GLuint vaoHorizontalFanPink, vaoHorizontalFanPurple, vaoDoorOut, vaoLeftdoor, vaoRightdoor, vaoJumpBarCenter, vaoJumpBarbargroup1, vaoJumpBarbargroup2, vaoJumpBarbargroup3, vaoVerticalFanBar,
-vaoVerticalFanCenter, vaoVerticalFan;
-GLuint  vboHorizontalFanPink[2], vboHorizontalFanPurple[2], vboDoorOut[2], vboLeftdoor[2], vboRightdoor[2], vboJumpBarCenter[2], vboJumpBarbargroup1[2], vboJumpBarbargroup2[2],
-vboJumpBarbargroup3[2], vboVerticalFanBar[2], vboVerticalFanCenter[2], vboVerticalFan[2];
-Model modelHorizontalFanPink, modelHorizontalFanPurple, modelDoorOut, modelLeftdoor, modelRightdoor, modelJumpBarCenter, modelJumpBarbargroup1, modelJumpBarbargroup2, modelJumpBarbargroup3,
-modelVerticalFanBar, modelVerticalFanCenter, modelVerticalFan;
-
 //checkbox
 GLuint vaoCheckBoxMap1, vboCheckBoxMap1[2], vaoCheckBoxMap2, vboCheckBoxMap2[2], vaoCheckBoxMap3, vboCheckBoxMap3[2], vaoCheckBoxMap4, vboCheckBoxMap4[2], vaoCheckBoxMap5, vboCheckBoxMap5[2];
-//GLuint vaoCharacter1CheckBox, vboCharacter1CheckBox[2], vaoCharacter2CheckBox, vboCharacter2CheckBox[2], vaoCharacter3CheckBox, vboCharacter3CheckBox[3];
 
-Model modelBongCheckBox1, modelBongCheckBox2, modelBongCheckBox3, modelBongCheckBox4, modelBongCheckBox5, modelBongCheckBox6;
-GLuint vaoBongCheckBox1, vaoBongCheckBox2, vaoBongCheckBox3, vaoBongCheckBox4, vaoBongCheckBox5, vaoBongCheckBox6;
-GLuint vboBongCheckBox1[2], vboBongCheckBox2[2], vboBongCheckBox3[2], vboBongCheckBox4[2], vboBongCheckBox5[2], vboBongCheckBox6[2];
 
 GLuint shaderProgramID;
 GLuint vertexShader;
 GLuint fragmentShader;
 
 
-
-GLfloat BongMove = 0.1f; // ¿Ãµø º”µµ
-GLfloat MaxBongMove = 1.6f; // √÷¥Î ¿Ãµø ∞≈∏Æ
 GLfloat obstacleRotation = 0.0f;
 GLfloat DoorMove = 0.05f;
-GLfloat MaxDoorMove = 1.7f;
-GLfloat jumpBarRotationAngle = 0.0f;
-//
+GLfloat MaxDoorMove = 1.7f; 
 
-glm::mat4 LeftdoorModelMatrix = glm::mat4(1.0f);
-glm::mat4 RightdoorModelMatrix = glm::mat4(1.0f);
-glm::vec3 LeftdoorGroupPosition = glm::vec3(0.0f, 0.0f, 0.0f); // √ ±‚ ¿ßƒ°
-glm::vec3 LeftdoorGroupDirection = glm::vec3(-1.0f, 0.0f, 0.0f); // √ ±‚ ¿Ãµø πÊ«‚ (øﬁ¬ )
-glm::vec3 RightdoorGroupPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::vec3 RightdoorGroupDirection = glm::vec3(1.0f, 0.0f, 0.0f);
-
-
-bool moveKeyStates[256] = { false }; // ¿Ãµø ≈∞ ªÛ≈¬
+bool moveKeyStates[256] = { false }; // Ïù¥Îèô ÌÇ§ ÏÉÅÌÉú
 bool arrowKeyStates[256] = { false };
-bool commandKeyStates[256] = { false }; // ∏Ì∑… ≈∞ ªÛ≈¬
+bool commandKeyStates[256] = { false }; // Î™ÖÎ†π ÌÇ§ ÏÉÅÌÉú
 bool isObstacleRotate = true;
 
 
@@ -218,27 +192,10 @@ char* filetobuf(const char* file) {
 
 void make_vertexShaders();
 void make_fragmentShaders();
-//void InitBuffer();
+void InitMap();
 
-// ∏ 
-void InitBottom();
-void InitArrowAndPillar();
-void InitEndPoint();
-void InitPoint();
 
-//void InitBong2();
 
-// ∞°∑Œ∆“
-//void InitHorizontalFanPink();
-void InitHorizontalFanPurple();
-// ¡°«¡πŸ
-void InitJumpbarCenter();
-void InitJumpbarbargroup1();
-void InitJumpbarbargroup2();
-// ºº∑Œ∆“
-void InitVerticalFanBar();
-void InitVerticalFanCenter();
-void InitVerticalFan();
 
 GLuint make_shaderProgram();
 GLvoid drawScene();
@@ -252,416 +209,13 @@ GLvoid Timer(int value);
 int window_Width = 800;
 int window_Height = 600;
 
-// ∏ 
-void InitBottom() {
+// Îßµ
+void InitMap() {
 	InitPart("Map/bottom.obj", modelBottom, vaoBottom, vboBottom, glm::vec3(0.482f, 0.424f, 0.761f));
-}
-void InitArrowAndPillar() {
 	InitPart("Map/arrowAndPillar.obj", modelArrowAndPillar, vaoArrowAndPillar, vboArrowAndPillar, glm::vec3(0.49f, 0.0f, 0.871f));
-}
-void InitEndPoint() {
 	InitPart("Map/endPoint.obj", modelEndPoint, vaoEndPoint, vboEndPoint, glm::vec3(1.0f, 0.0f, 1.0f));
-}
-void InitPoint() {
 	InitPart("Map/point.obj", modelPoint, vaoPoint, vboPoint, glm::vec3(1.0f, 0.0f, 0.0f));
 }
-// ∏ 
-AABB map1 = {
-	glm::vec3(-22.5f, 0.0f, -80.0f), // min
-	glm::vec3(22.5f,  0.3f,  3.0f)   // max
-};
-AABB map2 = {
-	glm::vec3(-18.0f, -2.3f, -121.0f), // min
-	glm::vec3(18.0f, -0.2f, -79.0f)    // max
-};
-AABB map3 = {
-	glm::vec3(-14.0f, -2.0f, -146.0f), // min
-	glm::vec3(14.0f, -0.3f, -120.0f)   // max
-};
-AABB map4 = {
-	glm::vec3(-11.6f, -2.0f, -165.0f), // min
-	glm::vec3(11.6f, -0.4f, -143.0f)   // max
-};
-AABB map5 = {
-	glm::vec3(-10.6f, -28.5f, -245.0f), // min
-	glm::vec3(10.6f, -26.5f, -165.0f)   // max
-};
-
-
-// ¡°«¡πŸ
-void InitJumpbarCenter() {
-	InitPart("jumpBong/centergroup.obj", modelJumpBarCenter, vaoJumpBarCenter, vboJumpBarCenter, glm::vec3(0.576f, 0.078f, 1.0f));
-}
-void InitJumpbarbargroup1() {
-	InitPart("jumpBong/bar1.obj", modelJumpBarbargroup1, vaoJumpBarbargroup1, vboJumpBarbargroup1, glm::vec3(0.576f, 0.078f, 1.0f));
-}
-void InitJumpbarbargroup2() {
-	InitPart("jumpBong/bar2.obj", modelJumpBarbargroup2, vaoJumpBarbargroup2, vboJumpBarbargroup2, glm::vec3(0.576f, 0.078f, 1.0f));
-}
-void InitJumpbarbar3() {
-	InitPart("jumpBong/bar3.obj", modelJumpBarbargroup3, vaoJumpBarbargroup3, vboJumpBarbargroup3, glm::vec3(0.576f, 0.078f, 1.0f));
-}
-// ºº∑Œ∆“
-void InitVerticalFanBar() {
-	InitPart("verticalFan/bar.obj", modelVerticalFanBar, vaoVerticalFanBar, vboVerticalFanBar, glm::vec3(0.5f, 0.5f, 0.5f));
-}
-void InitVerticalFanCenter() {
-	InitPart("verticalFan/center.obj", modelVerticalFanCenter, vaoVerticalFanCenter, vboVerticalFanCenter, glm::vec3(1.0f, 0.4f, 0.7f));
-}
-void InitVerticalFan() {
-	InitPart("verticalFan/fan.obj", modelVerticalFan, vaoVerticalFan, vboVerticalFan, glm::vec3(1.0f, 0.4f, 0.7f));
-}
-
-
-
-// πÆ
-AABB leftdoor1 = {
-	glm::vec3(-8.475f, -0.76f, -159.129f), // min
-	glm::vec3(-6.4f,  2.4f,  -158.53f)   // max
-};
-AABB leftdoor2 = {
-	glm::vec3(-2.168f, -0.76f, -159.129f), // min
-	glm::vec3(-0.09f,  2.4f,  -158.53f)   // max
-};
-AABB leftdoor3 = {
-	glm::vec3(4.227f, -0.76f, -159.129f), // min
-	glm::vec3(6.297f,  2.4f,  -158.53f)   // max
-};
-AABB rightdoor1 = {
-	glm::vec3(6.408f, -0.76f, -159.129f), // min
-	glm::vec3(4.38f,  2.4f,  -158.53f)   // max
-};
-AABB rightdoor2 = {
-	glm::vec3(-0.1f, -0.76f, -159.129f), // min
-	glm::vec3(1.926f,  2.4f,  -158.53f)   // max
-};
-AABB rightdoor3 = {
-	glm::vec3(6.294f, -0.76f, -159.129f), // min
-	glm::vec3(8.322f,  2.4f,  -158.53f)   // max
-};
-AABB outdoor1 = {
-	glm::vec3(-9.546f, -0.6f,-160.437f), // min
-	glm::vec3(-8.346f,  2.6, -158.4f)   // max
-};
-AABB outdoor2 = {
-	glm::vec3(-4.344f, -0.6f,-160.437f), // min
-	glm::vec3(-2.144f,  2.6, -158.4f)   // max
-};
-AABB outdoor3 = {
-	glm::vec3(2.004f, -0.6f,-160.437f), // min
-	glm::vec3(4.304f,  2.6, -158.4f)   // max
-};
-AABB outdoor4 = {
-	glm::vec3(8.295f, -0.6f,-160.437f), // min
-	glm::vec3(9.495f,  2.6, -158.4f)   // max
-};
-//¡°«¡πŸ
-AABB barcenter1 = {
-	glm::vec3(-10.2f, 0.0f, -94.93f), // min
-	glm::vec3(-9.0f, 0.76f,  -93.73f)   // max
-};
-AABB barcenter2 = {
-	glm::vec3(-0.29f, 0.0f, -94.93f), // min
-	glm::vec3(0.9f, 0.76f,  -93.73f)   // max
-};
-AABB barcenter3 = {
-	glm::vec3(10.03f, 0.0f, -94.93f), // min
-	glm::vec3(11.23f, 0.76f,  -93.73f)   // max
-};
-AABB barbar1 = {
-	glm::vec3(-9.8f, -0.36f, -94.457f), // min
-	glm::vec3(-9.4f,0.0399f,  -88.457f)   // max
-};
-AABB barbar2 = {
-	glm::vec3(0.155f, -0.36f, -94.457f), // min
-	glm::vec3(0.555f,0.0399f,  -88.457f)   // max
-};
-AABB barbar3 = {
-	glm::vec3(10.43f, -0.36f, -94.457f), // min
-	glm::vec3(10.83f,0.0399f,  -88.457f)   // max
-};
-//// ∞°∑Œ∆“
-//AABB horizontalFan1 = {
-//	glm::vec3(-6.1f, -0.3f, -140.49f),  // min
-//	glm::vec3(6.1f, 4.1f, -139.51f)     // max
-//};
-//AABB horizontalFan2 = {
-//	glm::vec3(0.9f, -0.3f, -115.49f),   // min
-//	glm::vec3(13.1f, 4.1f, -114.51f)    // max
-//};
-//AABB horizontalFan3 = {
-//	glm::vec3(-13.1f, -0.3f, -115.49f), // min
-//	glm::vec3(-0.9f, 4.1f, -114.51f)    // max
-//};
-// ºº∑Œ∆“
-AABB leftBar1 = {
-	glm::vec3(-18.12f, -0.64f, -62.86f),
-	glm::vec3(-16.98f, 3.65f, -61.72f)
-};
-AABB leftBar2 = {
-	glm::vec3(-10.62f, -0.64f, -62.86f),
-	glm::vec3(-9.48f, 3.65f, -61.72f)
-};
-AABB leftBar3 = {
-	glm::vec3(-3.12f, -0.64f, -62.86f),
-	glm::vec3(-1.98f, 3.65f, -61.72f)
-};
-AABB leftBar4 = {
-	glm::vec3(4.38f, -0.64f, -62.86f),
-	glm::vec3(5.52f, 3.65f, -61.72f)
-};
-AABB leftBar5 = {
-	glm::vec3(11.88f, -0.64f, -62.86f),
-	glm::vec3(13.02f, 3.65f, -61.72f)
-};
-AABB middleBar1 = {
-	glm::vec3(-17.17f, 3.51f, -62.86f),
-	glm::vec3(-12.89f, 3.64f, -61.72f)
-};
-AABB middleBar2 = {
-	glm::vec3(-9.67f, 3.51f, -62.86f),
-	glm::vec3(-5.39f, 3.64f, -61.72f)
-};
-AABB middleBar3 = {
-	glm::vec3(-2.17f, 3.51f, -62.86f),
-	glm::vec3(2.11f, 3.64f, -61.72f)
-};
-AABB middleBar4 = {
-	glm::vec3(5.33f, 3.51f, -62.86f),
-	glm::vec3(9.61f, 3.64f, -61.72f)
-};
-AABB middleBar5 = {
-	glm::vec3(12.83f, 3.51f, -62.86f),
-	glm::vec3(17.11f, 3.64f, -61.72f)
-};
-AABB rightBar1 = {
-	glm::vec3(-13.07f, -0.64f, -62.86f),
-	glm::vec3(-11.93f, 3.65f, -61.72f)
-};
-AABB rightBar2 = {
-	glm::vec3(-5.57f, -0.64f, -62.86f),
-	glm::vec3(-4.43f, 3.65f, -61.72f)
-};
-AABB rightBar3 = {
-	glm::vec3(1.93f, -0.64f, -62.86f),
-	glm::vec3(3.07f, 3.65f, -61.72f)
-};
-AABB rightBar4 = {
-	glm::vec3(9.43f, -0.64f, -62.86f),
-	glm::vec3(10.57f, 3.65f, -61.72f)
-};
-AABB rightBar5 = {
-	glm::vec3(16.93f, -0.64f, -62.86f),
-	glm::vec3(18.07f, 3.65f, -61.72f)
-};
-AABB verticalFan1 = {
-	glm::vec3(-17.33f, -0.39f, -60.46f),
-	glm::vec3(-12.67f, 6.39f, -59.54f)
-};
-AABB verticalFan2 = {
-	glm::vec3(-9.83f, -0.39f, -60.46f),
-	glm::vec3(-5.17f, 6.39f, -59.54f)
-};
-AABB verticalFan3 = {
-	glm::vec3(-2.33f, -0.39f, -60.46f),
-	glm::vec3(2.33f, 6.39f, -59.54f)
-};
-AABB verticalFan4 = {
-	glm::vec3(5.17f, -0.39f, -60.46f),
-	glm::vec3(9.83f, 6.39f, -59.54f)
-};
-AABB verticalFan5 = {
-	glm::vec3(12.67f, -0.39f, -60.46f),
-	glm::vec3(17.33f, 6.39f, -59.54f)
-};
-
-
-// ∏  √Êµππ⁄Ω∫
-std::vector<float> CheckBoxVerticesMap1 = {
-	// Bottom
-	-22.5f, -2.0f,  0.0f,
-	-22.5f,  0.0f,  0.0f,
-	-22.5f, -2.0f, -80.0f,
-	-22.5f,  0.0f, -80.0f,
-
-	// Top
-	22.5f, -2.0f,  0.0f,
-	22.5f,  0.0f,  0.0f,
-	22.5f, -2.0f, -80.0f,
-	22.5f,  0.0f, -80.0f,
-
-	// Front
-	-22.5f, -2.0f, -80.0f,
-	22.5f, -2.0f, -80.0f,
-	22.5f,  0.0f, -80.0f,
-	-22.5f,  0.0f, -80.0f,
-
-	// Back face
-	-22.5f, -2.0f,  0.0f,
-	22.5f, -2.0f,  0.0f,
-	22.5f,  0.0f,  0.0f,
-	-22.5f,  0.0f,  0.0f,
-
-	// Left face
-	-22.5f, -2.0f,  0.0f,
-	-22.5f, -2.0f, -80.0f,
-	-22.5f,  0.0f, -80.0f,
-	-22.5f,  0.0f,  0.0f,
-
-	// Right face
-	22.5f, -2.0f,  0.0f,
-	22.5f, -2.0f, -80.0f,
-	22.5f,  0.0f, -80.0f,
-	22.5f,  0.0f,  0.0f
-};
-std::vector<float> CheckBoxVerticesMap2 = {
-	// Bottom
-	-18.0f, -2.3f, -79.0f,
-	-18.0f, -0.3f, -79.0f,
-	-18.0f, -2.3f, -121.0f,
-	-18.0f, -0.3f, -121.0f,
-
-	// Top
-	18.0f, -2.3f, -79.0f,
-	18.0f, -0.3f, -79.0f,
-	18.0f, -2.3f, -121.0f,
-	18.0f, -0.3f, -121.0f,
-
-	// Front
-	-18.0f, -2.3f, -121.0f,
-	18.0f, -2.3f, -121.0f,
-	18.0f, -0.3f, -121.0f,
-	-18.0f, -0.3f, -121.0f,
-
-	// Back face
-	-18.0f, -2.3f, -79.0f,
-	18.0f, -2.3f, -79.0f,
-	18.0f, -0.3f, -79.0f,
-	-18.0f, -0.3f, -79.0f,
-
-	// Left face
-	-18.0f, -2.3f, -79.0f,
-	-18.0f, -2.3f, -121.0f,
-	-18.0f, -0.3f, -121.0f,
-	-18.0f, -0.3f, -79.0f,
-
-	// Right face
-	18.0f, -2.3f, -79.0f,
-	18.0f, -2.3f, -121.0f,
-	18.0f, -0.3f, -121.0f,
-	18.0f, -0.3f, -79.0f
-};
-std::vector<float> CheckBoxVerticesMap3 = {
-	// Bottom
-	-14.0f, -2.6f, -120.0f,
-	-14.0f, -0.6f, -120.0f,
-	-14.0f, -2.6f, -146.0f,
-	-14.0f, -0.6f, -146.0f,
-
-	// Top
-	14.0f, -2.6f, -120.0f,
-	14.0f, -0.6f, -120.0f,
-	14.0f, -2.6f, -146.0f,
-	14.0f, -0.6f, -146.0f,
-
-	// Front
-	-14.0f, -2.6f, -146.0f,
-	14.0f, -2.6f, -146.0f,
-	14.0f, -0.6f, -146.0f,
-	-14.0f, -0.6f, -146.0f,
-
-	// Back face
-	-14.0f, -2.6f, -120.0f,
-	14.0f, -2.6f, -120.0f,
-	14.0f, -0.6f, -120.0f,
-	-14.0f, -0.6f, -120.0f,
-
-	// Left face
-	-14.0f, -2.6f, -120.0f,
-	-14.0f, -2.6f, -146.0f,
-	-14.0f, -0.6f, -146.0f,
-	-14.0f, -0.6f, -120.0f,
-
-	// Right face
-	14.0f, -2.6f, -120.0f,
-	14.0f, -2.6f, -146.0f,
-	14.0f, -0.6f, -146.0f,
-	14.0f, -0.6f, -120.0f
-};
-std::vector<float> CheckBoxVerticesMap4 = {
-	// Bottom
-	-11.6f, -2.8f, -143.0f,
-	-11.6f, -0.8f, -143.0f,
-	-11.6f, -2.8f, -165.0f,
-	-11.6f, -0.8f, -165.0f,
-
-	// Top
-	11.6f, -2.8f, -143.0f,
-	11.6f, -0.8f, -143.0f,
-	11.6f, -2.8f, -165.0f,
-	11.6f, -0.8f, -165.0f,
-
-	// Front
-	-11.6f, -2.8f, -165.0f,
-	11.6f, -2.8f, -165.0f,
-	11.6f, -0.8f, -165.0f,
-	-11.6f, -0.8f, -165.0f,
-
-	// Back face
-	-11.6f, -2.8f, -143.0f,
-	11.6f, -2.8f, -143.0f,
-	11.6f, -0.8f, -143.0f,
-	-11.6f, -0.8f, -143.0f,
-
-	// Left face
-	-11.6f, -2.8f, -143.0f,
-	-11.6f, -2.8f, -165.0f,
-	-11.6f, -0.8f, -165.0f,
-	-11.6f, -0.8f, -143.0f,
-
-	// Right face
-	11.6f, -2.8f, -143.0f,
-	11.6f, -2.8f, -165.0f,
-	11.6f, -0.8f, -165.0f,
-	11.6f, -0.8f, -143.0f
-};
-std::vector<float> CheckBoxVerticesMap5 = {
-	// Bottom
-	 -10.6f, -28.5f, -165.0f,
-	 -10.6f, -26.5f, -165.0f,
-	 -10.6f, -28.5f, -245.0f,
-	 -10.6f, -26.5f, -245.0f,
-
-	 // Top
-	 10.6f, -28.5f, -165.0f,
-	 10.6f, -26.5f, -165.0f,
-	 10.6f, -28.5f, -245.0f,
-	 10.6f, -26.5f, -245.0f,
-
-	 // Front
-	 -10.6f, -28.5f, -245.0f,
-	 10.6f, -28.5f, -245.0f,
-	 10.6f, -26.5f, -245.0f,
-	 -10.6f, -26.5f, -245.0f,
-
-	 // Back face
-	 -10.6f, -28.5f, -165.0f,
-	 10.6f, -28.5f, -165.0f,
-	 10.6f, -26.5f, -165.0f,
-	 -10.6f, -26.5f, -165.0f,
-
-	 // Left face
-	 -10.6f, -28.5f, -165.0f,
-	 -10.6f, -28.5f, -245.0f,
-	 -10.6f, -26.5f, -245.0f,
-	 -10.6f, -26.5f, -165.0f,
-
-	 // Right face
-	 10.6f, -28.5f, -165.0f,
-	 10.6f, -28.5f, -245.0f,
-	 10.6f, -26.5f, -245.0f,
-	 10.6f, -26.5f, -165.0f
-};
 
 void InitCheckBoxMap1() {
 	glGenVertexArrays(1, &vaoCheckBoxMap1);
@@ -734,9 +288,9 @@ void InitCheckBoxMap5() {
 	glBindVertexArray(0);
 }
 
-// ∏  ±◊∏Æ±‚
+// Îßµ Í∑∏Î¶¨Í∏∞
 void DrawMap(GLuint shaderPRogramID, GLint modelMatrixLocation) {
-	// πŸ¥⁄
+	// Î∞îÎã•
 	glm::mat4 bottomModelMatrix = glm::mat4(1.0f);
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(bottomModelMatrix));
 
@@ -744,7 +298,7 @@ void DrawMap(GLuint shaderPRogramID, GLint modelMatrixLocation) {
 	glDrawElements(GL_TRIANGLES, modelBottom.faces.size() * 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	// »≠ªÏ«•øÕ ±‚µ’
+	// ÌôîÏÇ¥ÌëúÏôÄ Í∏∞Îë•
 	glm::mat4 arrowAndPillarModelMatrix = glm::mat4(1.0f);
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(arrowAndPillarModelMatrix));
 
@@ -752,7 +306,7 @@ void DrawMap(GLuint shaderPRogramID, GLint modelMatrixLocation) {
 	glDrawElements(GL_TRIANGLES, modelArrowAndPillar.faces.size() * 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	// ∞·Ω¬¡°
+	// Í≤∞ÏäπÏ†ê
 	glm::mat4 endPointModelMatrix = glm::mat4(1.0f);
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(endPointModelMatrix));
 
@@ -760,7 +314,7 @@ void DrawMap(GLuint shaderPRogramID, GLint modelMatrixLocation) {
 	glDrawElements(GL_TRIANGLES, modelEndPoint.faces.size() * 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	// ∆˜¿Œ∆Æ
+	// Ìè¨Ïù∏Ìä∏
 	glm::mat4 pointModelMatrix = glm::mat4(1.0f);
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(pointModelMatrix));
 
@@ -769,7 +323,7 @@ void DrawMap(GLuint shaderPRogramID, GLint modelMatrixLocation) {
 	glBindVertexArray(0);
 }
 
-// √º≈©π⁄Ω∫ ±◊∏Æ±‚
+// Ï≤¥ÌÅ¨Î∞ïÏä§ Í∑∏Î¶¨Í∏∞
 void DrawMapCheckBox(GLuint shaderProgramID, GLint modelMatrixLocation) {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glm::mat4 checkBoxModelMatrix1 = glm::mat4(1.0f);
@@ -804,244 +358,24 @@ void DrawMapCheckBox(GLuint shaderProgramID, GLint modelMatrixLocation) {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-// ¿Âæ÷π∞ ±◊∏Æ±‚
-void DrawObstacleBong(GLuint shaderPRogramID, GLint modelMatrixLocation) {
-}
-void DrawBongCheckBoxes(GLuint shaderProgramID, GLint modelMatrixLocation) {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-}
-void DrawObstacleHorizontalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) {
-	glm::vec3 horizontalFan1Position = glm::vec3(0.0f, -0.3f, -140.0f);
-	glm::mat4 HorizontalFanPink1ModelMatrix = glm::mat4(1.0f);
-	HorizontalFanPink1ModelMatrix = glm::translate(HorizontalFanPink1ModelMatrix, horizontalFan1Position);
-	HorizontalFanPink1ModelMatrix = glm::rotate(HorizontalFanPink1ModelMatrix, glm::radians(obstacleRotation), glm::vec3(0.0f, 1.0f, 0.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(HorizontalFanPink1ModelMatrix));
-
-	glBindVertexArray(vaoHorizontalFanPink);
-	glDrawElements(GL_TRIANGLES, modelHorizontalFanPink.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 HorizontalFanPurple1ModelMatrix = glm::mat4(1.0f);
-	HorizontalFanPurple1ModelMatrix = glm::translate(HorizontalFanPurple1ModelMatrix, horizontalFan1Position);
-	HorizontalFanPurple1ModelMatrix = glm::rotate(HorizontalFanPurple1ModelMatrix, glm::radians(obstacleRotation), glm::vec3(0.0f, 1.0f, 0.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(HorizontalFanPink1ModelMatrix));
-
-	glBindVertexArray(vaoHorizontalFanPurple);
-	glDrawElements(GL_TRIANGLES, modelHorizontalFanPurple.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-}
-void DrawObstacleDoor(GLuint shaderPRogramID, GLint modelMatrixLocation) {
-	glm::mat4 DooroutModelMatrix = glm::mat4(1.0f);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(DooroutModelMatrix));
-
-	glBindVertexArray(vaoDoorOut);
-	glDrawElements(GL_TRIANGLES, modelDoorOut.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 finalLeftdoorModelMatrix = LeftdoorModelMatrix;
-	LeftdoorModelMatrix = glm::translate(glm::mat4(1.0f), LeftdoorGroupPosition);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalLeftdoorModelMatrix));
-
-	glBindVertexArray(vaoLeftdoor);
-	glDrawElements(GL_TRIANGLES, modelLeftdoor.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 finalRightdoorModelMatrix = RightdoorModelMatrix;
-	RightdoorModelMatrix = glm::translate(glm::mat4(1.0f), RightdoorGroupPosition);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(finalRightdoorModelMatrix));
-
-	glBindVertexArray(vaoRightdoor);
-	glDrawElements(GL_TRIANGLES, modelRightdoor.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-}
-void DrawObstacleJumpbar(GLuint shaderPRogramID, GLint modelMatrixLocation) {
-	glm::mat4 JumpBarCenterModelMatrix = glm::mat4(1.0f);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(JumpBarCenterModelMatrix));
-
-	glBindVertexArray(vaoJumpBarCenter);
-	glDrawElements(GL_TRIANGLES, modelJumpBarCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	// √π π¯¬∞ πŸ »∏¿¸
-	glm::mat4 JumpBarbargroup1ModelMatrix = glm::mat4(1.0f);
-	JumpBarbargroup1ModelMatrix = glm::translate(JumpBarbargroup1ModelMatrix, glm::vec3(-9.5f, 0.0f, -94.93f)); // ºæ≈Õ∑Œ ¿Ãµø
-	JumpBarbargroup1ModelMatrix = glm::rotate(JumpBarbargroup1ModelMatrix, glm::radians(jumpBarRotationAngle), glm::vec3(0.0f, 1.0f, 0.0f)); // Y√‡ »∏¿¸
-	JumpBarbargroup1ModelMatrix = glm::translate(JumpBarbargroup1ModelMatrix, glm::vec3(9.5f, 0.0f, 94.93f)); // ø¯∑° ¿ßƒ°∑Œ ¿Ãµø
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(JumpBarbargroup1ModelMatrix));
-
-	glBindVertexArray(vaoJumpBarbargroup1);
-	glDrawElements(GL_TRIANGLES, modelJumpBarbargroup1.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 JumpBarbargroup2ModelMatrix = glm::mat4(1.0f);
-	JumpBarbargroup2ModelMatrix = glm::translate(JumpBarbargroup2ModelMatrix, glm::vec3(0.6f, 0.0f, -94.93f)); // ºæ≈Õ∑Œ ¿Ãµø
-	JumpBarbargroup2ModelMatrix = glm::rotate(JumpBarbargroup2ModelMatrix, glm::radians(-jumpBarRotationAngle), glm::vec3(0.0f, 1.0f, 0.0f)); // π›¥Î πÊ«‚ »∏¿¸
-	JumpBarbargroup2ModelMatrix = glm::translate(JumpBarbargroup2ModelMatrix, glm::vec3(-0.6f, 0.0f, 94.93f)); // ø¯∑° ¿ßƒ°∑Œ ¿Ãµø
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(JumpBarbargroup2ModelMatrix));
-
-	glBindVertexArray(vaoJumpBarbargroup2);
-	glDrawElements(GL_TRIANGLES, modelJumpBarbargroup2.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 JumpBarbargroup3ModelMatrix = glm::mat4(1.0f);
-	JumpBarbargroup3ModelMatrix = glm::translate(JumpBarbargroup3ModelMatrix, glm::vec3(10.5f, 0.0f, -94.93f)); // ºæ≈Õ∑Œ ¿Ãµø
-	JumpBarbargroup3ModelMatrix = glm::rotate(JumpBarbargroup3ModelMatrix, glm::radians(jumpBarRotationAngle), glm::vec3(0.0f, 1.0f, 0.0f)); // π›¥Î πÊ«‚ »∏¿¸
-	JumpBarbargroup3ModelMatrix = glm::translate(JumpBarbargroup3ModelMatrix, glm::vec3(-10.5f, 0.0f, 94.93f)); // ø¯∑° ¿ßƒ°∑Œ ¿Ãµø
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(JumpBarbargroup3ModelMatrix));
-
-	glBindVertexArray(vaoJumpBarbargroup3);
-	glDrawElements(GL_TRIANGLES, modelJumpBarbargroup3.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-}
-void DrawObstacleVerticalFan(GLuint shaderPRogramID, GLint modelMatrixLocation) {
-	glm::vec3 verticalFan1Position = glm::vec3(0.0f, 3.0f, -60.0f);
-	glm::mat4 verticalFanBar1ModelMatrix = glm::mat4(1.0f);
-	verticalFanBar1ModelMatrix = glm::translate(verticalFanBar1ModelMatrix, verticalFan1Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar1ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFanBar);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanBar.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 verticalFanCenter1ModelMatrix = glm::mat4(1.0f);
-	verticalFanCenter1ModelMatrix = glm::translate(verticalFanCenter1ModelMatrix, verticalFan1Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanCenter1ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFanCenter);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 verticalFan1ModelMatrix = glm::mat4(1.0f);
-	verticalFan1ModelMatrix = glm::translate(verticalFan1ModelMatrix, verticalFan1Position);
-	verticalFan1ModelMatrix = glm::rotate(verticalFan1ModelMatrix, glm::radians(obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFan1ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFan);
-	glDrawElements(GL_TRIANGLES, modelVerticalFan.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	verticalFan1.update(verticalFan1Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
-
-	glm::vec3 verticalFan2Position = glm::vec3(-15.0f, 3.0f, -60.0f);
-	glm::mat4 verticalFanBar2ModelMatrix = glm::mat4(1.0f);
-	verticalFanBar2ModelMatrix = glm::translate(verticalFanBar2ModelMatrix, verticalFan2Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar2ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFanBar);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanBar.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 verticalFanCenter2ModelMatrix = glm::mat4(1.0f);
-	verticalFanCenter2ModelMatrix = glm::translate(verticalFanCenter2ModelMatrix, verticalFan2Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanCenter2ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFanCenter);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 verticalFan2ModelMatrix = glm::mat4(1.0f);
-	verticalFan2ModelMatrix = glm::translate(verticalFan2ModelMatrix, verticalFan2Position);
-	verticalFan2ModelMatrix = glm::rotate(verticalFan2ModelMatrix, glm::radians(obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFan2ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFan);
-	glDrawElements(GL_TRIANGLES, modelVerticalFan.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	verticalFan2.update(verticalFan2Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
-
-	glm::vec3 verticalFan3Position = glm::vec3(15.0f, 3.0f, -60.0f);
-	glm::mat4 verticalFanBar3ModelMatrix = glm::mat4(1.0f);
-	verticalFanBar3ModelMatrix = glm::translate(verticalFanBar3ModelMatrix, verticalFan3Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar3ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFanBar);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanBar.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 verticalFanCenter3ModelMatrix = glm::mat4(1.0f);
-	verticalFanCenter3ModelMatrix = glm::translate(verticalFanCenter3ModelMatrix, verticalFan3Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanCenter3ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFanCenter);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 verticalFan3ModelMatrix = glm::mat4(1.0f);
-	verticalFan3ModelMatrix = glm::translate(verticalFan3ModelMatrix, verticalFan3Position);
-	verticalFan3ModelMatrix = glm::rotate(verticalFan3ModelMatrix, glm::radians(obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFan3ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFan);
-	glDrawElements(GL_TRIANGLES, modelVerticalFan.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	verticalFan3.update(verticalFan3Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
-
-	glm::vec3 verticalFan4Position = glm::vec3(-7.5f, 3.0f, -60.0f);
-	glm::mat4 verticalFanBar4ModelMatrix = glm::mat4(1.0f);
-	verticalFanBar4ModelMatrix = glm::translate(verticalFanBar4ModelMatrix, verticalFan4Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar4ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFanBar);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanBar.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 verticalFanCenter4ModelMatrix = glm::mat4(1.0f);
-	verticalFanCenter4ModelMatrix = glm::translate(verticalFanCenter4ModelMatrix, verticalFan4Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanCenter4ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFanCenter);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 verticalFan4ModelMatrix = glm::mat4(1.0f);
-	verticalFan4ModelMatrix = glm::translate(verticalFan4ModelMatrix, verticalFan4Position);
-	verticalFan4ModelMatrix = glm::rotate(verticalFan4ModelMatrix, glm::radians(-obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFan4ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFan);
-	glDrawElements(GL_TRIANGLES, modelVerticalFan.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	verticalFan4.update(verticalFan4Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
-
-	glm::vec3 verticalFan5Position = glm::vec3(7.5f, 3.0f, -60.0f);
-	glm::mat4 verticalFanBar5ModelMatrix = glm::mat4(1.0f);
-	verticalFanBar5ModelMatrix = glm::translate(verticalFanBar5ModelMatrix, verticalFan5Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanBar5ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFanBar);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanBar.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 verticalFanCenter5ModelMatrix = glm::mat4(1.0f);
-	verticalFanCenter5ModelMatrix = glm::translate(verticalFanCenter5ModelMatrix, verticalFan5Position);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFanCenter5ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFanCenter);
-	glDrawElements(GL_TRIANGLES, modelVerticalFanCenter.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glm::mat4 verticalFan5ModelMatrix = glm::mat4(1.0f);
-	verticalFan5ModelMatrix = glm::translate(verticalFan5ModelMatrix, verticalFan5Position);
-	verticalFan5ModelMatrix = glm::rotate(verticalFan5ModelMatrix, glm::radians(-obstacleRotation), glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(verticalFan5ModelMatrix));
-
-	glBindVertexArray(vaoVerticalFan);
-	glDrawElements(GL_TRIANGLES, modelVerticalFan.faces.size() * 3, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	verticalFan5.update(verticalFan5Position, glm::vec3(-2.33f, -3.39f, -0.46f), glm::vec3(2.33f, 3.39f, 0.46f));
-}
 
 
+Player1* P1 = nullptr;
 BongGroup* Bong1 = nullptr;
 BongGroup* Bong2 = nullptr;
-HorizontalFan* PinkFan1 = nullptr;
-HorizontalFan* PurpleFan1 = nullptr;
-
+HorizontalFan* HorFan1 = nullptr;
+HorizontalFan* HorFan2 = nullptr;
+HorizontalFan* HorFan3 = nullptr;
+BongGroup* JumpbarCenter = nullptr;
+Obstacle* Jumpbar1 = nullptr;
+Obstacle* Jumpbar2 = nullptr;
+Obstacle* Jumpbar3 = nullptr;
+VerticalFan* VerFan1 = nullptr;
+VerticalFan* VerFan2 = nullptr;
+VerticalFan* VerFan3 = nullptr;
+VerticalFan* VerFan4 = nullptr;
+VerticalFan* VerFan5 = nullptr;
+Door* flogDoor = nullptr;
 void main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -1054,11 +388,8 @@ void main(int argc, char** argv) {
 
 	make_shaderProgram();
 
-	// ∏ 
-	InitBottom();
-	InitArrowAndPillar();
-	InitEndPoint();
-	InitPoint();
+	// Îßµ
+	InitMap();
 
 	//mapcheckbox
 	InitCheckBoxMap1();
@@ -1069,67 +400,105 @@ void main(int argc, char** argv) {
 
 	InitializeCriticalSection(&g_cs_client);
 
-	std::cout << "ƒ≥∏Ø≈Õ ª˝º∫¡ﬂ...." << std::endl;
+	std::cout << "Ï∫êÎ¶≠ÌÑ∞ ÏÉùÏÑ±Ï§ë...." << std::endl;
 	P1 = new Player1();
 	P2 = new Player1();
 	P3 = new Player1();
 
 
-	//¿Âæ÷π∞
-	std::cout << "¿Âæ÷π∞ ª˝º∫¡ﬂ...." << std::endl;
-	AABB bong1 = {
-		glm::vec3(-15.74f , 0.0f, -33.25f), // min
-		glm::vec3(-13.74f,  3.6f,  -31.25f)  // max
-	};
+	//Ïû•Ïï†Î¨º
+	std::cout << "Ïû•Ïï†Î¨º ÏÉùÏÑ±Ï§ë...." << std::endl;
 	Bong1 = new BongGroup(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
 	InitPart("bong/bonggroup1.obj", Bong1->model, Bong1->vao, Bong1->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
-	Bong1->SetAABB(bong1);
+	Bong1->SetAABB(bong1, bong3, bong5);
 
-	AABB bong2 = {
-	glm::vec3(-9.47f, 0.0f, -33.25f), // min
-	glm::vec3(-7.47f ,  3.6f,  -31.25f)  // max
+	bong3 = {
+	glm::vec3(-3.169f + Bong1->Position.x, 0.0f, -33.25f), // min
+	glm::vec3(-1.169f + Bong1->Position.x,  3.6f,  -31.25f)  // max
 	};
 	Bong2 = new BongGroup(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
 	InitPart("bong/bonggroup2.obj", Bong2->model, Bong2->vao, Bong2->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
-	Bong2->SetAABB(bong2);
+	Bong2->SetAABB(bong2, bong4, bong6);
 
-	// ∞°∑Œ∆“
-	AABB horizontalFan1 = {
-		glm::vec3(-6.1f, -0.3f, -140.49f),  // min
-		glm::vec3(6.1f, 4.1f, -139.51f)     // max
-	};
-	AABB horizontalFan2 = {
-		glm::vec3(0.9f, -0.3f, -115.49f),   // min
-		glm::vec3(13.1f, 4.1f, -114.51f)    // max
-	};
-	AABB horizontalFan3 = {
-		glm::vec3(-13.1f, -0.3f, -115.49f), // min
-		glm::vec3(-0.9f, 4.1f, -114.51f)    // max
-	};
+	HorFan1 = new HorizontalFan(glm::vec3(0.0f, -0.3f, -140.0f));
+	HorFan2 = new HorizontalFan(glm::vec3(7.0f, -0.3f, -115.0f));
+	HorFan3 = new HorizontalFan(glm::vec3(-7.0f, -0.3f, -115.0f));
+	InitPart("horizontalFan/pink.obj", HorFan1->Pink->model, HorFan1->Pink->vao, HorFan1->Pink->vbo, glm::vec3(1.0f, 0.7f, 0.75f));
+	InitPart("horizontalFan/purple.obj", HorFan1->Purple->model, HorFan1->Purple->vao, HorFan1->Purple->vbo, glm::vec3(0.5f, 0.0f, 0.5f));
+	InitPart("horizontalFan/pink.obj", HorFan2->Pink->model, HorFan2->Pink->vao, HorFan2->Pink->vbo, glm::vec3(1.0f, 0.7f, 0.75f));
+	InitPart("horizontalFan/purple.obj", HorFan2->Purple->model, HorFan2->Purple->vao, HorFan2->Purple->vbo, glm::vec3(0.5f, 0.0f, 0.5f));
 
-	PinkFan1 = new HorizontalFan(glm::vec3(0.0f, -0.3f, -140.0f));
-	InitPart("horizontalFan/pink.obj", PinkFan1->model, PinkFan1->vao, PinkFan1->vbo, glm::vec3(1.0f, 0.7f, 0.75f));
-	PinkFan1->SetAABB(horizontalFan1);
-
-	PurpleFan1 = new HorizontalFan(PinkFan1->Position);
-	InitPart("horizontalFan/purple.obj", PurpleFan1->model, PurpleFan1->vao, PurpleFan1->vbo, glm::vec3(0.5f, 0.0f, 0.5f));
+	HorFan3->Pink = HorFan1->Pink;
+	HorFan3->Purple = HorFan1->Purple;
+	HorFan1->CAABB = horizontalFan1;
+	HorFan2->CAABB = horizontalFan2;
+	HorFan3->CAABB = horizontalFan3;
 
 
-	
-	InitJumpbarCenter();
-	InitJumpbarbargroup1();
-	InitJumpbarbargroup2();
-	InitJumpbarbar3();
-	InitVerticalFanBar();
-	InitVerticalFanCenter();
-	InitVerticalFan();
+	JumpbarCenter = new BongGroup(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
+	InitPart("jumpBong/centergroup.obj", JumpbarCenter->model, JumpbarCenter->vao, JumpbarCenter->vbo, glm::vec3(0.576f, 0.078f, 1.0f));
+	JumpbarCenter->SetAABB(barcenter1, barcenter2, barcenter3);
 
-	printf("[≈¨∂Û¿Ãæ∆Æ] º≠πˆ ø¨∞· Ω√µµ...\n");
+	Jumpbar1 = new Obstacle(glm::vec3(9.5f, 0.0f, 94.93f));
+	InitPart("jumpBong/bar1.obj", Jumpbar1->model, Jumpbar1->vao, Jumpbar1->vbo, glm::vec3(0.576f, 0.078f, 1.0f));
+	Jumpbar1->SetAABB(barbar1);
+
+	Jumpbar2 = new Obstacle(glm::vec3(-0.6f, 0.0f, 94.93f));
+	InitPart("jumpBong/bar2.obj", Jumpbar2->model, Jumpbar2->vao, Jumpbar2->vbo, glm::vec3(0.576f, 0.078f, 1.0f));
+	Jumpbar2->SetAABB(barbar2);
+
+	Jumpbar3 = new Obstacle(glm::vec3(-10.5f, 0.0f, 94.93f));
+	InitPart("jumpBong/bar3.obj", Jumpbar3->model, Jumpbar3->vao, Jumpbar3->vbo, glm::vec3(0.576f, 0.078f, 1.0f));
+	Jumpbar3->SetAABB(barbar3);
+
+	VerFan1 = new VerticalFan(glm::vec3(0.0f, 3.0f, -60.0f));
+	VerFan2 = new VerticalFan(glm::vec3(-15.0f, 3.0f, -60.0f));
+	VerFan3 = new VerticalFan(glm::vec3(15.0f, 3.0f, -60.0f));
+	VerFan4 = new VerticalFan(glm::vec3(-7.5f, 3.0f, -60.0f));
+	VerFan5 = new VerticalFan(glm::vec3(7.5f, 3.0f, -60.0f));
+	InitPart("verticalFan/bar.obj", VerFan1->FanBar->model, VerFan1->FanBar->vao, VerFan1->FanBar->vbo, glm::vec3(0.5f, 0.5f, 0.5f));
+	InitPart("verticalFan/center.obj", VerFan1->FanCenter->model, VerFan1->FanCenter->vao, VerFan1->FanCenter->vbo, glm::vec3(1.0f, 0.4f, 0.7f));
+	InitPart("verticalFan/fan.obj", VerFan1->VFan->model, VerFan1->VFan->vao, VerFan1->VFan->vbo, glm::vec3(1.0f, 0.4f, 0.7f));
+	InitPart("verticalFan/fan.obj", VerFan4->VFan->model, VerFan4->VFan->vao, VerFan4->VFan->vbo, glm::vec3(1.0f, 0.4f, 0.7f));
+
+	VerticalFan* Fans[] = { VerFan2,VerFan3,VerFan4,VerFan5 };
+	for (VerticalFan* fan : Fans) {
+		fan->FanBar = VerFan1->FanBar;
+		fan->FanCenter = VerFan1->FanCenter;
+		if (fan == VerFan1 || fan == VerFan2 || fan == VerFan3)
+			fan->VFan = VerFan1->VFan;
+		else
+			fan->VFan = VerFan4->VFan;
+	}
+	VerFan1->SetAABB(verticalFan1);
+	VerFan2->SetAABB(verticalFan2);
+	VerFan3->SetAABB(verticalFan3);
+	VerFan4->SetAABB(verticalFan4);
+	VerFan5->SetAABB(verticalFan5);
+
+
+	glm::mat4 LeftdoorModelMatrix = glm::mat4(1.0f);
+	glm::mat4 RightdoorModelMatrix = glm::mat4(1.0f);
+	glm::vec3 LeftdoorGroupPosition = glm::vec3(0.0f, 0.0f, 0.0f); // Ï¥àÍ∏∞ ÏúÑÏπò
+	glm::vec3 LeftdoorGroupDirection = glm::vec3(-1.0f, 0.0f, 0.0f); // Ï¥àÍ∏∞ Ïù¥Îèô Î∞©Ìñ• (ÏôºÏ™Ω)
+	glm::vec3 RightdoorGroupPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 RightdoorGroupDirection = glm::vec3(1.0f, 0.0f, 0.0f);
+	// Í∞úÍµ¨Î¶¨Î¨∏
+
+	flogDoor = new Door(glm::vec3(0.0f, 0.0f, 0.0f));
+	InitPart("frogDoor/outsidegroup.obj", flogDoor->Center->model, flogDoor->Center->vao, flogDoor->Center->vbo, glm::vec3(0.576f, 0.078f, 1.0f));
+	InitPart("frogDoor/leftdoorgroup.obj", flogDoor->LeftD->model, flogDoor->LeftD->vao, flogDoor->LeftD->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
+	InitPart("frogDoor/rightdoorgroup.obj", flogDoor->RightD->model, flogDoor->RightD->vao, flogDoor->RightD->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
+	flogDoor->LeftD->SetAABB(leftdoor1, leftdoor2, leftdoor3);
+	flogDoor->RightD->SetAABB(rightdoor1, rightdoor2, rightdoor3);
+
+
+	printf("[ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏] ÏÑúÎ≤Ñ Ïó∞Í≤∞ ÏãúÎèÑ...\n");
 	if (!InitNetworkConnection()) {
-		printf("[≈¨∂Û¿Ãæ∆Æ] º≠πˆ ø¨∞· Ω«∆–! ∞‘¿”¿ª ¡æ∑·«’¥œ¥Ÿ.\n");
+		printf("[ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏] ÏÑúÎ≤Ñ Ïó∞Í≤∞ Ïã§Ìå®! Í≤åÏûÑÏùÑ Ï¢ÖÎ£åÌï©ÎãàÎã§.\n");
 		return;
 	}
-	printf("[≈¨∂Û¿Ãæ∆Æ] º≠πˆ ø¨∞· º∫∞¯!\n");
+	printf("[ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏] ÏÑúÎ≤Ñ Ïó∞Í≤∞ ÏÑ±Í≥µ!\n");
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -1147,8 +516,6 @@ void main(int argc, char** argv) {
 	DeleteCriticalSection(&g_cs_client);
 }
 
-// ƒ≥∏Ø≈Õ
-
 
 void make_vertexShaders() {
 	GLchar* vertexSource;
@@ -1164,7 +531,7 @@ void make_vertexShaders() {
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &result);
 	if (!result) {
 		glGetShaderInfoLog(vertexShader, 512, NULL, errorLog);
-		std::cerr << "ERROR: vertex shader ƒƒ∆ƒ¿œ Ω«∆–\n" << errorLog << std::endl;
+		std::cerr << "ERROR: vertex shader Ïª¥ÌååÏùº Ïã§Ìå®\n" << errorLog << std::endl;
 		return;
 	}
 }
@@ -1184,7 +551,7 @@ void make_fragmentShaders() {
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &result);
 	if (!result) {
 		glGetShaderInfoLog(fragmentShader, 512, NULL, errorLog);
-		std::cerr << "ERROR: frag_shader ƒƒ∆ƒ¿œ Ω«∆–\n" << errorLog << std::endl;
+		std::cerr << "ERROR: frag_shader Ïª¥ÌååÏùº Ïã§Ìå®\n" << errorLog << std::endl;
 		return;
 	}
 }
@@ -1206,19 +573,19 @@ GLuint make_shaderProgram() {
 }
 
 GLvoid drawScene() {
-	glClearColor(1.0, 1.0, 1.0, 1.0f);  // πË∞Ê¿ª »Úªˆ¿∏∑Œ º≥¡§
+	glClearColor(1.0, 1.0, 1.0, 1.0f);  // Î∞∞Í≤ΩÏùÑ Ìù∞ÏÉâÏúºÎ°ú ÏÑ§Ï†ï
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgramID);
 
 
-	glViewport(0, 0, window_Width, window_Height); //¿¸√º»≠∏È
+	glViewport(0, 0, window_Width, window_Height); //Ï†ÑÏ≤¥ÌôîÎ©¥
 	glm::vec3 camera1Position = P1->Position + glm::vec3(0.0f, 10.0f, 15.0f);
 	glm::vec3 camera1Target = P1->Position;
 
 	glm::mat4 viewMatrix1 = glm::lookAt(
-		camera1Position,  // ƒ´∏ﬁ∂Û 1 ¿ßƒ°
-		camera1Target,    // ƒ´∏ﬁ∂Û 1 πŸ∂Û∫∏¥¬ ¡ˆ¡°
-		glm::vec3(0.0f, 1.0f, 0.0f) // ªÛ«‚ ∫§≈Õ
+		camera1Position,  // Ïπ¥Î©îÎùº 1 ÏúÑÏπò
+		camera1Target,    // Ïπ¥Î©îÎùº 1 Î∞îÎùºÎ≥¥Îäî ÏßÄÏ†ê
+		glm::vec3(0.0f, 1.0f, 0.0f) // ÏÉÅÌñ• Î≤°ÌÑ∞
 	);
 
 	GLint viewMatrixLocation = glGetUniformLocation(shaderProgramID, "viewTransform");
@@ -1226,7 +593,7 @@ GLvoid drawScene() {
 
 	glm::mat4 projectionMatrix1 = glm::perspective(
 		glm::radians(45.0f),
-		(float)(window_Width ) / (float)window_Height, // ¡¬øÏ ¿˝π›¿« ¡æ»æ∫Ò
+		(float)(window_Width ) / (float)window_Height, // Ï¢åÏö∞ Ï†àÎ∞òÏùò Ï¢ÖÌö°ÎπÑ
 		0.1f,
 		10000.0f
 	);
@@ -1244,12 +611,23 @@ GLvoid drawScene() {
 	Bong2->Draw(shaderProgramID, modelMatrixLocation);
 	P1->Draw(shaderProgramID, modelMatrixLocation);
 
-	// p2 ¿ßƒ° µø±‚»≠
+	// p2 ÏúÑÏπò ÎèôÍ∏∞Ìôî
 	P2->Draw(shaderProgramID, modelMatrixLocation);
 
-	//ªÛ¥Î ƒ≥∏Ø≈Õµµ πﬁæ∆º≠ ±◊∑¡æﬂ«‘.
-	PinkFan1->Draw(shaderProgramID, modelMatrixLocation);
-	PurpleFan1->Draw(shaderProgramID, modelMatrixLocation);
+	//ÏÉÅÎåÄ Ï∫êÎ¶≠ÌÑ∞ÎèÑ Î∞õÏïÑÏÑú Í∑∏Î†§ÏïºÌï®.
+	HorFan1->Draw(shaderProgramID, modelMatrixLocation);
+	HorFan2->Draw(shaderProgramID, modelMatrixLocation);
+	HorFan3->Draw(shaderProgramID, modelMatrixLocation);
+	JumpbarCenter->JumpBarCenterDraw(shaderProgramID, modelMatrixLocation);
+	Jumpbar1->JumpBarDraw(shaderProgramID, modelMatrixLocation);
+	Jumpbar2->JumpBarDraw(shaderProgramID, modelMatrixLocation);
+	Jumpbar3->JumpBarDraw(shaderProgramID, modelMatrixLocation);
+	VerFan1->Draw(shaderProgramID, modelMatrixLocation);
+	VerFan2->Draw(shaderProgramID, modelMatrixLocation);
+	VerFan3->Draw(shaderProgramID, modelMatrixLocation);
+	VerFan4->Draw(shaderProgramID, modelMatrixLocation);
+	VerFan5->Draw(shaderProgramID, modelMatrixLocation);
+	flogDoor->Draw(shaderProgramID, modelMatrixLocation);
 	glutSwapBuffers();
 }
 
@@ -1331,7 +709,7 @@ GLvoid Timer(int value) {
 		}
 	}
 
-	// ¡°«¡ ∑Œ¡˜
+	// Ï†êÌîÑ Î°úÏßÅ
 	if (P1->IsJumping) {
 		// character1Position.y += character1JumpSpeed;
 		P1->Position += glm::vec3(0.0f, P1->JSpeed, 0.0f);
@@ -1347,29 +725,29 @@ GLvoid Timer(int value) {
 		P1->Position = glm::vec3(0.0f, -P1->realGravity, 0.0f);
 	}
 
-	// ƒ≥∏Ø≈Õ1 ∏µ® ∏≈∆Æ∏ØΩ∫ æ˜µ•¿Ã∆Æ
+	// Ï∫êÎ¶≠ÌÑ∞1 Î™®Îç∏ Îß§Ìä∏Î¶≠Ïä§ ÏóÖÎç∞Ïù¥Ìä∏
 	P1->ModelMatrix = glm::translate(glm::mat4(1.0f), P1->Position);
 	P1->ModelMatrix = glm::rotate(P1->ModelMatrix, glm::radians(P1->RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
 
-	// AABB æ˜µ•¿Ã∆Æ
+	// AABB ÏóÖÎç∞Ïù¥Ìä∏
 	P1->CAABB.update(P1->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 
-	// ¥Ÿ∏• ƒ≥∏Ø≈Õ æ˜µ•¿Ã∆Æ∏¶ ∞Ëº” «ÿ¡‹
+	// Îã§Î•∏ Ï∫êÎ¶≠ÌÑ∞ ÏóÖÎç∞Ïù¥Ìä∏Î•º Í≥ÑÏÜç Ìï¥Ï§å
 	UpdatePlayer();
 
 
-	// ∆» »ÁµÈ∏≤ æ˜µ•¿Ã∆Æ
+	// Ìåî ÌùîÎì§Î¶º ÏóÖÎç∞Ïù¥Ìä∏
 	if (P1->IsSwing) {
 		P1->ArmLegSwingAngle += P1->SwingDirection * 2.0f;
 		if (P1->ArmLegSwingAngle >= P1->MaxSwingAngle) {
-			P1->SwingDirection = -1; // πÊ«‚ π›¿¸
+			P1->SwingDirection = -1; // Î∞©Ìñ• Î∞òÏ†Ñ
 		}
 		else if (P1->ArmLegSwingAngle <= -P1->MaxSwingAngle) {
-			P1->SwingDirection = 1; // πÊ«‚ π›¿¸
+			P1->SwingDirection = 1; // Î∞©Ìñ• Î∞òÏ†Ñ
 		}
 	}
 	else {
-		// »ÁµÈ∏≤ ∫Ò»∞º∫»≠ Ω√ √ ±‚ ªÛ≈¬∑Œ ∫π±∏
+		// ÌùîÎì§Î¶º ÎπÑÌôúÏÑ±Ìôî Ïãú Ï¥àÍ∏∞ ÏÉÅÌÉúÎ°ú Î≥µÍµ¨
 		if (P1->ArmLegSwingAngle > 0.0f) {
 			P1->ArmLegSwingAngle -= 2.0f;
 			if (P1->ArmLegSwingAngle < 0.0f) P1->ArmLegSwingAngle = 0.0f;
@@ -1380,18 +758,18 @@ GLvoid Timer(int value) {
 		}
 	}
 
-	////∫¿ øÚ¡˜¿Ã±‚
+	////Î¥â ÏõÄÏßÅÏù¥Í∏∞
 	////Bong1->Position.x += BongGroup1Direction.x * BongMove;
 	//Bong1->Position.x += Bong1->Direction.x * Bong1->MoveSpeed;
 
 	//if (Bong1->Position.x >= Bong1->MaxMoveDistance) {
-	//	Bong1->Direction.x = -1; // øﬁ¬ ¿∏∑Œ ¿Ãµø
+	//	Bong1->Direction.x = -1; // ÏôºÏ™ΩÏúºÎ°ú Ïù¥Îèô
 	//}
 	//else if (Bong1->Position.x <= -Bong1->MaxMoveDistance) {
-	//	Bong1->Direction.x = 1;  // ø¿∏•¬ ¿∏∑Œ ¿Ãµø
+	//	Bong1->Direction.x = 1;  // Ïò§Î•∏Ï™ΩÏúºÎ°ú Ïù¥Îèô
 	//}
 
-	//// ∫¿ ±◊∑Ï 2 øÚ¡˜¿Ã±‚ (π›¥Î πÊ«‚)
+	//// Î¥â Í∑∏Î£π 2 ÏõÄÏßÅÏù¥Í∏∞ (Î∞òÎåÄ Î∞©Ìñ•)
 	//Bong2->Position.x += Bong2->Direction.x * Bong2->MoveSpeed;
 	//if (Bong2->Position.x >= Bong2->MaxMoveDistance) {
 	//	Bong2->Direction.x = -1;
@@ -1403,16 +781,22 @@ GLvoid Timer(int value) {
 	//if (isObstacleRotate) {
 	//	obstacleRotation += 2.0f;
 	//}
-	//Bong1->CAABB.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
-	//Bong2->CAABB.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
 	if (Socket != INVALID_SOCKET) {
 		if (!recv_BongObstacle(Socket)) {
 			std::cout << "recv_Bong Error" << '\n';
 		}
 	}
+	if (isObstacleRotate) {
+		obstacleRotation += 2.0f;
+	}
+	
+
+	 //Î¥â ÏõÄÏßÅÏù¥Í∏∞
+	 //Bong1->Position.x += BongGroup1Direction.x * BongMove;
+	Bong1->Position.x += Bong1->Direction.x * Bong1->MoveSpeed;
 
 	EnterCriticalSection(&g_cs_client);
-	// ¿¸ø™ ∫Øºˆ g_bongObstacle¿ª BongGroup ∞¥√ºø° π›øµ
+	// Ï†ÑÏó≠ Î≥ÄÏàò g_bongObstacleÏùÑ BongGroup Í∞ùÏ≤¥Ïóê Î∞òÏòÅ
 	if (Bong1 && Bong2) {
 		Bong1->Position = g_bongObstacle.pos1;
 		Bong2->Position = g_bongObstacle.pos2;
@@ -1426,77 +810,38 @@ GLvoid Timer(int value) {
 		Bong2->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong2->Position);
 	}
 
-	// πÆ¬¶ øÚ¡˜¿Ã±‚
-	LeftdoorGroupPosition.x += LeftdoorGroupDirection.x * DoorMove;
-	if (LeftdoorGroupPosition.x >= 0.0) {
-		LeftdoorGroupDirection.x = -1; // øﬁ¬ ¿∏∑Œ ¿Ãµø
-	}
-	else if (LeftdoorGroupPosition.x <= -MaxDoorMove) {
-		LeftdoorGroupDirection.x = 1;  // ø¿∏•¬ ¿∏∑Œ ¿Ãµø
-	}
-	RightdoorGroupPosition.x += RightdoorGroupDirection.x * DoorMove;
-	if (RightdoorGroupPosition.x >= MaxDoorMove) {
-		RightdoorGroupDirection.x = -1;
-	}
-	else if (RightdoorGroupPosition.x <= -0.0) {
-		RightdoorGroupDirection.x = 1;
-	}
-	leftdoor1.update(LeftdoorGroupPosition, glm::vec3(-8.475f, -0.76f, -159.129f), glm::vec3(-6.4f, 2.4f, -158.53f));
-	leftdoor2.update(LeftdoorGroupPosition, glm::vec3(-2.168f, -0.76f, -159.129f), glm::vec3(-0.09f, 2.4f, -158.53f));
-	leftdoor3.update(LeftdoorGroupPosition, glm::vec3(4.227f, -0.76f, -159.129f), glm::vec3(6.297f, 2.4f, -158.53f));
-	rightdoor1.update(RightdoorGroupPosition, glm::vec3(6.408f, -0.76f, -159.129f), glm::vec3(4.38f, 2.4f, -158.53f));
-	rightdoor2.update(RightdoorGroupPosition, glm::vec3(-0.1f, -0.76f, -159.129f), glm::vec3(1.926f, 2.4f, -158.53f));
-	rightdoor3.update(RightdoorGroupPosition, glm::vec3(6.294f, -0.76f, -159.129f), glm::vec3(8.322f, 2.4f, -158.53f));
-	AABB leftDoors[] = { leftdoor1, leftdoor2, leftdoor3 };
-	AABB rightDoors[] = { rightdoor1, rightdoor2, rightdoor3 };
+	Bong1->CAABB1.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
+	Bong2->CAABB1.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
+	Bong1->CAABB2.update(Bong1->Position, glm::vec3(-3.169f, 0.0f, -33.25f), glm::vec3(-1.169f, 3.6f, -31.25f));
+	Bong2->CAABB2.update(Bong2->Position, glm::vec3(3.045f, 0.0f, -33.25f), glm::vec3(5.045f, 3.6f, -31.25f));
+	Bong1->CAABB3.update(Bong1->Position, glm::vec3(9.27f, 0.0f, -33.25f), glm::vec3(11.27f, 3.6f, -31.25f));
+	Bong2->CAABB3.update(Bong2->Position, glm::vec3(14.945f, 0.0f, -33.25f), glm::vec3(16.945f, 3.6f, -31.25f));
 
-	// ƒ≥∏Ø≈Õ1∞˙ πÆ¬¶ √Êµπ √≥∏Æ
-	for (const auto& door : leftDoors) {
-		if (checkCollision(P1->CAABB, door)) {
-			float overlapX = std::min(P1->CAABB.max.x, door.max.x) - std::max(P1->CAABB.min.x, door.min.x);
-			float overlapZ = std::min(P1->CAABB.max.z, door.max.z) - std::max(P1->CAABB.min.z, door.min.z);
-
-			if (overlapX < overlapZ) {
-				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > door.min.x) {
-					P1->Direction.x = 0.0f;
-				}
-				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < door.max.x) {
-					P1->Direction.x = 0.0f;
-				}
-			}
-			else {
-				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > door.min.z) {
-					P1->Direction.z = 0.0f;
-				}
-				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < door.max.z) {
-					P1->Direction.z = 0.0f;
-				}
-			}
-		}
+	// Î¨∏Ïßù ÏõÄÏßÅÏù¥Í∏∞
+	flogDoor->LeftD->Position.x += flogDoor->LeftD->Direction.x * DoorMove;
+	if (flogDoor->LeftD->Position.x >= 0.0) {
+		flogDoor->LeftD->Direction.x = -1; // ÏôºÏ™ΩÏúºÎ°ú Ïù¥Îèô
 	}
-	for (const auto& door : rightDoors) {
-		if (checkCollision(P1->CAABB, door)) {
-			float overlapX = std::min(P1->CAABB.max.x, door.max.x) - std::max(P1->CAABB.min.x, door.min.x);
-			float overlapZ = std::min(P1->CAABB.max.z, door.max.z) - std::max(P1->CAABB.min.z, door.min.z);
-
-			if (overlapX < overlapZ) {
-				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > door.min.x) {
-					P1->Direction.x = 0.0f;
-				}
-				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < door.max.x) {
-					P1->Direction.x = 0.0f;
-				}
-			}
-			else {
-				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > door.min.z) {
-					P1->Direction.z = 0.0f;
-				}
-				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < door.max.z) {
-					P1->Direction.z = 0.0f;
-				}
-			}
-		}
+	else if (flogDoor->LeftD->Position.x <= -MaxDoorMove) {
+		flogDoor->LeftD->Direction.x = 1;  // Ïò§Î•∏Ï™ΩÏúºÎ°ú Ïù¥Îèô
 	}
+	flogDoor->RightD->Position.x += flogDoor->RightD->Direction.x * DoorMove;
+	if (flogDoor->RightD->Position.x >= MaxDoorMove) {
+		flogDoor->RightD->Direction.x = -1;
+	}
+	else if (flogDoor->RightD->Position.x <= -0.0) {
+		flogDoor->RightD->Direction.x = 1;
+	}
+	// Î¨∏Ïßù AABB ÏóÖÎç∞Ïù¥Ìä∏
+	flogDoor->LeftD->CAABB1.update(flogDoor->LeftD->Position, glm::vec3(-8.475f, -0.76f, -159.129f), glm::vec3(-6.4f, 2.4f, -158.53f));
+	flogDoor->LeftD->CAABB2.update(flogDoor->LeftD->Position, glm::vec3(-2.168f, -0.76f, -159.129f), glm::vec3(-0.09f, 2.4f, -158.53f));
+	flogDoor->LeftD->CAABB3.update(flogDoor->LeftD->Position, glm::vec3(4.227f, -0.76f, -159.129f), glm::vec3(6.297f, 2.4f, -158.53f));
+	flogDoor->RightD->CAABB1.update(flogDoor->RightD->Position, glm::vec3(6.408f, -0.76f, -159.129f), glm::vec3(4.38f, 2.4f, -158.53f));
+	flogDoor->RightD->CAABB2.update(flogDoor->RightD->Position, glm::vec3(-0.1f, -0.76f, -159.129f), glm::vec3(1.926f, 2.4f, -158.53f));
+	flogDoor->RightD->CAABB3.update(flogDoor->RightD->Position, glm::vec3(6.294f, -0.76f, -159.129f), glm::vec3(8.322f, 2.4f, -158.53f));
+	//AABB leftDoors[] = { leftdoor1, leftdoor2, leftdoor3 };
+	//AABB rightDoors[] = { rightdoor1, rightdoor2, rightdoor3 };
+
 
 	AABB outdoors[] = { outdoor1, outdoor2, outdoor3, outdoor4 };
 	for (const auto& outdoor : outdoors) {
@@ -1524,126 +869,83 @@ GLvoid Timer(int value) {
 	}
 
 
-	// ¿Âæ÷π∞ AABB æ˜µ•¿Ã∆Æ
-	PinkFan1->CAABB.updateRotatedAABB(
-		glm::vec3(0.0f, -0.3f, -140.0f),  // ¿Âæ÷π∞¿« ¡ﬂΩ… ¿ßƒ°
-		glm::vec3(-6.1f, -0.3f, -0.49f), // ∑Œƒ√ √÷º“ ø¿«¡º¬
-		glm::vec3(6.1f, 4.4f, 0.49f),    // ∑Œƒ√ √÷¥Î ø¿«¡º¬
-		obstacleRotation,                // »∏¿¸ ∞¢µµ
-		glm::vec3(0.0f, 1.0f, 0.0f)      // »∏¿¸ √‡
+	// Ïû•Ïï†Î¨º AABB ÏóÖÎç∞Ïù¥Ìä∏
+	HorFan1->CAABB.updateRotatedAABB(
+		glm::vec3(0.0f, -0.3f, -140.0f),  // Ïû•Ïï†Î¨ºÏùò Ï§ëÏã¨ ÏúÑÏπò
+		glm::vec3(-6.1f, -0.3f, -0.49f), // Î°úÏª¨ ÏµúÏÜå Ïò§ÌîÑÏÖã
+		glm::vec3(6.1f, 4.4f, 0.49f),    // Î°úÏª¨ ÏµúÎåÄ Ïò§ÌîÑÏÖã
+		obstacleRotation,                // ÌöåÏ†Ñ Í∞ÅÎèÑ
+		glm::vec3(0.0f, 1.0f, 0.0f)      // ÌöåÏ†Ñ Ï∂ï
 	);
 
+	HorFan2->CAABB.updateRotatedAABB(
+		glm::vec3(7.0f, -0.3f, -115.0f),  // Ïû•Ïï†Î¨ºÏùò Ï§ëÏã¨ ÏúÑÏπò
+		glm::vec3(-6.1f, -0.3f, -0.49f), // Î°úÏª¨ ÏµúÏÜå Ïò§ÌîÑÏÖã
+		glm::vec3(6.1f, 4.4f, 0.49f),    // Î°úÏª¨ ÏµúÎåÄ Ïò§ÌîÑÏÖã
+		-obstacleRotation,                // ÌöåÏ†Ñ Í∞ÅÎèÑ
+		glm::vec3(0.0f, 1.0f, 0.0f)      // ÌöåÏ†Ñ Ï∂ï
+	);
 
-	// ¿Âæ÷π∞ AABB πËø≠ æ˜µ•¿Ã∆Æ
-	AABB horizontalFans[] = { PurpleFan1->CAABB/*, horizontalFan2, horizontalFan3 */};
+	HorFan3->CAABB.updateRotatedAABB(
+		glm::vec3(-7.0f, -0.3f, -115.0f), // Ïû•Ïï†Î¨ºÏùò Ï§ëÏã¨ ÏúÑÏπò
+		glm::vec3(-6.1f, -0.3f, -0.49f), // Î°úÏª¨ ÏµúÏÜå Ïò§ÌîÑÏÖã
+		glm::vec3(6.1f, 4.4f, 0.49f),    // Î°úÏª¨ ÏµúÎåÄ Ïò§ÌîÑÏÖã
+		obstacleRotation,                // ÌöåÏ†Ñ Í∞ÅÎèÑ
+		glm::vec3(0.0f, 1.0f, 0.0f)      // ÌöåÏ†Ñ Ï∂ï
+	);
 
-	// ƒ≥∏Ø≈Õ1∞˙ ¿Âæ÷π∞ √Êµπ √º≈©
-	for (const auto& fan : horizontalFans) {
-		if (checkCollision(P1->CAABB, fan)) {
-			float overlapX = std::min(P1->CAABB.max.x, fan.max.x) - std::max(P1->CAABB.min.x, fan.min.x);
-			float overlapZ = std::min(P1->CAABB.max.z, fan.max.z) - std::max(P1->CAABB.min.z, fan.min.z);
+	HorizontalFan* horizontalFans[] = { HorFan1, HorFan2, HorFan3 };
 
-			if (overlapX < overlapZ) {
-				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > fan.min.x) {
-					P1->Direction.x = 0.0f;
-				}
-				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < fan.max.x) {
-					P1->Direction.x = 0.0f;
-				}
-			}
-			else {
-				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > fan.min.z) {
-					P1->Direction.z = 0.0f;
-				}
-				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < fan.max.z) {
-					P1->Direction.z = 0.0f;
-				}
-			}
+	for (int i = 0; i < 3; i++) {
+		if (i != 1) {
+			horizontalFans[i]->Pink->RotationAngle = obstacleRotation;
+			horizontalFans[i]->Purple->RotationAngle = obstacleRotation;
 		}
-	}
-	// ¡°«¡πŸ »∏¿¸
-	jumpBarRotationAngle += 2.0f;
-	if (jumpBarRotationAngle >= 360.0f) {
-		jumpBarRotationAngle -= 360.0f;
-	}
-	AABB barbars[] = { barbar1, barbar2, barbar3 };
-	AABB barcenters[] = { barcenter1, barcenter2, barcenter3 };
-	// barbar1 AABB æ˜µ•¿Ã∆Æ
-	barbar1.updateRotatedAABB(
-		glm::vec3(-9.5f, 0.0f, -94.93f),  // ¿Âæ÷π∞¿« ¡ﬂΩ… ¿ßƒ°
-		glm::vec3(-0.3f, -0.36f, -0.5f), // ∑Œƒ√ √÷º“ ø¿«¡º¬
-		glm::vec3(0.3f, 0.04f, 0.5f),    // ∑Œƒ√ √÷¥Î ø¿«¡º¬
-		jumpBarRotationAngle,            // »∏¿¸ ∞¢µµ
-		glm::vec3(0.0f, 1.0f, 0.0f)      // »∏¿¸ √‡
-	);
-
-	// barbar2 AABB æ˜µ•¿Ã∆Æ
-	barbar2.updateRotatedAABB(
-		glm::vec3(0.6f, 0.0f, -94.93f),  // ¿Âæ÷π∞¿« ¡ﬂΩ… ¿ßƒ°
-		glm::vec3(-0.3f, -0.36f, -0.5f), // ∑Œƒ√ √÷º“ ø¿«¡º¬
-		glm::vec3(0.3f, 0.04f, 0.5f),    // ∑Œƒ√ √÷¥Î ø¿«¡º¬
-		-jumpBarRotationAngle,           // »∏¿¸ ∞¢µµ (π›¥Î πÊ«‚)
-		glm::vec3(0.0f, 1.0f, 0.0f)      // »∏¿¸ √‡
-	);
-
-	// barbar3 AABB æ˜µ•¿Ã∆Æ
-	barbar3.updateRotatedAABB(
-		glm::vec3(10.5f, 0.0f, -94.93f), // ¿Âæ÷π∞¿« ¡ﬂΩ… ¿ßƒ°
-		glm::vec3(-0.3f, -0.36f, -0.5f), // ∑Œƒ√ √÷º“ ø¿«¡º¬
-		glm::vec3(0.3f, 0.04f, 0.5f),    // ∑Œƒ√ √÷¥Î ø¿«¡º¬
-		jumpBarRotationAngle,            // »∏¿¸ ∞¢µµ
-		glm::vec3(0.0f, 1.0f, 0.0f)      // »∏¿¸ √‡
-	);
-
-	for (const auto& barcenter : barcenters) {
-		if (checkCollision(P1->CAABB, barcenter)) {
-			float overlapX = std::min(P1->CAABB.max.x, barcenter.max.x) - std::max(P1->CAABB.min.x, barcenter.min.x);
-			float overlapZ = std::min(P1->CAABB.max.z, barcenter.max.z) - std::max(P1->CAABB.min.z, barcenter.min.z);
-
-			if (overlapX < overlapZ) { // X√‡ø°º≠ ¥ı ∞„ƒ£ ∞ÊøÏ
-				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > barcenter.min.x) {
-					P1->Direction.x = 0.0f; // ƒ≥∏Ø≈Õ∞° ø¿∏•¬ ¿∏∑Œ ¿Ãµø ¡ﬂ¿Ã∏È ¡§¡ˆ
-				}
-				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < barcenter.max.x) {
-					P1->Direction.x = 0.0f; // ƒ≥∏Ø≈Õ∞° øﬁ¬ ¿∏∑Œ ¿Ãµø ¡ﬂ¿Ã∏È ¡§¡ˆ
-				}
-			}
-			else { // Z√‡ø°º≠ ¥ı ∞„ƒ£ ∞ÊøÏ
-				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > barcenter.min.z) {
-					P1->Direction.z = 0.0f; // ƒ≥∏Ø≈Õ∞° ¿ß¬ ¿∏∑Œ ¿Ãµø ¡ﬂ¿Ã∏È ¡§¡ˆ
-				}
-				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < barcenter.max.z) {
-					P1->Direction.z = 0.0f; // ƒ≥∏Ø≈Õ∞° æ∆∑°¬ ¿∏∑Œ ¿Ãµø ¡ﬂ¿Ã∏È ¡§¡ˆ
-				}
-			}
-		}
-	}
-	for (const auto& bar : barbars) {
-		if (checkCollision(P1->CAABB, bar)) {
-			float overlapX = std::min(P1->CAABB.max.x, bar.max.x) - std::max(P1->CAABB.min.x, bar.min.x);
-			float overlapZ = std::min(P1->CAABB.max.z, bar.max.z) - std::max(P1->CAABB.min.z, bar.min.z);
-
-			if (overlapX < overlapZ) { // X√‡ø°º≠ ¥ı ∞„ƒ£ ∞ÊøÏ
-				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > bar.min.x) {
-					P1->Direction.x = 0.0f; // ø¿∏•¬  ¿Ãµø ¡§¡ˆ
-				}
-				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < bar.max.x) {
-					P1->Direction.x = 0.0f; // øﬁ¬  ¿Ãµø ¡§¡ˆ
-				}
-			}
-			else { // Z√‡ø°º≠ ¥ı ∞„ƒ£ ∞ÊøÏ
-				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > bar.min.z) {
-					P1->Direction.z = 0.0f; // ¿ß¬  ¿Ãµø ¡§¡ˆ
-				}
-				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < bar.max.z) {
-					P1->Direction.z = 0.0f; // æ∆∑°¬  ¿Ãµø ¡§¡ˆ
-				}
-			}
+		else {
+			horizontalFans[i]->Pink->RotationAngle = -obstacleRotation;
+			horizontalFans[i]->Purple->RotationAngle = -obstacleRotation;
 		}
 	}
 
 
-	// πŸøÕ ƒ≥∏Ø≈Õ1 √Êµπ √≥∏Æ
+	AABB barbars[] = { Jumpbar1->CAABB, Jumpbar2->CAABB, Jumpbar3->CAABB };
+	Obstacle* Bars[] = { Jumpbar1, Jumpbar2, Jumpbar3 };
+	//AABB barcenters[] = { barcenter1, barcenter2, barcenter3 };
+
+
+	int i = 0;
+	for (const auto& bar : Bars) {
+		bar->RotationAngle += 2.0f;
+		if (bar->RotationAngle >= 360.0f) {
+			bar->RotationAngle -= 360.0f;
+		}
+		int val = (i % 2 == 0) ? 1 : -1;
+		if (val == -1)bar->RotationAngle = -(Jumpbar1->RotationAngle);
+		bar->CAABB.updateRotatedAABB(
+			-(bar->Position),  // Ïû•Ïï†Î¨ºÏùò Ï§ëÏã¨ ÏúÑÏπò
+			glm::vec3(-0.3f, -0.36f, -0.5f), // Î°úÏª¨ ÏµúÏÜå Ïò§ÌîÑÏÖã
+			glm::vec3(0.3f, 0.04f, 0.5f),    // Î°úÏª¨ ÏµúÎåÄ Ïò§ÌîÑÏÖã
+			bar->RotationAngle,            // ÌöåÏ†Ñ Í∞ÅÎèÑ
+			glm::vec3(0.0f, 1.0f, 0.0f)      // ÌöåÏ†Ñ Ï∂ï
+		);
+		i++;
+	}
+
+
+	// ÏÑ∏Î°úÌå¨ -------------------------------------------------------------------------------------------
+	VerticalFan* verticalFans[] = { VerFan1,VerFan2,VerFan3,VerFan4,VerFan5 };
+
+	for (int i = 0; i < 5; i++) {
+		if (i < 3) {
+			verticalFans[i]->VFan->RotationAngle = obstacleRotation;
+		}
+		else {
+			verticalFans[i]->VFan->RotationAngle = -obstacleRotation;
+		}
+	}
+
+
+	// Î∞îÏôÄ Ï∫êÎ¶≠ÌÑ∞1 Ï∂©Îèå Ï≤òÎ¶¨
 	AABB bars[] = { leftBar1, leftBar2, leftBar3, leftBar4, leftBar5, middleBar1, middleBar2, middleBar3, middleBar4, middleBar5, rightBar1, rightBar2, rightBar3, rightBar4, rightBar5 };
 	for (const auto& bar : bars) {
 		if (checkCollision(P1->CAABB, bar)) {
@@ -1668,20 +970,21 @@ GLvoid Timer(int value) {
 			}
 		}
 	}
+	// ^ ÏÑ∏Î°úÌå¨ -------------------------------------------------------------------------------------------
 
 
-	// ¿Ãµø √≥∏Æ
+	// Ïù¥Îèô Ï≤òÎ¶¨
 	//character1Position += P1.Direction;
 	P1->Position += P1->Direction;
 	//character2Position += character2Direction;
 
-	//¿¸º€ ∑Œ¡˜
+	//Ï†ÑÏÜ° Î°úÏßÅ
 	if (Socket != INVALID_SOCKET && P1 != nullptr) {
 		character myCharacter;
 		myCharacter.position = P1->Position;
 		myCharacter.direction = P1->Direction;
 		myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
-		myCharacter.isCollision = false;  // « ø‰Ω√ ≥™¡ﬂø° ºˆ¡§
+		myCharacter.isCollision = false;  // ÌïÑÏöîÏãú ÎÇòÏ§ëÏóê ÏàòÏ†ï
 
 		C2S_Character(Socket, myCharacter);
 	}
@@ -1693,7 +996,7 @@ GLvoid Timer(int value) {
 
 	
 
-	// »≠∏È ∞ªΩ≈
+	// ÌôîÎ©¥ Í∞±Ïã†
 	glutPostRedisplay();
 	glutTimerFunc(16, Timer, 0);
 }

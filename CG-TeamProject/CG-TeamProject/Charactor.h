@@ -1,5 +1,5 @@
 #pragma once
-#include"stdafx.h"
+#include "stdafx.h"
 #include "Çì´õ.h"
 
 struct AABB {
@@ -122,7 +122,6 @@ public:
 	glm::vec3 Position = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	glm::vec3 InitialPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-
 
 	int SwingDirection{ 1 };
 

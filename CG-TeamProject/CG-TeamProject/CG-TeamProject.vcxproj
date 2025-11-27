@@ -136,6 +136,7 @@
     <ClCompile Include="obstacle_network.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AABB.h" />
     <ClInclude Include="Charactor.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Obstacle.h" />
