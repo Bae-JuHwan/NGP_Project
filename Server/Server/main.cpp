@@ -22,6 +22,7 @@ int g_clientCount = 0;
 
 // 캐릭터 정보 저장하기 위해서 클라이언트 정보 구조체 배열
 ClientInfo g_clients[MAX_CLIENTS];
+
 // 충돌 처리 함수 (아직 미구현)
 bool CheckCollision(const character& ch) {
     return false; // 임시 반환
@@ -136,20 +137,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     int receive_count = 0;
     int send_count[MAX_CLIENTS];
     while (true) {
-        
-        printf("장애물 전송 로직 \n");
-
-        EnterCriticalSection(&g_cs);
-        UpdateBongObstacle();
-        Broadcast_BongObstacle(g_bongObstacle , g_clients);
-        LeaveCriticalSection(&g_cs);
-        printf("장애물 전송 로직 끝 \n");
-       
-
-        //Sleep(16); // 60 FPS 주기로 실행
         character received_char;
-
-
         
         // 클라이언트로부터 캐릭터 정보 수신
         if (!recv_character(client_sock, received_char)) {
@@ -195,6 +183,19 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     return 0;
 }
 
+// 장애물 전용 스레드
+DWORD WINAPI ObstacleThread(LPVOID arg) {
+    while (true) {
+        Sleep(16); // 60FPS
+
+        EnterCriticalSection(&g_cs);
+        UpdateBongObstacle(); // 장애물 위치 계산
+        Broadcast_BongObstacle(g_bongObstacle, g_clients); // 클라이언트에게 전송
+        LeaveCriticalSection(&g_cs);
+    }
+    return 0;
+}
+
 int main() {
     WSADATA wsa;
     SOCKET listen_sock, client_sock;
@@ -232,41 +233,42 @@ int main() {
         return 1;
     }
 
-    printf("서버가 포트 %d에서 대기 중...\n", SERVERPORT);
+    // 클라 배열 초기화
     for (int i = 0; i < MAX_CLIENTS; i++) {
-        g_client_list[i] = INVALID_SOCKET;
+        g_clients[i].sock = INVALID_SOCKET;
+        g_clients[i].isActive = false;
     }
 
-    while (1) {
+    HANDLE hObstacle = CreateThread(NULL, 0, ObstacleThread, NULL, 0, NULL);
+    if (hObstacle) {
+        CloseHandle(hObstacle);
+    }
+
+    printf("서버가 포트 %d에서 대기 중...\n", SERVERPORT);
+
+    // 클라이언트 접속 루프 (메인 스레드에서 블록 가능)
+    int clientCount = 0;
+    while (clientCount < MAX_CLIENTS) {
         client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
-        if (client_sock == INVALID_SOCKET) {
-            printf("accept 실패\n");
-            continue;
-        }
+        if (client_sock == INVALID_SOCKET) continue;
 
-        char clientIP[INET_ADDRSTRLEN];
-        inet_ntop(AF_INET, &(clientaddr.sin_addr), clientIP, INET_ADDRSTRLEN);
-        printf("클라이언트 접속: IP=%s, PORT=%d\n", clientIP, ntohs(clientaddr.sin_port));
+        EnterCriticalSection(&g_cs);
+        int id = clientCount++;
+        g_clients[id].sock = client_sock;
+        g_clients[id].id = id + 1;
+        g_clients[id].isActive = true;
+        LeaveCriticalSection(&g_cs);
 
-        // 스레드 인자로 전달할 소켓 복사본 동적 할당
-        SOCKET* pClientSock = (SOCKET*)malloc(sizeof(SOCKET));
-        *pClientSock = client_sock;
+        SOCKET* pSock = (SOCKET*)malloc(sizeof(SOCKET));
+        *pSock = client_sock;
+        HANDLE hThread = CreateThread(NULL, 0, ClientThread, (LPVOID)pSock, 0, NULL);
+        if (hThread) CloseHandle(hThread);
 
-        HANDLE hThread = CreateThread(NULL, 0, ClientThread, (LPVOID)pClientSock, 0, NULL);
-        if (hThread == NULL) {
-            printf("스레드 생성 실패\n");
-            closesocket(client_sock);
-            free(pClientSock);
-        }
-        else {
-            CloseHandle(hThread);
-        }
-
-        if (g_clientCount >= MAX_CLIENTS) {
-            printf("최대 접속자 수 도달\n");
-            break;
-        }
+        printf("클라이언트 %d 접속 완료\n", id + 1);
     }
+
+    // 서버 종료 처리 (무한 루프 대신 플래그 사용 가능)
+    while (true) Sleep(1000);
 
     DeleteCriticalSection(&g_cs);
     closesocket(listen_sock);
