@@ -5,7 +5,7 @@
 #include <gl/glew.h>
 #include "Common.h"
 #include "stdafx.h"
-
+// 원래꺼
 // 서버 -> 클라 첫번째 장애물(봉) 보내기 구조체
 #pragma pack(1)
 struct obstacle_Bong {

@@ -1,6 +1,6 @@
 ﻿#include "obstacle.h"
 #include "Common.h"
-
+// 원래꺼
 obstacle_Bong g_bongObstacle;
 
 bool S2C_BongObstacle(SOCKET sock, const obstacle_Bong& obs_info)
