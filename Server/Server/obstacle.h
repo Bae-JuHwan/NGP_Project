@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "Common.h"
 #include "stdafx.h"
-// 원래꺼
+
 // 서버 -> 클라 첫번째 장애물(봉) 보내기 구조체
 #pragma pack(1)
 struct obstacle_Bong {
@@ -19,4 +19,4 @@ extern obstacle_Bong g_bongObstacle;
 
 bool S2C_BongObstacle(SOCKET sock, const obstacle_Bong& obs_info);
 void UpdateBongObstacle();
-bool Broadcast_BongObstacle(const obstacle_Bong& obs_info , ClientInfo g_client_list[MAX_CLIENTS]);
+bool Broadcast_BongObstacle(const obstacle_Bong& obs_info , ClientInfo g_clients[MAX_CLIENTS]);

@@ -120,16 +120,24 @@ bool InitCharByNum() {
 		return false;
 	}
 	int order = ntohl(data); // 네트워크 엔디안 변환
-	glm::vec3 P1Color;
-	glm::vec3 P2Color;
-	glm::vec3 P3Color;
+	glm::vec3 P1Color = glm::vec3(1.0f);
+	glm::vec3 P2Color = glm::vec3(1.0f);
+	glm::vec3 P3Color = glm::vec3(1.0f);
 
 	std::cout << order << "번 째 캐릭터 입니다." << std::endl;
 	glm::vec3 RedColor = glm::vec3(1.0f, 0.0f, 0.0f);
 	glm::vec3 YellowColor = glm::vec3(1.0f, 1.0f, 0.0f);
 	glm::vec3 BlueColor = glm::vec3(0.0f, 0.0f, 1.0f);
+
 	//순서에 따라 캐릭터 색상 설정
 	switch (order) {
+	case 0:
+	{
+		P1Color = YellowColor;
+		P2Color = RedColor;
+		P3Color = BlueColor;
+		break;
+	}
 	case 1:
 	{
 		P1Color = YellowColor;
@@ -151,6 +159,9 @@ bool InitCharByNum() {
 		P3Color = YellowColor;
 		break;
 	}
+	default:
+		std::cerr << "경고: 서버에서 잘못된 order(" << order << ")를 보냄\n";
+		return false; // 초기화 중단
 	}
 	//컨트롤 하는 캐릭터
 	P1 = new Player1(P1Color);
@@ -423,12 +434,6 @@ void DrawMapCheckBox(GLuint shaderProgramID, GLint modelMatrixLocation) {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-
-<<<<<<< HEAD
-
-//Player1* P1 = nullptr;
-=======
->>>>>>> 447595995a4c602e9bf9c232e9b4cee5b55f9baa
 BongGroup* Bong1 = nullptr;
 BongGroup* Bong2 = nullptr;
 HorizontalFan* HorFan1 = nullptr;
@@ -444,6 +449,7 @@ VerticalFan* VerFan3 = nullptr;
 VerticalFan* VerFan4 = nullptr;
 VerticalFan* VerFan5 = nullptr;
 Door* flogDoor = nullptr;
+
 void main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -466,7 +472,7 @@ void main(int argc, char** argv) {
 	InitCheckBoxMap4();
 	InitCheckBoxMap5();
 
-
+	InitializeCriticalSection(&g_cs_client);
 
 	//장애물
 	std::cout << "장애물 생성중...." << std::endl;
@@ -847,68 +853,41 @@ GLvoid Timer(int value) {
 		C2S_Character(Socket, myCharacter);
 	}
 
-<<<<<<< HEAD
-	//if (isObstacleRotate) {
-	//	obstacleRotation += 2.0f;
-	//}
-
-	//Bong1->CAABB.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
-	//Bong2->CAABB.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
-	// 원래꺼
 	if (Socket != INVALID_SOCKET) {
-=======
+	
+	}
 	//다른 캐릭터들 정보를 받음
 
 	if (!recv_character()) {
 		std::cout << "recive failed" << std::endl;
 	}
 
-
 	// 캐릭터 업데이트를 계속 해줌
 	UpdatePlayer();
 
 
 
-	/*if (Socket != INVALID_SOCKET) {
->>>>>>> 447595995a4c602e9bf9c232e9b4cee5b55f9baa
+	if (Socket != INVALID_SOCKET) {
 		if (!recv_BongObstacle(Socket)) {
 			std::cout << "recv_Bong Error" << '\n';
 		}
 	}
 
-	if (isObstacleRotate) {
-		obstacleRotation += 2.0f;
-	}*/
-	
-
-	 //봉 움직이기
-
-<<<<<<< HEAD
 	EnterCriticalSection(&g_cs_client);
-	// 전역 변수 g_bongObstacle을 BongGroup 객체에 반영
-	Bong1->Position = g_bongObstacle.pos1;
-	Bong2->Position = g_bongObstacle.pos2;
+	std::cout << "[Timer] Bong1=" << Bong1 << " Bong2=" << Bong2 << std::endl;
+	if (Bong1) Bong1->Position = g_bongObstacle.pos1;
+	else std::cout << "[Warn] Bong1 is NULL\n";
+
+	if (Bong2) Bong2->Position = g_bongObstacle.pos2;
+	else std::cout << "[Warn] Bong2 is NULL\n";
 	LeaveCriticalSection(&g_cs_client);
-=======
-	
->>>>>>> 447595995a4c602e9bf9c232e9b4cee5b55f9baa
 
-	//Bong1->Position.x += Bong1->Direction.x * Bong1->MoveSpeed;
-
-	//EnterCriticalSection(&g_cs_client);
-	//// 전역 변수 g_bongObstacle을 BongGroup 객체에 반영
-	//if (Bong1 && Bong2) {
-	//	Bong1->Position = g_bongObstacle.pos1;
-	//	Bong2->Position = g_bongObstacle.pos2;
-	//}
-	//LeaveCriticalSection(&g_cs_client);
-
-	//if (Bong1) {
-	//	Bong1->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong1->Position);
-	//}
-	//if (Bong2) {
-	//	Bong2->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong2->Position);
-	//}
+	if (Bong1) {
+		Bong1->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong1->Position);
+	}
+	if (Bong2) {
+		Bong2->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong2->Position);
+	}
 
 	//Bong1->CAABB1.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
 	//Bong2->CAABB1.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));

@@ -14,7 +14,7 @@
 #include "stdafx.h"
 
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
-<<<<<<< HEAD
+
 // 캐릭터 구조체
 #pragma pack(1)
 struct character {
@@ -31,10 +31,8 @@ struct ClientInfo {
     character charInfo;
     bool isActive;
 };
-=======
 
 // 캐릭터 정보 저장하기 위해서 클라이언트 정보 구조체 배열
->>>>>>> 447595995a4c602e9bf9c232e9b4cee5b55f9baa
 extern ClientInfo g_clients[MAX_CLIENTS];
 
 void err_quit(const char* msg);

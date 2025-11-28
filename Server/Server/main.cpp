@@ -1,12 +1,10 @@
 #include"Common.h"
-#include <gtc/matrix_transform.hpp>
+#include "obstacle.h"
+#include <glm/gtc/matrix_transform.hpp>
 #include <gl/glew.h>
 #pragma comment(lib, "ws2_32.lib")
 
 #define SERVERPORT 9000
-
-
-
 
 /*  전달사항아닌 전달사항
 
@@ -133,11 +131,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     int send_count[MAX_CLIENTS]{};
     while (true) {
         character received_char;
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> 447595995a4c602e9bf9c232e9b4cee5b55f9baa
         // 클라이언트로부터 캐릭터 정보 수신
         if (!recv_character(client_sock, received_char)) {
             break;  // 수신 실패 시 루프 종료
@@ -239,15 +233,13 @@ int main() {
         return 1;
     }
 
-<<<<<<< HEAD
     // 클라 배열 초기화
     for (int i = 0; i < MAX_CLIENTS; i++) {
         g_clients[i].sock = INVALID_SOCKET;
         g_clients[i].isActive = false;
     }
-=======
+
     printf("서버가 포트 %d에서 대기 중...\n", SERVERPORT);
->>>>>>> 447595995a4c602e9bf9c232e9b4cee5b55f9baa
 
     HANDLE hObstacle = CreateThread(NULL, 0, ObstacleThread, NULL, 0, NULL);
     if (hObstacle) {
