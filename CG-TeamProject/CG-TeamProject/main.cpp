@@ -125,6 +125,7 @@ bool recv_character() {
 	glm::vec3 RedColor = glm::vec3(1.0f, 0.0f, 0.0f);
 	glm::vec3 YellowColor = glm::vec3(1.0f, 1.0f, 0.0f);
 	glm::vec3 BlueColor = glm::vec3(0.0f, 0.0f, 1.0f);
+	//순서에 따라 캐릭터 색상 설정
 	switch (order) {
 	case 1:
 	{
