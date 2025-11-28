@@ -124,7 +124,7 @@ public:
 	glm::vec3 InitialPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	int SwingDirection{ 1 };
-
+	int ID{ 0 };
 	//팔다리 움직임 각도
 	GLfloat RotationAngle{ 0.0f };
 	GLfloat ArmLegSwingAngle{ 0.0f };
@@ -144,7 +144,7 @@ public:
 class Player1 : public Charactor
 {
 public:
-	Player1();
+	Player1(glm::vec3 vc);
 	~Player1();
 
 private:

@@ -30,5 +30,11 @@ bool recv_BongObstacle(SOCKET sock)
 		return false;
 	}
 
+<<<<<<< HEAD
 	return true;
+=======
+
+    printf("[클라] 봉 장애물 정보 수신 완료 (%d 바이트)\n", total_received);
+    return true;
+>>>>>>> 447595995a4c602e9bf9c232e9b4cee5b55f9baa
 }
