@@ -26,8 +26,8 @@ bool recv_BongObstacle(SOCKET sock) {
         printf("\n[수신] 장애물 정보 수신 완료 (%d 바이트)\n", retval);
     }
 
-    EnterCriticalSection(&g_cs_client);
-    LeaveCriticalSection(&g_cs_client);
+    //EnterCriticalSection(&g_cs_client);
+    //LeaveCriticalSection(&g_cs_client);
 
     printf("[클라] 봉 장애물 정보 수신 완료 (%d 바이트)\n", total_received);
     return true;

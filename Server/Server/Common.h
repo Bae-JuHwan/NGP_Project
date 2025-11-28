@@ -11,7 +11,8 @@
 #include <stdlib.h> // exit(), ...
 #include <string.h> // strncpy(), ...
 #include<iostream>
-#include"stdafx.h"
+#include "stdafx.h"
+
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
 // 캐릭터 구조체
 #pragma pack(1)

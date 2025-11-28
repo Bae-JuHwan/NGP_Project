@@ -2,7 +2,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <gl/glew.h>
 #include "obstacle.h"
-#include "stdafx.h"
+
 #pragma comment(lib, "ws2_32.lib")
 
 #define SERVERPORT 9000

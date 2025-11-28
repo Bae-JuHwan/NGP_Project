@@ -359,8 +359,6 @@ void DrawMapCheckBox(GLuint shaderProgramID, GLint modelMatrixLocation) {
 }
 
 
-
-Player1* P1 = nullptr;
 BongGroup* Bong1 = nullptr;
 BongGroup* Bong2 = nullptr;
 HorizontalFan* HorFan1 = nullptr;
