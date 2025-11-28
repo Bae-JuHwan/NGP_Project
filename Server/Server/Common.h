@@ -14,23 +14,9 @@
 #include "stdafx.h"
 
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
-// 캐릭터 구조체
-#pragma pack(1)
-struct character {
-    glm::vec3 position;
-    glm::vec3 direction;
-    GLfloat ArmLegSwingAngle;
-    bool isCollision;
-};
-#pragma pack()
-// 클라이언트 정보 구조체 추가
-struct ClientInfo {
-    SOCKET sock;
-    int id;
-    character charInfo;
-    bool isActive;
-};
-extern SOCKET g_client_list[MAX_CLIENTS];
+
+// 캐릭터 정보 저장하기 위해서 클라이언트 정보 구조체 배열
+extern ClientInfo g_clients[MAX_CLIENTS];
 
 void err_quit(const char* msg);
 

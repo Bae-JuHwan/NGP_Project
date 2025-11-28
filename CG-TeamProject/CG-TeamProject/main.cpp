@@ -54,17 +54,18 @@ void UpdatePlayer() {
 	// AABB 업데이트
 	P2->CAABB.update(P2->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 
-	//P3 ������Ʈ
-	P3->Position = otherPlayers[1].position;	
+	//P3 업데이트
+	P3->Position = otherPlayers[1].position;
 	P3->Direction = otherPlayers[1].direction;
-	// ���� ��Ʈ���� ������Ʈ
+	// 모델 매트릭스 업데이트
 	P3->ModelMatrix = glm::translate(glm::mat4(1.0f), P3->Position);
 	P3->ModelMatrix = glm::rotate(P3->ModelMatrix, glm::radians(P3->RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
 	P3->ArmLegSwingAngle = otherPlayers[1].ArmLegSwingAngle;
-	// AABB ������Ʈ
+	// AABB 업데이트
 	P3->CAABB.update(P3->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 }
 int recv_count = 0;
+
 // 서버로부터 다른 캐릭터 정보 수신
 bool recv_character() {
 	if (Socket == INVALID_SOCKET) {
@@ -81,24 +82,24 @@ bool recv_character() {
 		if (retval == SOCKET_ERROR) {
 			int err = WSAGetLastError();
 			if (err != WSAEWOULDBLOCK) {
-				printf("[����] recv_characters() ���� - �����ڵ�: %d\n", err);
+				printf("[에러] recv_characters() 실패 - 에러코드: %d\n", err);
 				return false;
 			}
-			return false;  // ������ ����
+			return false;  // 데이터 없음
 		}
 		if (retval == 0) {
-			printf("[����] �������� ������ �����Ǿ����ϴ�\n");
+			printf("[경고] 서버와의 연결이 종료되었습니다\n");
 			return false;
 		}
 		totalRecv += retval;
 	}
 
 	recv_count++;
-	// ���� Ȯ�� (�ɼ�)
+	// 출력 확인 (옵션)
 	if (recv_count % 100 == 0) {
 		for (int i = 0; i < MAX_OTHER_PLAYERS; ++i) {
-			printf("\n[����] Ŭ���̾�Ʈ ���� ���� �Ϸ� (%d ����Ʈ)\n", (int)bytesToRead);
-			std::cout << "���� ID: " << otherPlayers[i].ID << std::endl;
+			printf("\n[수신] 클라이언트 정보 수신 완료 (%d 바이트)\n", (int)bytesToRead);
+			std::cout << "받은 ID: " << otherPlayers[i].ID << std::endl;
 			printf("  Position: (%.2f, %.2f, %.2f)\n",
 				otherPlayers[i].position.x, otherPlayers[i].position.y, otherPlayers[i].position.z);
 			printf("  Direction: (%.2f, %.2f, %.2f)\n",
@@ -109,25 +110,25 @@ bool recv_character() {
 	}
 	return true;
 }
-//��ȣ �ް� ĳ���� ��ȣ�� ���� ������
- bool InitCharByNum() {
-	// 1. �� ��ȣ �ޱ�
+//번호 받고 캐릭터 번호에 따라 만들기
+bool InitCharByNum() {
+	// 1. 내 번호 받기
 	int data = 0;
 	int retval = recv(Socket, (char*)&data, sizeof(data), 0);
 	if (retval <= 0) {
-		printf("�������� �� ��ȣ �ޱ� ����\n");
+		printf("서버에서 내 번호 받기 실패\n");
 		return false;
 	}
-	int order = ntohl(data); // ��Ʈ��ũ ������ ��ȯ
+	int order = ntohl(data); // 네트워크 엔디안 변환
 	glm::vec3 P1Color;
 	glm::vec3 P2Color;
 	glm::vec3 P3Color;
 
-	std::cout << order << "�� ° ĳ���� �Դϴ�." << std::endl;
+	std::cout << order << "번 째 캐릭터 입니다." << std::endl;
 	glm::vec3 RedColor = glm::vec3(1.0f, 0.0f, 0.0f);
 	glm::vec3 YellowColor = glm::vec3(1.0f, 1.0f, 0.0f);
 	glm::vec3 BlueColor = glm::vec3(0.0f, 0.0f, 1.0f);
-	//������ ���� ĳ���� ���� ����
+	//순서에 따라 캐릭터 색상 설정
 	switch (order) {
 	case 1:
 	{
@@ -151,16 +152,15 @@ bool recv_character() {
 		break;
 	}
 	}
-	//��Ʈ�� �ϴ� ĳ����
+	//컨트롤 하는 캐릭터
 	P1 = new Player1(P1Color);
-	P1->ID = order -1;
-	//�ٸ� ĳ���͵�
+	P1->ID = order - 1;
+	//다른 캐릭터들
 	P2 = new Player1(P2Color);
 	P3 = new Player1(P3Color);
 
 	return true;
 }
-
 // 네트워크 초기화
 bool InitNetworkConnection() {
 	WSADATA wsa;
@@ -559,10 +559,10 @@ void main(int argc, char** argv) {
 
 
 
-	std::cout << "ĳ���� ������...." << std::endl;
+	std::cout << "캐릭터 생성중...." << std::endl;
 	if (!InitCharByNum())
 	{
-		std::cerr << "ĳ���� �ʱ�ȭ ����!" << std::endl;
+		std::cerr << "캐릭터 초기화 실패!" << std::endl;
 		return;
 	}
 	
@@ -794,6 +794,8 @@ GLvoid Timer(int value) {
 		//character1Position.y -= realGravity;
 		P1->Position = glm::vec3(0.0f, -P1->realGravity, 0.0f);
 	}
+	// 이동 처리
+	P1->Position += P1->Direction;
 
 	// 캐릭터1 모델 매트릭스 업데이트
 	P1->ModelMatrix = glm::translate(glm::mat4(1.0f), P1->Position);
@@ -802,8 +804,7 @@ GLvoid Timer(int value) {
 	// AABB 업데이트
 	P1->CAABB.update(P1->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 
-	// 다른 캐릭터 업데이트를 계속 해줌
-	UpdatePlayer();
+
 
 
 	// 팔 흔들림 업데이트
@@ -828,64 +829,69 @@ GLvoid Timer(int value) {
 		}
 	}
 
-	////봉 움직이기
-	////Bong1->Position.x += BongGroup1Direction.x * BongMove;
-	//Bong1->Position.x += Bong1->Direction.x * Bong1->MoveSpeed;
 
-	//if (Bong1->Position.x >= Bong1->MaxMoveDistance) {
-	//	Bong1->Direction.x = -1; // 왼쪽으로 이동
-	//}
-	//else if (Bong1->Position.x <= -Bong1->MaxMoveDistance) {
-	//	Bong1->Direction.x = 1;  // 오른쪽으로 이동
-	//}
+	//전송 로직
+	if (Socket != INVALID_SOCKET && P1 != nullptr) {
+		character myCharacter;
+		myCharacter.ID = P1->ID;
+		myCharacter.position = P1->Position;
+		myCharacter.direction = P1->Direction;
+		myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
+		myCharacter.isCollision = false;  // 필요시 나중에 수정
 
-	//// 봉 그룹 2 움직이기 (반대 방향)
-	//Bong2->Position.x += Bong2->Direction.x * Bong2->MoveSpeed;
-	//if (Bong2->Position.x >= Bong2->MaxMoveDistance) {
-	//	Bong2->Direction.x = -1;
-	//}
-	//else if (Bong2->Position.x <= -Bong2->MaxMoveDistance) {
-	//	Bong2->Direction.x = 1;
-	//}
+		C2S_Character(Socket, myCharacter);
+	}
 
-	//if (isObstacleRotate) {
-	//	obstacleRotation += 2.0f;
-	//}
-	if (Socket != INVALID_SOCKET) {
+	//다른 캐릭터들 정보를 받음
+
+	if (!recv_character()) {
+		std::cout << "recive failed" << std::endl;
+	}
+
+
+	// 캐릭터 업데이트를 계속 해줌
+	UpdatePlayer();
+
+
+
+	/*if (Socket != INVALID_SOCKET) {
 		if (!recv_BongObstacle(Socket)) {
 			std::cout << "recv_Bong Error" << '\n';
 		}
 	}
+
 	if (isObstacleRotate) {
 		obstacleRotation += 2.0f;
-	}
+	}*/
 	
 
 	 //봉 움직이기
-	 //Bong1->Position.x += BongGroup1Direction.x * BongMove;
-	Bong1->Position.x += Bong1->Direction.x * Bong1->MoveSpeed;
 
-	EnterCriticalSection(&g_cs_client);
-	// 전역 변수 g_bongObstacle을 BongGroup 객체에 반영
-	if (Bong1 && Bong2) {
-		Bong1->Position = g_bongObstacle.pos1;
-		Bong2->Position = g_bongObstacle.pos2;
-	}
-	LeaveCriticalSection(&g_cs_client);
+	
 
-	if (Bong1) {
-		Bong1->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong1->Position);
-	}
-	if (Bong2) {
-		Bong2->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong2->Position);
-	}
+	//Bong1->Position.x += Bong1->Direction.x * Bong1->MoveSpeed;
 
-	Bong1->CAABB1.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
-	Bong2->CAABB1.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
-	Bong1->CAABB2.update(Bong1->Position, glm::vec3(-3.169f, 0.0f, -33.25f), glm::vec3(-1.169f, 3.6f, -31.25f));
-	Bong2->CAABB2.update(Bong2->Position, glm::vec3(3.045f, 0.0f, -33.25f), glm::vec3(5.045f, 3.6f, -31.25f));
-	Bong1->CAABB3.update(Bong1->Position, glm::vec3(9.27f, 0.0f, -33.25f), glm::vec3(11.27f, 3.6f, -31.25f));
-	Bong2->CAABB3.update(Bong2->Position, glm::vec3(14.945f, 0.0f, -33.25f), glm::vec3(16.945f, 3.6f, -31.25f));
+	//EnterCriticalSection(&g_cs_client);
+	//// 전역 변수 g_bongObstacle을 BongGroup 객체에 반영
+	//if (Bong1 && Bong2) {
+	//	Bong1->Position = g_bongObstacle.pos1;
+	//	Bong2->Position = g_bongObstacle.pos2;
+	//}
+	//LeaveCriticalSection(&g_cs_client);
+
+	//if (Bong1) {
+	//	Bong1->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong1->Position);
+	//}
+	//if (Bong2) {
+	//	Bong2->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong2->Position);
+	//}
+
+	//Bong1->CAABB1.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
+	//Bong2->CAABB1.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
+	//Bong1->CAABB2.update(Bong1->Position, glm::vec3(-3.169f, 0.0f, -33.25f), glm::vec3(-1.169f, 3.6f, -31.25f));
+	//Bong2->CAABB2.update(Bong2->Position, glm::vec3(3.045f, 0.0f, -33.25f), glm::vec3(5.045f, 3.6f, -31.25f));
+	//Bong1->CAABB3.update(Bong1->Position, glm::vec3(9.27f, 0.0f, -33.25f), glm::vec3(11.27f, 3.6f, -31.25f));
+	//Bong2->CAABB3.update(Bong2->Position, glm::vec3(14.945f, 0.0f, -33.25f), glm::vec3(16.945f, 3.6f, -31.25f));
 
 	// 문짝 움직이기
 	flogDoor->LeftD->Position.x += flogDoor->LeftD->Direction.x * DoorMove;

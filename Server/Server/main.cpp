@@ -4,7 +4,7 @@
 #pragma comment(lib, "ws2_32.lib")
 
 #define SERVERPORT 9000
-#define MAX_CLIENTS 3
+
 
 
 
@@ -20,25 +20,9 @@ g_clientCount 이걸로만 판단하면 안될 것 같음. 들어왔다가 나갔을때 저 수가 줄어들
 CRITICAL_SECTION g_cs;  // 임계영역
 int g_clientCount = 0;
 
-// 캐릭터 구조체
-#pragma pack(1)
-struct character {
-    int ID;
-    glm::vec3 position;
-    glm::vec3 direction;
-    GLfloat ArmLegSwingAngle;
-    bool isCollision;
-};
-#pragma pack()
-// 클라이언트 정보 구조체 추가
-struct ClientInfo {
-    SOCKET sock;
-    int id;
-    character charInfo;
-    bool isActive;
-};
 // 캐릭터 정보 저장하기 위해서 클라이언트 정보 구조체 배열
 ClientInfo g_clients[MAX_CLIENTS];
+
 // 충돌 처리 함수 (아직 미구현)
 bool CheckCollision(const character& ch) {
     return false; // 임시 반환
@@ -92,7 +76,7 @@ int S2C_ClientOrder(SOCKET sock, int order) {   //클라에게 몇번째 클라인지 보내�
         err_display("send()");
         return -1;
     }
-	printf("클라이언트에게 %d번쨰 클라인것을 전송\n", order);
+    printf("클라이언트 %d\n", order);
     return retval;
 }
 
@@ -132,13 +116,13 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 
     EnterCriticalSection(&g_cs);
     client_id = ++g_clientCount;
-	g_clients[client_id - 1].sock = client_sock;
-	g_clients[client_id - 1].id = client_id;
-	g_clients[client_id - 1].isActive = true;
+    g_clients[client_id - 1].sock = client_sock;
+    g_clients[client_id - 1].id = client_id;
+    g_clients[client_id - 1].isActive = true;
     LeaveCriticalSection(&g_cs);
 
     printf("클라이언트 %d번 접속 완료\n", client_id);
-	S2C_ClientOrder(client_sock, client_id);   //몇번째 클라인지 보내주기
+    S2C_ClientOrder(client_sock, client_id);   //몇번째 클라인지 보내주기
     //이 부분 수정 필요할 것 같음------ while 돌릴예정.
 
     //S2C_isPlayerReady(client_sock);//3명 접속했는지 확인하고 맞으면 클라에게 보내기
@@ -168,27 +152,27 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             printf("  isCollision: %s\n", received_char.isCollision ? "true" : "false");
             printf("\n");
         }
-        
+
         // 임계영역 진입 - 데이터 저장
         EnterCriticalSection(&g_cs);
-		g_clients[client_id - 1].charInfo = received_char;
+        g_clients[client_id - 1].charInfo = received_char;
         LeaveCriticalSection(&g_cs);
 
         EnterCriticalSection(&g_cs);
-		// 다른 클라이언트들에게 캐릭터 정보 전송
-        for(int i = 0; i < MAX_CLIENTS; i++) {
+        // 다른 클라이언트들에게 캐릭터 정보 전송
+        for (int i = 0; i < MAX_CLIENTS; i++) {
             if (i != client_id - 1 && g_clients[i].isActive) { // 자기 자신 제외
                 if (!S2C_Character(g_clients[i].sock, received_char)) {
                     printf("클라이언트 %d번에게 캐릭터 정보 전송 실패\n", g_clients[i].id);
                 }
                 else {
                     if (send_count[i] % 100 == 0) {
-                        printf("[서버] 클라이언트 %d 캐릭터 정보 전송 완료 송신 %d회 \n", g_clients[client_id - 1].id , send_count);
+                        printf("[서버] 클라이언트 %d 캐릭터 정보 전송 완료 송신 %d회 \n", g_clients[client_id - 1].id, send_count[i]);
                         send_count[i]++;
                     }
                 }
             }
-		}
+        }
         LeaveCriticalSection(&g_cs);
 
     }

@@ -1,8 +1,7 @@
 #pragma once
 
 #include <WinSock2.h>
-#include <glm/glm.hpp>
-#include <gl/glew.h>
+#include "stdafx.h"
 #include "Common.h"
 //#include "stdafx.h"
 // 장애물 구조체
