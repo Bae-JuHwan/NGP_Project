@@ -16,6 +16,7 @@ char* SERVERIP = (char*)"127.0.0.1";
 SOCKET Socket = INVALID_SOCKET; //전역 변수로 소켓 선언
 #pragma pack(1)
 struct character {
+	int ID;
 	glm::vec3 position;
 	glm::vec3 direction;
 	GLfloat ArmLegSwingAngle;
@@ -52,47 +53,111 @@ void UpdatePlayer() {
 	P2->ArmLegSwingAngle = otherPlayers[0].ArmLegSwingAngle;
 	// AABB 업데이트
 	P2->CAABB.update(P2->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
+
+	//P3 ������Ʈ
+	P3->Position = otherPlayers[1].position;	
+	P3->Direction = otherPlayers[1].direction;
+	// ���� ��Ʈ���� ������Ʈ
+	P3->ModelMatrix = glm::translate(glm::mat4(1.0f), P3->Position);
+	P3->ModelMatrix = glm::rotate(P3->ModelMatrix, glm::radians(P3->RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+	P3->ArmLegSwingAngle = otherPlayers[1].ArmLegSwingAngle;
+	// AABB ������Ʈ
+	P3->CAABB.update(P3->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 }
 int recv_count = 0;
 // 서버로부터 다른 캐릭터 정보 수신
 bool recv_character() {
-	// 소켓이 유효한지 확인
 	if (Socket == INVALID_SOCKET) {
 		printf("[경고] 소켓이 유효하지 않습니다\n");
 		return false;
 	}
 
-	character received_char;
+	int bytesToRead = sizeof(otherPlayers);
+	char* buf = (char*)otherPlayers;
+	int totalRecv = 0;
 
-	// 서버로부터 캐릭터 정보 패킷 수신
-	int retval = recv(Socket, (char*)&received_char, sizeof(character), 0);
-	recv_count++;
-	otherPlayers[0] = received_char; // 첫 번째 플레이어 정보 저장
-	if (retval == SOCKET_ERROR) {
-		int err = WSAGetLastError();
-		if (err != WSAEWOULDBLOCK) {
-			printf("[에러] recv_character() 실패 - 에러코드: %d\n", err);
+	while (totalRecv < bytesToRead) {
+		int retval = recv(Socket, buf + totalRecv, bytesToRead - totalRecv, 0);
+		if (retval == SOCKET_ERROR) {
+			int err = WSAGetLastError();
+			if (err != WSAEWOULDBLOCK) {
+				printf("[����] recv_characters() ���� - �����ڵ�: %d\n", err);
+				return false;
+			}
+			return false;  // ������ ����
+		}
+		if (retval == 0) {
+			printf("[����] �������� ������ �����Ǿ����ϴ�\n");
 			return false;
 		}
-		return false;  // 데이터 없음
+		totalRecv += retval;
 	}
 
-	if (retval == 0) {
-		printf("[경고] 서버와의 연결이 종료되었습니다\n");
+	recv_count++;
+	// ���� Ȯ�� (�ɼ�)
+	if (recv_count % 100 == 0) {
+		for (int i = 0; i < MAX_OTHER_PLAYERS; ++i) {
+			printf("\n[����] Ŭ���̾�Ʈ ���� ���� �Ϸ� (%d ����Ʈ)\n", (int)bytesToRead);
+			std::cout << "���� ID: " << otherPlayers[i].ID << std::endl;
+			printf("  Position: (%.2f, %.2f, %.2f)\n",
+				otherPlayers[i].position.x, otherPlayers[i].position.y, otherPlayers[i].position.z);
+			printf("  Direction: (%.2f, %.2f, %.2f)\n",
+				otherPlayers[i].direction.x, otherPlayers[i].direction.y, otherPlayers[i].direction.z);
+			printf("  ArmLegSwingAngle: %.2f\n", otherPlayers[i].ArmLegSwingAngle);
+			printf("  isCollision: %s\n\n", otherPlayers[i].isCollision ? "true" : "false");
+		}
+	}
+	return true;
+}
+//��ȣ �ް� ĳ���� ��ȣ�� ���� ������
+ bool InitCharByNum() {
+	// 1. �� ��ȣ �ޱ�
+	int data = 0;
+	int retval = recv(Socket, (char*)&data, sizeof(data), 0);
+	if (retval <= 0) {
+		printf("�������� �� ��ȣ �ޱ� ����\n");
 		return false;
 	}
+	int order = ntohl(data); // ��Ʈ��ũ ������ ��ȯ
+	glm::vec3 P1Color;
+	glm::vec3 P2Color;
+	glm::vec3 P3Color;
 
-	// 수신 출력
-	if (recv_count % 100 == 0) {
-		printf("\n[수신] 다른 클라이언트 정보 수신 완료 (%d 바이트)\n", retval);
-		printf("  Position: (%.2f, %.2f, %.2f)\n",
-			received_char.position.x, received_char.position.y, received_char.position.z);
-		printf("  Direction: (%.2f, %.2f, %.2f)\n",
-			received_char.direction.x, received_char.direction.y, received_char.direction.z);
-		printf("  ArmLegSwingAngle: %.2f\n", received_char.ArmLegSwingAngle);
-		printf("  isCollision: %s\n\n", received_char.isCollision ? "true" : "false");
-
+	std::cout << order << "�� ° ĳ���� �Դϴ�." << std::endl;
+	glm::vec3 RedColor = glm::vec3(1.0f, 0.0f, 0.0f);
+	glm::vec3 YellowColor = glm::vec3(1.0f, 1.0f, 0.0f);
+	glm::vec3 BlueColor = glm::vec3(0.0f, 0.0f, 1.0f);
+	//������ ���� ĳ���� ���� ����
+	switch (order) {
+	case 1:
+	{
+		P1Color = YellowColor;
+		P2Color = RedColor;
+		P3Color = BlueColor;
+		break;
 	}
+	case 2:
+	{
+		P1Color = RedColor;
+		P2Color = YellowColor;
+		P3Color = BlueColor;
+		break;
+	}
+	case 3:
+	{
+		P1Color = BlueColor;
+		P2Color = RedColor;
+		P3Color = YellowColor;
+		break;
+	}
+	}
+	//��Ʈ�� �ϴ� ĳ����
+	P1 = new Player1(P1Color);
+	P1->ID = order -1;
+	//�ٸ� ĳ���͵�
+	P2 = new Player1(P2Color);
+	P3 = new Player1(P3Color);
+
 	return true;
 }
 
@@ -396,12 +461,6 @@ void main(int argc, char** argv) {
 	InitCheckBoxMap4();
 	InitCheckBoxMap5();
 
-	InitializeCriticalSection(&g_cs_client);
-
-	std::cout << "캐릭터 생성중...." << std::endl;
-	P1 = new Player1();
-	P2 = new Player1();
-	P3 = new Player1();
 
 
 	//장애물
@@ -498,11 +557,21 @@ void main(int argc, char** argv) {
 	}
 	printf("[클라이언트] 서버 연결 성공!\n");
 
+
+
+	std::cout << "ĳ���� ������...." << std::endl;
+	if (!InitCharByNum())
+	{
+		std::cerr << "ĳ���� �ʱ�ȭ ����!" << std::endl;
+		return;
+	}
+	
+
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
 	glutKeyboardFunc(Keyboard);
 	glutKeyboardUpFunc(KeyboardUp);
-	glutKeyboardUpFunc(KeyboardUp);
+
 	glutSpecialFunc(SpecialKey);
 	glutSpecialUpFunc(SpecialKeyUp);
 	glutTimerFunc(16, Timer, 0);
@@ -611,6 +680,9 @@ GLvoid drawScene() {
 
 	// p2 위치 동기화
 	P2->Draw(shaderProgramID, modelMatrixLocation);
+	// p3 ��ġ ����ȭ
+	P3->Draw(shaderProgramID, modelMatrixLocation);
+
 
 	//상대 캐릭터도 받아서 그려야함.
 	HorFan1->Draw(shaderProgramID, modelMatrixLocation);
@@ -971,25 +1043,7 @@ GLvoid Timer(int value) {
 	// ^ 세로팬 -------------------------------------------------------------------------------------------
 
 
-	// 이동 처리
-	//character1Position += P1.Direction;
-	P1->Position += P1->Direction;
-	//character2Position += character2Direction;
 
-	//전송 로직
-	if (Socket != INVALID_SOCKET && P1 != nullptr) {
-		character myCharacter;
-		myCharacter.position = P1->Position;
-		myCharacter.direction = P1->Direction;
-		myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
-		myCharacter.isCollision = false;  // 필요시 나중에 수정
-
-		C2S_Character(Socket, myCharacter);
-	}
-
-	if (!recv_character()) {
-		std::cout << "recive failed" << std::endl;
-	}
 
 
 	

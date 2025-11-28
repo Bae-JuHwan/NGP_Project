@@ -1,11 +1,12 @@
-#include "Common.h"
-#include <glm/gtc/matrix_transform.hpp>
+#include"Common.h"
+#include <gtc/matrix_transform.hpp>
 #include <gl/glew.h>
-#include "obstacle.h"
-
 #pragma comment(lib, "ws2_32.lib")
 
 #define SERVERPORT 9000
+#define MAX_CLIENTS 3
+
+
 
 /*  전달사항아닌 전달사항
 
@@ -19,7 +20,23 @@ g_clientCount 이걸로만 판단하면 안될 것 같음. 들어왔다가 나갔을때 저 수가 줄어들
 CRITICAL_SECTION g_cs;  // 임계영역
 int g_clientCount = 0;
 
-
+// 캐릭터 구조체
+#pragma pack(1)
+struct character {
+    int ID;
+    glm::vec3 position;
+    glm::vec3 direction;
+    GLfloat ArmLegSwingAngle;
+    bool isCollision;
+};
+#pragma pack()
+// 클라이언트 정보 구조체 추가
+struct ClientInfo {
+    SOCKET sock;
+    int id;
+    character charInfo;
+    bool isActive;
+};
 // 캐릭터 정보 저장하기 위해서 클라이언트 정보 구조체 배열
 ClientInfo g_clients[MAX_CLIENTS];
 // 충돌 처리 함수 (아직 미구현)
@@ -30,7 +47,6 @@ bool CheckCollision(const character& ch) {
 // 클라이언트로부터 캐릭터 정보 받기
 bool recv_character(SOCKET sock, character& ch) {
     int retval = recv(sock, (char*)&ch, sizeof(character), 0);
-    printf("전송받은  데이터 크기 %d)\n", retval);
     if (retval == SOCKET_ERROR) {
         err_display("recv() - recv_character");
         return false;
@@ -71,13 +87,12 @@ int S2C_ClientOrder(SOCKET sock, int order) {   //클라에게 몇번째 클라인지 보내�
     int data = htonl(order); // 엔디안 변환(필수)
 
     retval = send(sock, (char*)&data, sizeof(data), 0);
-    printf("전송된 데이터 크기 %d)\n", retval);
     if (retval == SOCKET_ERROR)
     {
         err_display("send()");
         return -1;
     }
-
+	printf("클라이언트에게 %d번쨰 클라인것을 전송\n", order);
     return retval;
 }
 
@@ -120,13 +135,10 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 	g_clients[client_id - 1].sock = client_sock;
 	g_clients[client_id - 1].id = client_id;
 	g_clients[client_id - 1].isActive = true;
-
     LeaveCriticalSection(&g_cs);
 
     printf("클라이언트 %d번 접속 완료\n", client_id);
-
-
-	//S2C_ClientOrder(client_sock, client_id);   //몇번째 클라인지 보내주기
+	S2C_ClientOrder(client_sock, client_id);   //몇번째 클라인지 보내주기
     //이 부분 수정 필요할 것 같음------ while 돌릴예정.
 
     //S2C_isPlayerReady(client_sock);//3명 접속했는지 확인하고 맞으면 클라에게 보내기
@@ -134,26 +146,12 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 
     // TODO
     int receive_count = 0;
-    int send_count[MAX_CLIENTS];
+    int send_count[MAX_CLIENTS]{};
     while (true) {
-        
-        printf("장애물 전송 로직 \n");
-
-        EnterCriticalSection(&g_cs);
-        UpdateBongObstacle();
-        Broadcast_BongObstacle(g_bongObstacle , g_clients);
-        LeaveCriticalSection(&g_cs);
-        printf("장애물 전송 로직 끝 \n");
-       
-
-        //Sleep(16); // 60 FPS 주기로 실행
         character received_char;
 
-
-        
         // 클라이언트로부터 캐릭터 정보 수신
         if (!recv_character(client_sock, received_char)) {
-            std::cout << "캐릭터 정보 수신 실패" << '\n';
             break;  // 수신 실패 시 루프 종료
         }
 
@@ -170,28 +168,36 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             printf("  isCollision: %s\n", received_char.isCollision ? "true" : "false");
             printf("\n");
         }
- 
+        
+        // 임계영역 진입 - 데이터 저장
         EnterCriticalSection(&g_cs);
-        g_clients[client_id - 1].charInfo = received_char; //캐릭터 정보 저장
-        // 다른 클라이언트들에게 캐릭터 정보 전송
-        for (int i = 0; i < MAX_CLIENTS; i++) {
+		g_clients[client_id - 1].charInfo = received_char;
+        LeaveCriticalSection(&g_cs);
+
+        EnterCriticalSection(&g_cs);
+		// 다른 클라이언트들에게 캐릭터 정보 전송
+        for(int i = 0; i < MAX_CLIENTS; i++) {
             if (i != client_id - 1 && g_clients[i].isActive) { // 자기 자신 제외
                 if (!S2C_Character(g_clients[i].sock, received_char)) {
                     printf("클라이언트 %d번에게 캐릭터 정보 전송 실패\n", g_clients[i].id);
                 }
                 else {
                     if (send_count[i] % 100 == 0) {
-                        printf("[서버] 클라이언트 %d 캐릭터 정보 전송 완료 송신 %d회 \n", g_clients[client_id - 1].id, send_count);
+                        printf("[서버] 클라이언트 %d 캐릭터 정보 전송 완료 송신 %d회 \n", g_clients[client_id - 1].id , send_count);
                         send_count[i]++;
                     }
                 }
             }
-        }
+		}
         LeaveCriticalSection(&g_cs);
+
     }
 
     closesocket(client_sock);
     printf("클라이언트 %d번 연결 종료\n", client_id);
+    EnterCriticalSection(&g_cs);
+    g_clientCount--;
+    LeaveCriticalSection(&g_cs);
     return 0;
 }
 
@@ -233,9 +239,6 @@ int main() {
     }
 
     printf("서버가 포트 %d에서 대기 중...\n", SERVERPORT);
-    for (int i = 0; i < MAX_CLIENTS; i++) {
-        g_client_list[i] = INVALID_SOCKET;
-    }
 
     while (1) {
         client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
