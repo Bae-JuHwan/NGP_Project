@@ -900,7 +900,7 @@ GLvoid Timer(int value) {
 
 
 
-	/*if (Socket != INVALID_SOCKET) {
+	if (Socket != INVALID_SOCKET) {
 		if (!recv_BongObstacle(Socket)) {
 			std::cout << "recv_Bong Error" << '\n';
 		}
@@ -919,7 +919,7 @@ GLvoid Timer(int value) {
 	}
 	if (Bong2) {
 		Bong2->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong2->Position);
-	}*/
+	}
 
 	//Bong1->CAABB1.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
 	//Bong2->CAABB1.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));

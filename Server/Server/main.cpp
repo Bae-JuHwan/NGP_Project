@@ -192,8 +192,8 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 
 		// 장애물 위치 업데이트 및 전송
         EnterCriticalSection(&g_cs);
-        //UpdateBongObstacle(); // 장애물 위치 계산
-        //S2C_BongObstacle(g_clients[client_id - 1].sock, g_bongObstacle);
+        UpdateBongObstacle(); // 장애물 위치 계산
+        S2C_BongObstacle(g_clients[client_id - 1].sock, g_bongObstacle);
         LeaveCriticalSection(&g_cs);
     }
 
