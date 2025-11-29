@@ -41,6 +41,7 @@ bool recv_character(SOCKET sock, character& ch) {
 }
 
 // 서버에서 클라이언트로 캐릭터 정보 전송
+int characterSendCount = 0;
 bool S2C_Character(SOCKET sock, const character& char_info) {
     // 소켓이 유효한지 확인
     if (sock == INVALID_SOCKET) {
@@ -50,7 +51,19 @@ bool S2C_Character(SOCKET sock, const character& char_info) {
 
     // 클라이언트에게 캐릭터 정보 전송
     int retval = send(sock, (char*)&char_info, sizeof(character), 0);
-
+	characterSendCount++;
+    if(characterSendCount % 100 ==0)
+    {
+        printf("[서버] 캐릭터 정보 전송 완료 송신 %d회 \n", characterSendCount);
+		printf("캐릭터 ID: %d\n", char_info.ID);
+        printf("  Position: (%.2f, %.2f, %.2f)\n",
+            char_info.position.x, char_info.position.y, char_info.position.z);
+        printf("  Direction: (%.2f, %.2f, %.2f)\n",
+            char_info.direction.x, char_info.direction.y, char_info.direction.z);
+        printf("  ArmLegSwingAngle: %.2f\n", char_info.ArmLegSwingAngle);
+        printf("  isCollision: %s\n", char_info.isCollision ? "true" : "false");
+		printf("\n");
+	}
     if (retval == SOCKET_ERROR) {
         int err = WSAGetLastError();
         printf("[에러] S2C_Character() 전송 실패 - 에러코드: %d\n", err);
@@ -179,8 +192,8 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 
 		// 장애물 위치 업데이트 및 전송
         EnterCriticalSection(&g_cs);
-        UpdateBongObstacle(); // 장애물 위치 계산
-        S2C_BongObstacle(g_clients[client_id - 1].sock, g_bongObstacle);
+        //UpdateBongObstacle(); // 장애물 위치 계산
+        //S2C_BongObstacle(g_clients[client_id - 1].sock, g_bongObstacle);
         LeaveCriticalSection(&g_cs);
     }
 

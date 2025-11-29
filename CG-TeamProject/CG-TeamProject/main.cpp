@@ -33,10 +33,22 @@ character otherPlayers[MAX_OTHER_PLAYERS];
 bool otherPlayersActive[MAX_OTHER_PLAYERS] = { false, false };
 
 // 캐릭터 정보를 서버에 전송하는 함수
+int sendCharacterCount = 0;
 void C2S_Character(SOCKET sock, const character& char_info)
 {
 	// 3. 서버에 패킷 전송
 	int retval = send(sock, (char*)&char_info, sizeof(char_info), 0);
+	if(sendCharacterCount++ % 100 == 0){
+		std::cout << "\n[전송] 클라이언트 정보 전송 완료 (" << sizeof(char_info) << " 바이트)" << std::endl;
+		std::cout << "보낸 ID: " << char_info.ID << std::endl;
+		printf("  Position: (%.2f, %.2f, %.2f)\n",
+			char_info.position.x, char_info.position.y, char_info.position.z);
+		printf("  Direction: (%.2f, %.2f, %.2f)\n",
+			char_info.direction.x, char_info.direction.y, char_info.direction.z);
+		printf("  ArmLegSwingAngle: %.2f\n", char_info.ArmLegSwingAngle);
+		printf("  isCollision: %s\n\n", char_info.isCollision ? "true" : "false");
+	}
+
 	if (retval == SOCKET_ERROR) {
 		err_display("send() - C2S_Character, position");
 		return;
@@ -64,43 +76,65 @@ void UpdatePlayer() {
 	// AABB 업데이트
 	P3->CAABB.update(P3->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 }
+//서버로부터 다른 캐릭터들 정보 받기
 int recv_count = 0;
-
-// 서버로부터 다른 캐릭터 정보 수신
 bool recv_character() {
 	if (Socket == INVALID_SOCKET) {
 		printf("[경고] 소켓이 유효하지 않습니다\n");
 		return false;
 	}
 
-	int bytesToRead = sizeof(otherPlayers);
-	char* buf = (char*)otherPlayers;
-	int totalRecv = 0;
+	for (int i = 0; i < MAX_OTHER_PLAYERS; ++i) {
+		int totalRecv = 0;
+		char* buf = (char*)&otherPlayers[i];
+		int bytesToRead = sizeof(character);
 
-	while (totalRecv < bytesToRead) {
-		int retval = recv(Socket, buf + totalRecv, bytesToRead - totalRecv, 0);
-		if (retval == SOCKET_ERROR) {
-			int err = WSAGetLastError();
-			if (err != WSAEWOULDBLOCK) {
-				printf("[에러] recv_characters() 실패 - 에러코드: %d\n", err);
+		// 반복적으로 하나의 character를 모두 수신
+		while (totalRecv < bytesToRead) {
+			character received_char;
+			int retval = recv(Socket, (char*)&received_char, sizeof(received_char), 0);
+			if (retval == SOCKET_ERROR) {
+				int err = WSAGetLastError();
+				if (err != WSAEWOULDBLOCK) {
+					printf("[에러] recv_character() 실패 - 에러코드: %d\n", err);
+					return false;
+				}
+				return false;  // 데이터 없음
+			}
+			if (retval == 0) {
+				printf("[경고] 서버와의 연결이 종료되었습니다\n");
 				return false;
 			}
-			return false;  // 데이터 없음
-		}
-		if (retval == 0) {
-			printf("[경고] 서버와의 연결이 종료되었습니다\n");
-			return false;
-		}
-		// 캐릭터 업데이트를 계속 해줌
 
-		totalRecv += retval;
+			// 수신된 캐릭터 정보를 올바른 위치에 저장
+			if (received_char.ID == P1->ID || received_char.ID>2) {
+				continue;
+			}
+			if (P1->ID == 0) {
+				otherPlayers[received_char.ID - 1] = received_char;
+			}
+			else if (P1->ID == 1) {
+				if (received_char.ID == 0)
+					otherPlayers[0] = received_char;
+				else if (received_char.ID == 2)
+					otherPlayers[1] = received_char;
+			}
+			else {
+				if (received_char.ID == 0)
+					otherPlayers[0] = received_char;
+				else if (received_char.ID == 1)
+					otherPlayers[1] = received_char;
+			}
+
+			totalRecv += retval;
+		}
 	}
 	UpdatePlayer();
 	recv_count++;
-	// 출력 확인 (옵션)
+	// 출력(옵션)
 	if (recv_count % 100 == 0) {
 		for (int i = 0; i < MAX_OTHER_PLAYERS; ++i) {
-			printf("\n[수신] 클라이언트 정보 수신 완료 (%d 바이트)\n", (int)bytesToRead);
+			printf("\n[수신] 클라이언트 정보 수신 완료 (%d 바이트)\n", (int)sizeof(character));
 			std::cout << "받은 ID: " << otherPlayers[i].ID << std::endl;
 			printf("  Position: (%.2f, %.2f, %.2f)\n",
 				otherPlayers[i].position.x, otherPlayers[i].position.y, otherPlayers[i].position.z);
@@ -866,7 +900,7 @@ GLvoid Timer(int value) {
 
 
 
-	if (Socket != INVALID_SOCKET) {
+	/*if (Socket != INVALID_SOCKET) {
 		if (!recv_BongObstacle(Socket)) {
 			std::cout << "recv_Bong Error" << '\n';
 		}
@@ -885,7 +919,7 @@ GLvoid Timer(int value) {
 	}
 	if (Bong2) {
 		Bong2->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong2->Position);
-	}
+	}*/
 
 	//Bong1->CAABB1.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
 	//Bong2->CAABB1.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));

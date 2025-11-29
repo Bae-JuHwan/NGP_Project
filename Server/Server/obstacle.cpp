@@ -12,6 +12,7 @@ bool S2C_BongObstacle(SOCKET sock, const obstacle_Bong& obs_info)
 	}
 
 	int retval = send(sock, (char*)&obs_info, sizeof(obstacle_Bong), 0);
+	sendBongCount++;
 	if(sendBongCount % 100 ==0)
 	{
 		printf("[서버] 봉 장애물 정보 전송 완료 송신 %d회 \n", sendBongCount);
