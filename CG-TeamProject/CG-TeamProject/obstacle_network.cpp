@@ -3,7 +3,7 @@
 
 obstacle_Bong g_bongObstacle; // 전역 변수 정의
 extern CRITICAL_SECTION g_cs_client;
-
+int reciveBongCount = 0;
 bool recv_BongObstacle(SOCKET sock)
 {
 	if (sock == INVALID_SOCKET) {
@@ -15,7 +15,15 @@ bool recv_BongObstacle(SOCKET sock)
 
 	// 서버로부터 장애물 정보 패킷 수신
 	int retval = recv(sock, (char*)&obs_info, sizeof(obstacle_Bong), 0);
-	printf("장애물 정보 받음\n");
+	reciveBongCount++;
+	if (reciveBongCount % 100 == 0) {
+		printf("장애물 정보 받음\n");
+		printf("pos1: (%.2f, %.2f, %.2f)\n", obs_info.pos1.x, obs_info.pos1.y, obs_info.pos1.z);
+		printf("dir1: (%.2f, %.2f, %.2f)\n", obs_info.dir1.x, obs_info.dir1.y, obs_info.dir1.z);
+		printf("pos2: (%.2f, %.2f, %.2f)\n", obs_info.pos2.x, obs_info.pos2.y, obs_info.pos2.z);
+		printf("dir2: (%.2f, %.2f, %.2f)\n", obs_info.dir2.x, obs_info.dir2.y, obs_info.dir2.z);
+	}
+	
 	if (retval == SOCKET_ERROR) {
 		int err = WSAGetLastError();
 		if (err != WSAEWOULDBLOCK) {

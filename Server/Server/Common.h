@@ -18,6 +18,7 @@
 // 캐릭터 구조체
 #pragma pack(1)
 struct character {
+    int ID;
     glm::vec3 position;
     glm::vec3 direction;
     GLfloat ArmLegSwingAngle;

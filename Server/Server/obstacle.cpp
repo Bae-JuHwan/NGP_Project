@@ -2,6 +2,7 @@
 #include "Common.h"
 // 원래꺼
 obstacle_Bong g_bongObstacle;
+int sendBongCount = 0;
 
 bool S2C_BongObstacle(SOCKET sock, const obstacle_Bong& obs_info)
 {
@@ -11,7 +12,12 @@ bool S2C_BongObstacle(SOCKET sock, const obstacle_Bong& obs_info)
 	}
 
 	int retval = send(sock, (char*)&obs_info, sizeof(obstacle_Bong), 0);
-	printf("봉 장애물 전송 %d)\n",  retval);
+	if(sendBongCount % 100 ==0)
+	{
+		printf("[서버] 봉 장애물 정보 전송 완료 송신 %d회 \n", sendBongCount);
+		printf("봉 장애물 위치1 : x=%f, y=%f, z=%f\n", obs_info.pos1.x, obs_info.pos1.y, obs_info.pos1.z);
+		printf("봉 장애물 위치2 : x=%f, y=%f, z=%f\n", obs_info.pos2.x, obs_info.pos2.y, obs_info.pos2.z);
+	}
 	if (retval == SOCKET_ERROR) {
 		err_display("send() - S2C_BongObstacle");
 		return false;
@@ -51,7 +57,6 @@ bool Broadcast_BongObstacle(const obstacle_Bong& obs_info , ClientInfo g_clients
 	for (int i = 0; i < MAX_CLIENTS; i++) {
 		if (g_clients[i].isActive) {
 			S2C_BongObstacle(g_clients[i].sock, obs_info);
-			std::cout << i << "번 째 클라이언트 봉 정보 송신" << "\n";
 		}
 		else {
 			std::cout << i << "번 째 클라이언트 봉 정보 송신 실패" << "\n";

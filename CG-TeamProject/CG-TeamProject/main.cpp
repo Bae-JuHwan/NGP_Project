@@ -91,9 +91,11 @@ bool recv_character() {
 			printf("[경고] 서버와의 연결이 종료되었습니다\n");
 			return false;
 		}
+		// 캐릭터 업데이트를 계속 해줌
+
 		totalRecv += retval;
 	}
-
+	UpdatePlayer();
 	recv_count++;
 	// 출력 확인 (옵션)
 	if (recv_count % 100 == 0) {
@@ -853,17 +855,14 @@ GLvoid Timer(int value) {
 		C2S_Character(Socket, myCharacter);
 	}
 
-	if (Socket != INVALID_SOCKET) {
-	
-	}
+
 	//다른 캐릭터들 정보를 받음
 
 	if (!recv_character()) {
 		std::cout << "recive failed" << std::endl;
 	}
 
-	// 캐릭터 업데이트를 계속 해줌
-	UpdatePlayer();
+	
 
 
 
@@ -874,7 +873,6 @@ GLvoid Timer(int value) {
 	}
 
 	EnterCriticalSection(&g_cs_client);
-	std::cout << "[Timer] Bong1=" << Bong1 << " Bong2=" << Bong2 << std::endl;
 	if (Bong1) Bong1->Position = g_bongObstacle.pos1;
 	else std::cout << "[Warn] Bong1 is NULL\n";
 

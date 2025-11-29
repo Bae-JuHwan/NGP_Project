@@ -129,6 +129,10 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     // TODO
     int receive_count = 0;
     int send_count[MAX_CLIENTS]{};
+    while(g_clientCount < 3) {
+		printf("클라이언트 %d번 대기중... 현재 접속자 수: %d\n", client_id, g_clientCount);
+        Sleep(100); // 3명 접속 대기
+	}
     while (true) {
         character received_char;
 
@@ -173,6 +177,11 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         }
         LeaveCriticalSection(&g_cs);
 
+		// 장애물 위치 업데이트 및 전송
+        EnterCriticalSection(&g_cs);
+        UpdateBongObstacle(); // 장애물 위치 계산
+        S2C_BongObstacle(g_clients[client_id - 1].sock, g_bongObstacle);
+        LeaveCriticalSection(&g_cs);
     }
 
     closesocket(client_sock);
@@ -187,7 +196,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 DWORD WINAPI ObstacleThread(LPVOID arg) {
     while (true) {
         Sleep(16); // 60FPS
-
+        printf("장애물 스레드\n");
         EnterCriticalSection(&g_cs);
         UpdateBongObstacle(); // 장애물 위치 계산
         Broadcast_BongObstacle(g_bongObstacle, g_clients); // 클라이언트에게 전송
@@ -239,12 +248,6 @@ int main() {
         g_clients[i].isActive = false;
     }
 
-    printf("서버가 포트 %d에서 대기 중...\n", SERVERPORT);
-
-    HANDLE hObstacle = CreateThread(NULL, 0, ObstacleThread, NULL, 0, NULL);
-    if (hObstacle) {
-        CloseHandle(hObstacle);
-    }
 
     printf("서버가 포트 %d에서 대기 중...\n", SERVERPORT);
 
