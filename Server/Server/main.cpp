@@ -103,9 +103,8 @@ bool IsAllPlayersReady()    //3명 모두 접속했니?
     return ready;
 }
 
-bool S2C_isPlayerReady(SOCKET sock) {  // 플레이어 모두 접속 완료 됐는지 전송 함수 
-    bool ready = IsAllPlayersReady();
-    int data = ready ? 1 : 0;
+bool S2C_isPlayerReady(SOCKET sock,int num) {  // 플레이어 모두 접속 완료 됐는지 전송 함수 
+    int data = num;
 
     // 엔디안 변환
     int send_data = htonl(data);
@@ -136,7 +135,19 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     S2C_ClientOrder(client_sock, client_id);   //몇번째 클라인지 보내주기
     //이 부분 수정 필요할 것 같음------ while 돌릴예정.
 
-    //S2C_isPlayerReady(client_sock);//3명 접속했는지 확인하고 맞으면 클라에게 보내기
+    while (!IsAllPlayersReady());//3명 접속했는지 확인하고 맞으면 클라에게 보내기
+    // 3명 접속 완료
+    S2C_isPlayerReady(client_sock,3);  // 3초 보내기
+    Sleep(1000);
+
+    S2C_isPlayerReady(client_sock,2);  // 2
+    Sleep(1000);
+
+    S2C_isPlayerReady(client_sock,1);  // 1
+    Sleep(1000);
+
+
+
     //----------
 
     // TODO
