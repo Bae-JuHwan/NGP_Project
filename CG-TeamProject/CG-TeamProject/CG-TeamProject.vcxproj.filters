@@ -33,6 +33,9 @@
     <ClCompile Include="obstacle_network.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="clientPacketHandler.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="헤더.h">
@@ -42,6 +45,21 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Obstacle.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="AABB.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="obstacle_network.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="clientPacketHandler.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

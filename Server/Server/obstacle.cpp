@@ -1,6 +1,7 @@
 ﻿#include "obstacle.h"
 #include "Common.h"
-// 원래꺼
+#include "serverPacketHandler.h"
+
 obstacle_Bong g_bongObstacle;
 int sendBongCount = 0;
 
@@ -11,7 +12,12 @@ bool S2C_BongObstacle(SOCKET sock, const obstacle_Bong& obs_info)
 		return false;
 	}
 
-	int retval = send(sock, (char*)&obs_info, sizeof(obstacle_Bong), 0);
+	ObstaclePacket pkt;
+	pkt.header.type = htons(PACKET_S2C_OBSTACLE);
+	pkt.header.size = htons(sizeof(ObstaclePacket));
+	pkt.data = obs_info;
+
+	int retval = send(sock, (char*)&pkt, sizeof(pkt), 0);
 	sendBongCount++;
 	if(sendBongCount % 100 ==0)
 	{
@@ -24,8 +30,8 @@ bool S2C_BongObstacle(SOCKET sock, const obstacle_Bong& obs_info)
 		return false;
 	}
 
-	if (retval != sizeof(obstacle_Bong)) {
-		printf("[경고] 봉 장애물 전송 크기 불일치 (예상 : %zu, 실제 : %d)\n", sizeof(obstacle_Bong), retval);
+	if (retval != sizeof(pkt)) {
+		printf("[경고] 봉 장애물 전송 크기 불일치 (예상 : %zu, 실제 : %d)\n", sizeof(pkt), retval);
 	}
 
 	return true;
@@ -60,7 +66,7 @@ bool Broadcast_BongObstacle(const obstacle_Bong& obs_info , ClientInfo g_clients
 			S2C_BongObstacle(g_clients[i].sock, obs_info);
 		}
 		else {
-			std::cout << i << "번 째 클라이언트 봉 정보 송신 실패" << "\n";
+			//std::cout << i << "번 째 클라이언트 봉 정보 송신 실패" << "\n";
 		}
 	}
 	return true;

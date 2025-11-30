@@ -1,5 +1,6 @@
 #include"Common.h"
 #include "obstacle.h"
+#include "serverPacketHandler.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <gl/glew.h>
 #pragma comment(lib, "ws2_32.lib")
@@ -29,6 +30,7 @@ bool CheckCollision(const character& ch) {
 // 클라이언트로부터 캐릭터 정보 받기
 bool recv_character(SOCKET sock, character& ch) {
     int retval = recv(sock, (char*)&ch, sizeof(character), 0);
+
     if (retval == SOCKET_ERROR) {
         err_display("recv() - recv_character");
         return false;
@@ -43,14 +45,21 @@ bool recv_character(SOCKET sock, character& ch) {
 // 서버에서 클라이언트로 캐릭터 정보 전송
 int characterSendCount = 0;
 bool S2C_Character(SOCKET sock, const character& char_info) {
+    printf("sizeof(character) server: %zu\n", sizeof(character));
+    
     // 소켓이 유효한지 확인
     if (sock == INVALID_SOCKET) {
         printf("[경고] 소켓이 유효하지 않습니다\n");
         return false;
     }
 
+    CharacterPacket pkt;
+    pkt.header.type = PACKET_S2C_CHARACTER;
+    pkt.header.size = sizeof(CharacterPacket);
+    pkt.data = char_info;
+
     // 클라이언트에게 캐릭터 정보 전송
-    int retval = send(sock, (char*)&char_info, sizeof(character), 0);
+    int retval = send(sock, (char*)&pkt, sizeof(pkt), 0);
 	characterSendCount++;
     if(characterSendCount % 100 ==0)
     {
@@ -78,16 +87,14 @@ bool S2C_Character(SOCKET sock, const character& char_info) {
 }
 
 int S2C_ClientOrder(SOCKET sock, int order) {   //클라에게 몇번째 클라인지 보내주는 함수
-    int retval;
-    int data = htonl(order); // 엔디안 변환(필수)
 
-    retval = send(sock, (char*)&data, sizeof(data), 0);
+    int retval = send(sock, (char*)&order, sizeof(order), 0);
     if (retval == SOCKET_ERROR)
     {
         err_display("send()");
         return -1;
     }
-    printf("클라이언트 %d\n", order);
+    printf("서버 -> 클라이언트 %d번 order 전송\n", order);
     return retval;
 }
 
@@ -190,11 +197,11 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         }
         LeaveCriticalSection(&g_cs);
 
-		// 장애물 위치 업데이트 및 전송
-        EnterCriticalSection(&g_cs);
-        UpdateBongObstacle(); // 장애물 위치 계산
-        S2C_BongObstacle(g_clients[client_id - 1].sock, g_bongObstacle);
-        LeaveCriticalSection(&g_cs);
+		//// 장애물 위치 업데이트 및 전송
+  //      EnterCriticalSection(&g_cs);
+  //      UpdateBongObstacle(); // 장애물 위치 계산
+  //      S2C_BongObstacle(g_clients[client_id - 1].sock, g_bongObstacle);
+  //      LeaveCriticalSection(&g_cs);
     }
 
     closesocket(client_sock);
@@ -209,7 +216,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 DWORD WINAPI ObstacleThread(LPVOID arg) {
     while (true) {
         Sleep(16); // 60FPS
-        printf("장애물 스레드\n");
+        //printf("장애물 스레드\n");
         EnterCriticalSection(&g_cs);
         UpdateBongObstacle(); // 장애물 위치 계산
         Broadcast_BongObstacle(g_bongObstacle, g_clients); // 클라이언트에게 전송
@@ -230,7 +237,12 @@ int main() {
         return 1;
     }
 
+    printf("sizeof(character) server: %zu\n", sizeof(character));
+
     InitializeCriticalSection(&g_cs);
+
+    HANDLE hObstacleThread = CreateThread(NULL, 0, ObstacleThread, NULL, 0, NULL);
+    if (hObstacleThread) CloseHandle(hObstacleThread);
 
     listen_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_sock == INVALID_SOCKET) {

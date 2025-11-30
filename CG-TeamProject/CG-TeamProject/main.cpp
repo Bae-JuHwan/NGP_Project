@@ -5,24 +5,17 @@
 #include <cstdlib>
 #include <iostream>
 #include <set>
+#include <thread>
 #include "AABB.h"
 #include "Common.h"
 #include "obstacle_network.h"
+#include "clientPacketHandler.h"
 
 CRITICAL_SECTION g_cs_client;
 
 char* SERVERIP = (char*)"127.0.0.1";
 #define SERVERPORT 9000
 SOCKET Socket = INVALID_SOCKET; //전역 변수로 소켓 선언
-#pragma pack(1)
-struct character {
-	int ID;
-	glm::vec3 position;
-	glm::vec3 direction;
-	GLfloat ArmLegSwingAngle;
-	bool isCollision;
-};
-#pragma pack()
 
 Player1* P1 = nullptr;
 Player1* P2 = nullptr;
@@ -36,10 +29,20 @@ bool otherPlayersActive[MAX_OTHER_PLAYERS] = { false, false };
 int sendCharacterCount = 0;
 void C2S_Character(SOCKET sock, const character& char_info)
 {
-	// 3. 서버에 패킷 전송
-	int retval = send(sock, (char*)&char_info, sizeof(char_info), 0);
-	if(sendCharacterCount++ % 100 == 0){
-		std::cout << "\n[전송] 클라이언트 정보 전송 완료 (" << sizeof(char_info) << " 바이트)" << std::endl;
+	printf("sizeof(character) server: %zu\n", sizeof(character));
+
+	CharacterPacket pkt;
+	pkt.header.type = PACKET_S2C_CHARACTER;
+	pkt.header.size = sizeof(CharacterPacket);
+	pkt.data = char_info;
+
+	if (!SendPacket(sock, &pkt, sizeof(pkt))) {
+		err_display("SendPacket() - C2S_Character");
+		return;
+	}
+
+	if (sendCharacterCount++ % 100 == 0) {
+		std::cout << "\n[전송] 클라이언트 정보 전송 완료 (" << sizeof(pkt.data) << " 바이트)" << std::endl;
 		std::cout << "보낸 ID: " << char_info.ID << std::endl;
 		printf("  Position: (%.2f, %.2f, %.2f)\n",
 			char_info.position.x, char_info.position.y, char_info.position.z);
@@ -48,12 +51,6 @@ void C2S_Character(SOCKET sock, const character& char_info)
 		printf("  ArmLegSwingAngle: %.2f\n", char_info.ArmLegSwingAngle);
 		printf("  isCollision: %s\n\n", char_info.isCollision ? "true" : "false");
 	}
-
-	if (retval == SOCKET_ERROR) {
-		err_display("send() - C2S_Character, position");
-		return;
-	}
-
 }
 // 캐릭터 정보 업데이트
 void UpdatePlayer() {
@@ -85,54 +82,51 @@ bool recv_character() {
 	}
 
 	for (int i = 0; i < MAX_OTHER_PLAYERS; ++i) {
-		int totalRecv = 0;
-		char* buf = (char*)&otherPlayers[i];
-		int bytesToRead = sizeof(character);
+		PacketHeader header;
+		if (!RecvPacket(Socket, &header, sizeof(PacketHeader))) {
+			return false;
+		}
 
-		// 반복적으로 하나의 character를 모두 수신
-		while (totalRecv < bytesToRead) {
-			character received_char;
-			int retval = recv(Socket, (char*)&received_char, sizeof(received_char), 0);
-			if (retval == SOCKET_ERROR) {
-				int err = WSAGetLastError();
-				if (err != WSAEWOULDBLOCK) {
-					printf("[에러] recv_character() 실패 - 에러코드: %d\n", err);
-					return false;
-				}
-				return false;  // 데이터 없음
+		if (header.type != PACKET_S2C_CHARACTER) {
+			printf("[경고] 캐릭터가 다른 놈 받고 있음 : %d\n", header.type);
+			char dummy[1024];
+			int remaining = header.size - sizeof(PacketHeader);
+			while (remaining > 0) {
+				int chunk = remaining > 1024 ? 1024 : remaining;
+				if (!RecvPacket(Socket, dummy, chunk)) return false;
+				remaining -= chunk;
 			}
-			if (retval == 0) {
-				printf("[경고] 서버와의 연결이 종료되었습니다\n");
-				return false;
-			}
+			continue;
+		}
 
-			// 수신된 캐릭터 정보를 올바른 위치에 저장
-			if (received_char.ID == P1->ID || received_char.ID>2) {
-				continue;
-			}
-			if (P1->ID == 0) {
-				otherPlayers[received_char.ID - 1] = received_char;
-			}
-			else if (P1->ID == 1) {
-				if (received_char.ID == 0)
-					otherPlayers[0] = received_char;
-				else if (received_char.ID == 2)
-					otherPlayers[1] = received_char;
-			}
-			else {
-				if (received_char.ID == 0)
-					otherPlayers[0] = received_char;
-				else if (received_char.ID == 1)
-					otherPlayers[1] = received_char;
-			}
+		CharacterPacket pkt;
+		pkt.header = header;
 
-			totalRecv += retval;
+		if (!RecvPacket(Socket, &pkt.data, sizeof(character))) {
+			return false;
+		}
+
+		// 받은 캐릭터 정보 저장
+		int id = pkt.data.ID;
+		if (id == P1->ID || id >= MAX_OTHER_PLAYERS + 1) continue;
+
+		if (P1->ID == 0) {
+			otherPlayers[id - 1] = pkt.data;
+		}
+		else if (P1->ID == 1) {
+			if (id == 0) otherPlayers[0] = pkt.data;
+			else if (id == 2) otherPlayers[1] = pkt.data;
+		}
+		else { // P1->ID == 2
+			if (id == 0) otherPlayers[0] = pkt.data;
+			else if (id == 1) otherPlayers[1] = pkt.data;
 		}
 	}
+
 	UpdatePlayer();
-	recv_count++;
-	// 출력(옵션)
-	if (recv_count % 100 == 0) {
+
+	// 디버그 출력
+	if (++recv_count % 100 == 0) {
 		for (int i = 0; i < MAX_OTHER_PLAYERS; ++i) {
 			printf("\n[수신] 클라이언트 정보 수신 완료 (%d 바이트)\n", (int)sizeof(character));
 			std::cout << "받은 ID: " << otherPlayers[i].ID << std::endl;
@@ -144,18 +138,22 @@ bool recv_character() {
 			printf("  isCollision: %s\n\n", otherPlayers[i].isCollision ? "true" : "false");
 		}
 	}
+
 	return true;
 }
 //번호 받고 캐릭터 번호에 따라 만들기
 bool InitCharByNum() {
+	printf("sizeof(character) client: %zu\n", sizeof(character));
 	// 1. 내 번호 받기
 	int data = 0;
 	int retval = recv(Socket, (char*)&data, sizeof(data), 0);
+	printf("recv retval: %d, sizeof(data): %zu\n", retval, sizeof(data));
+
 	if (retval <= 0) {
 		printf("서버에서 내 번호 받기 실패\n");
 		return false;
 	}
-	int order = ntohl(data); // 네트워크 엔디안 변환
+	int order = data; // 네트워크 엔디안 변환
 	glm::vec3 P1Color = glm::vec3(1.0f);
 	glm::vec3 P2Color = glm::vec3(1.0f);
 	glm::vec3 P3Color = glm::vec3(1.0f);
@@ -175,33 +173,21 @@ bool InitCharByNum() {
 		break;
 	}
 	case 1:
-	{
-		P1Color = YellowColor;
-		P2Color = RedColor;
-		P3Color = BlueColor;
-		break;
-	}
-	case 2:
-	{
 		P1Color = RedColor;
 		P2Color = YellowColor;
 		P3Color = BlueColor;
 		break;
-	}
-	case 3:
-	{
+	case 2:
 		P1Color = BlueColor;
 		P2Color = RedColor;
 		P3Color = YellowColor;
 		break;
-	}
 	default:
 		std::cerr << "경고: 서버에서 잘못된 order(" << order << ")를 보냄\n";
 		return false; // 초기화 중단
 	}
 	//컨트롤 하는 캐릭터
 	P1 = new Player1(P1Color);
-	P1->ID = order - 1;
 	//다른 캐릭터들
 	P2 = new Player1(P2Color);
 	P3 = new Player1(P3Color);
@@ -253,6 +239,33 @@ void CleanupNetworkConnection() {
 	}
 	WSACleanup();
 }
+
+void PacketRecvLoop() {
+	while (Socket != INVALID_SOCKET) {
+		EnterCriticalSection(&g_cs_client);
+
+		if (!recv_character()) {
+			std::cout << "recive failed" << std::endl;
+
+			LeaveCriticalSection(&g_cs_client);
+			Sleep(5);
+			continue;
+		}
+
+		if (!recv_BongObstacle(Socket)) {
+			std::cout << "recv_Bong Error" << '\n';
+
+			LeaveCriticalSection(&g_cs_client);
+			Sleep(5);
+			continue;
+		}
+
+		LeaveCriticalSection(&g_cs_client);
+
+		Sleep(1); // CPU 점유 최소화
+	}
+}
+
 // 맵
 GLuint vaoBottom, vaoArrowAndPillar, vaoEndPoint, vaoPoint;
 GLuint vboBottom[2], vboArrowAndPillar[2], vboEndPoint[2], vboPoint[2];
@@ -612,7 +625,10 @@ void main(int argc, char** argv) {
 		std::cerr << "캐릭터 초기화 실패!" << std::endl;
 		return;
 	}
-	
+
+	// 패킷 수신 스레드 시작
+	std::thread recvThread(PacketRecvLoop);
+	recvThread.detach();  // GLUT 루프와 병행 실행
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -727,7 +743,7 @@ GLvoid drawScene() {
 
 	// p2 위치 동기화
 	P2->Draw(shaderProgramID, modelMatrixLocation);
-	// p3 ��ġ ����ȭ
+	// p3 위치 동기화
 	P3->Draw(shaderProgramID, modelMatrixLocation);
 
 
@@ -886,24 +902,9 @@ GLvoid Timer(int value) {
 		myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
 		myCharacter.isCollision = false;  // 필요시 나중에 수정
 
+		EnterCriticalSection(&g_cs_client);
 		C2S_Character(Socket, myCharacter);
-	}
-
-
-	//다른 캐릭터들 정보를 받음
-
-	if (!recv_character()) {
-		std::cout << "recive failed" << std::endl;
-	}
-
-	
-
-
-
-	if (Socket != INVALID_SOCKET) {
-		if (!recv_BongObstacle(Socket)) {
-			std::cout << "recv_Bong Error" << '\n';
-		}
+		LeaveCriticalSection(&g_cs_client);
 	}
 
 	EnterCriticalSection(&g_cs_client);
@@ -914,12 +915,9 @@ GLvoid Timer(int value) {
 	else std::cout << "[Warn] Bong2 is NULL\n";
 	LeaveCriticalSection(&g_cs_client);
 
-	if (Bong1) {
-		Bong1->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong1->Position);
-	}
-	if (Bong2) {
-		Bong2->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong2->Position);
-	}
+
+	Bong1->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong1->Position);
+	Bong2->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong2->Position);
 
 	//Bong1->CAABB1.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
 	//Bong2->CAABB1.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));

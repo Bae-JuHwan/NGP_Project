@@ -16,7 +16,7 @@
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
 
 // 캐릭터 구조체
-#pragma pack(1)
+#pragma pack(push, 1)
 struct character {
     int ID;
     glm::vec3 position;
@@ -24,7 +24,7 @@ struct character {
     GLfloat ArmLegSwingAngle;
     bool isCollision;
 };
-#pragma pack()
+#pragma pack(pop)
 
 // 클라이언트 정보 구조체 추가
 struct ClientInfo {
