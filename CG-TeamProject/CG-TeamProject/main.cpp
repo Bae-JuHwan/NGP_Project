@@ -29,10 +29,7 @@ Player1* P2 = nullptr;
 Player1* P3 = nullptr;
 
 
-bool count3_check = false;
-bool count2_check = false;
-bool count1_check = false;
-
+std::atomic<bool> count1_check, count2_check, count3_check;
 
 // 다른 클라이언트들의 캐릭터 정보 저장
 #define MAX_OTHER_PLAYERS 2
@@ -499,37 +496,6 @@ void DrawMapCheckBox(GLuint shaderProgramID, GLint modelMatrixLocation) {
 }
 
 
-void recv_CountNum() {
-	int recv_data = 0;             // 네트워크에서 받을 raw 데이터
-	int retval = recv(Socket, (char*)&recv_data, sizeof(recv_data), 0);
-
-	if (retval == SOCKET_ERROR) {
-		err_display("recv()");
-		return; // 통신 자체가 실패
-	}
-	// 엔디안 변환
-	int data = ntohl(recv_data);
-	switch (data) {
-	case 3:
-		count1_check = false;
-		count2_check = false;
-		count3_check = true;
-		break;
-	case 2:
-		count1_check = false;
-		count2_check = true;
-		count3_check = false;
-		break;
-	case 1:
-		count1_check = true;
-		count2_check = false;
-		count3_check = false;
-		break;
-	}
-	printf("카운트: %d\n", data);
-	return;
-}
-
 DWORD WINAPI RecvThread(LPVOID arg)
 {
 	SOCKET sock = *(SOCKET*)arg;
@@ -562,9 +528,14 @@ DWORD WINAPI RecvThread(LPVOID arg)
 			break;
 		case -1:
 			printf("카운트 종료 신호 받음, 쓰레드 종료!\n");
+			count1_check = false;
+			count2_check = false;
+			count3_check = false;
+			//glutPostRedisplay();
 			return 0;  // 쓰레드 종료
 		}
 		printf("카운트: %d\n", data);
+		//glutPostRedisplay();
 	}
 
 	return 0;
@@ -875,7 +846,7 @@ GLvoid drawScene() {
 		count3->Draw(shaderProgramID, modelMatrixLocation);
 	}
 	else if (count2_check) {
-		count1->Draw(shaderProgramID, modelMatrixLocation);
+		count2->Draw(shaderProgramID, modelMatrixLocation);
 	}
 	else if (count1_check) {
 		count1->Draw(shaderProgramID, modelMatrixLocation);
@@ -951,6 +922,7 @@ void MovingCharacter() {
 		P1->IsSwing = false;
 	}
 }
+
 GLvoid Timer(int value) {
 
 	MovingCharacter();
@@ -1014,42 +986,42 @@ GLvoid Timer(int value) {
 	}
 
 
-	//전송 로직
-	if (Socket != INVALID_SOCKET && P1 != nullptr) {
-		character myCharacter;
-		myCharacter.ID = P1->ID;
-		myCharacter.position = P1->Position;
-		myCharacter.direction = P1->Direction;
-		myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
-		myCharacter.isCollision = false;  // 필요시 나중에 수정
+	////전송 로직
+	//if (Socket != INVALID_SOCKET && P1 != nullptr) {
+	//	character myCharacter;
+	//	myCharacter.ID = P1->ID;
+	//	myCharacter.position = P1->Position;
+	//	myCharacter.direction = P1->Direction;
+	//	myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
+	//	myCharacter.isCollision = false;  // 필요시 나중에 수정
 
-		C2S_Character(Socket, myCharacter);
-	}
+	//	C2S_Character(Socket, myCharacter);
+	//}
 
 
 	//다른 캐릭터들 정보를 받음
 
-	if (!recv_character()) {
-		std::cout << "recive failed" << std::endl;
-	}
+	//if (!recv_character()) {
+	//	std::cout << "recive failed" << std::endl;
+	//}
 
 
 
 
 
-	if (Socket != INVALID_SOCKET) {
-		if (!recv_BongObstacle(Socket)) {
-			std::cout << "recv_Bong Error" << '\n';
-		}
-	}
+	//if (Socket != INVALID_SOCKET) {
+	//	if (!recv_BongObstacle(Socket)) {
+	//		std::cout << "recv_Bong Error" << '\n';
+	//	}
+	//}
 
-	EnterCriticalSection(&g_cs_client);
-	if (Bong1) Bong1->Position = g_bongObstacle.pos1;
-	else std::cout << "[Warn] Bong1 is NULL\n";
+	//EnterCriticalSection(&g_cs_client);
+	//if (Bong1) Bong1->Position = g_bongObstacle.pos1;
+	//else std::cout << "[Warn] Bong1 is NULL\n";
 
-	if (Bong2) Bong2->Position = g_bongObstacle.pos2;
-	else std::cout << "[Warn] Bong2 is NULL\n";
-	LeaveCriticalSection(&g_cs_client);
+	//if (Bong2) Bong2->Position = g_bongObstacle.pos2;
+	//else std::cout << "[Warn] Bong2 is NULL\n";
+	//LeaveCriticalSection(&g_cs_client);
 
 	if (Bong1) {
 		Bong1->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong1->Position);
