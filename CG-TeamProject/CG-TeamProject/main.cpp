@@ -533,6 +533,8 @@ DWORD WINAPI RecvThread(LPVOID arg)
 			count3_check = false;
 			//glutPostRedisplay();
 			return 0;  // 쓰레드 종료
+		default:
+			return 0;
 		}
 		printf("카운트: %d\n", data);
 		//glutPostRedisplay();
