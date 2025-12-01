@@ -1,7 +1,4 @@
-#include"Common.h"
-#include "obstacle.h"
-#include <gtc/matrix_transform.hpp>
-#include <gl/glew.h>
+#include "Function.h"
 #pragma comment(lib, "ws2_32.lib")
 
 #define SERVERPORT 9000
@@ -104,34 +101,8 @@ int S2C_ClientOrder(SOCKET sock, int order) {   //클라에게 몇번째 클라인지 보내�
     return retval;
 }
 
-bool IsAllPlayersReady()    //3명 모두 접속했니?       
-{
-    bool ready = false;
 
-    EnterCriticalSection(&g_cs);
-    if (g_clientCount >= 3)   // 원하는 최소 인원
-        ready = true;
-    LeaveCriticalSection(&g_cs);
-
-    return ready;
-}
-
-bool S2C_isPlayerReady(SOCKET sock) {  // 플레이어 모두 접속 완료 됐는지 전송 함수 
-    bool ready = IsAllPlayersReady();
-    int data = ready ? 1 : 0;
-
-    // 엔디안 변환
-    int send_data = htonl(data);
-
-    int retval = send(sock, (char*)&send_data, sizeof(send_data), 0);
-    if (retval == SOCKET_ERROR) {
-        err_display("send()");
-        return false;
-    }
-
-    return true;
-}
-
+bool g_countdown = true ;
 // 클라이언트 스레드 함수
 DWORD WINAPI ClientThread(LPVOID arg) {
     SOCKET client_sock = *(SOCKET*)arg;
@@ -147,18 +118,25 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 
     printf("클라이언트 %d번 접속 완료\n", client_id);
     S2C_ClientOrder(client_sock, client_id);   //몇번째 클라인지 보내주기
-    //이 부분 수정 필요할 것 같음------ while 돌릴예정.
 
-    //S2C_isPlayerReady(client_sock);//3명 접속했는지 확인하고 맞으면 클라에게 보내기
-    //----------
 
     // TODO
     int receive_count = 0;
     int send_count[MAX_CLIENTS]{};
     while(g_clientCount < 3) {
-		printf("클라이언트 %d번 대기중... 현재 접속자 수: %d\n", client_id, g_clientCount);
+		//printf("클라이언트 %d번 대기중... 현재 접속자 수: %d\n", client_id, g_clientCount);
         Sleep(100); // 3명 접속 대기
 	}
+    
+    //아무 쓰레드 중 하나가 확인하고 카운트다운 시작하면. 전체로 보내줌. 그 후 닫아서 다른 쓰레드는 못보게 함
+    if (IsAllPlayersReady()&& g_countdown) {
+        EnterCriticalSection(&g_cs);
+        CountdownThread(nullptr);
+        g_countdown = false;
+        LeaveCriticalSection(&g_cs);
+    }
+
+
     while (true) {
         character received_char;
 
@@ -277,6 +255,7 @@ int main() {
 
     printf("서버가 포트 %d에서 대기 중...\n", SERVERPORT);
 
+   
     // 클라이언트 접속 루프 (메인 스레드에서 블록 가능)
     int clientCount = 0;
     while (clientCount < MAX_CLIENTS) {
@@ -297,6 +276,7 @@ int main() {
 
         printf("클라이언트 %d 접속 완료\n", id + 1);
     }
+
 
     // 서버 종료 처리 (무한 루프 대신 플래그 사용 가능)
     while (true) Sleep(1000);

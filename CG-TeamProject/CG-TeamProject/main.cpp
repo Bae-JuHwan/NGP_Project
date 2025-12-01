@@ -44,6 +44,10 @@ struct character {
 Player1* P1 = nullptr;
 Player1* P2 = nullptr;
 Player1* P3 = nullptr;
+
+
+std::atomic<bool> count1_check, count2_check, count3_check;
+
 // 다른 클라이언트들의 캐릭터 정보 저장
 #define MAX_OTHER_PLAYERS 2
 character otherPlayers[MAX_OTHER_PLAYERS];
@@ -55,7 +59,7 @@ void C2S_Character(SOCKET sock, const character& char_info)
 {
 	// 3. 서버에 패킷 전송
 	int retval = send(sock, (char*)&char_info, sizeof(char_info), 0);
-	if(sendCharacterCount++ % 100 == 0){
+	if (sendCharacterCount++ % 100 == 0) {
 		std::cout << "\n[전송] 클라이언트 정보 전송 완료 (" << sizeof(char_info) << " 바이트)" << std::endl;
 		std::cout << "보낸 ID: " << char_info.ID << std::endl;
 		printf("  Position: (%.2f, %.2f, %.2f)\n",
@@ -247,6 +251,29 @@ bool InitCharByNum() {
 
 	return true;
 }
+
+bool recv_Start() {	//3명 다 접속했는지 확인하고 시작하기
+	int recv_data = 0;             // 네트워크에서 받을 raw 데이터
+	int retval = recv(Socket, (char*)&recv_data, sizeof(recv_data), 0);
+
+	if (retval == SOCKET_ERROR) {
+		err_display("recv()");
+		return false; // 통신 자체가 실패
+	}
+	if (retval == 0) {
+		printf("모두 접속하지 않음\n");
+		return false;
+	}
+
+	// 엔디안 변환
+	int data = ntohl(recv_data);
+
+	// data = 1 → true, 0 → false
+	bool ready = (data == 1);
+
+	return ready;
+}
+
 // 네트워크 초기화
 bool InitNetworkConnection() {
 	WSADATA wsa;
@@ -309,7 +336,7 @@ GLuint fragmentShader;
 
 GLfloat obstacleRotation = 0.0f;
 GLfloat DoorMove = 0.05f;
-GLfloat MaxDoorMove = 1.7f; 
+GLfloat MaxDoorMove = 1.7f;
 
 bool moveKeyStates[256] = { false }; // 이동 키 상태
 bool arrowKeyStates[256] = { false };
@@ -344,8 +371,6 @@ char* filetobuf(const char* file) {
 void make_vertexShaders();
 void make_fragmentShaders();
 void InitMap();
-
-
 
 
 GLuint make_shaderProgram();
@@ -509,6 +534,52 @@ void DrawMapCheckBox(GLuint shaderProgramID, GLint modelMatrixLocation) {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
+
+DWORD WINAPI RecvThread(LPVOID arg)
+{
+	SOCKET sock = *(SOCKET*)arg;
+	int recv_data = 0;             // 네트워크에서 받을 raw 데이터
+	// 엔디안 변환
+	while (true)
+	{
+		int retval = recv(sock, (char*)&recv_data, sizeof(recv_data), 0);
+		if (retval == SOCKET_ERROR) {
+			err_display("recv()");
+			return 0; // 통신 자체가 실패
+		}
+		int data = ntohl(recv_data);
+
+		switch (data) {
+		case 3:
+			count1_check = false;
+			count2_check = false;
+			count3_check = true;
+			break;
+		case 2:
+			count1_check = false;
+			count2_check = true;
+			count3_check = false;
+			break;
+		case 1:
+			count1_check = true;
+			count2_check = false;
+			count3_check = false;
+			break;
+		case -1:
+			printf("카운트 종료 신호 받음, 쓰레드 종료!\n");
+			count1_check = false;
+			count2_check = false;
+			count3_check = false;
+			//glutPostRedisplay();
+			return 0;  // 쓰레드 종료
+		}
+		printf("카운트: %d\n", data);
+		//glutPostRedisplay();
+	}
+
+	return 0;
+}
+
 BongGroup* Bong1 = nullptr;
 BongGroup* Bong2 = nullptr;
 HorizontalFan* HorFan1 = nullptr;
@@ -524,6 +595,9 @@ VerticalFan* VerFan3 = nullptr;
 VerticalFan* VerFan4 = nullptr;
 VerticalFan* VerFan5 = nullptr;
 Door* flogDoor = nullptr;
+Obstacle* count3 = nullptr;
+Obstacle* count2 = nullptr;
+Obstacle* count1 = nullptr;
 
 void main(int argc, char** argv) {
 	glutInit(&argc, argv);
@@ -548,6 +622,14 @@ void main(int argc, char** argv) {
 	InitCheckBoxMap5();
 
 	InitializeCriticalSection(&g_cs_client);
+
+
+	count3 = new Obstacle(glm::vec3(0.0f, 2.0f, 0.0f));
+	count2 = new Obstacle(glm::vec3(0.0f, 2.0f, 0.0f));
+	count1 = new Obstacle(glm::vec3(0.0f, 2.0f, 0.0f));
+	InitPart("map/3.obj", count3->model, count3->vao, count3->vbo, glm::vec3(1.0f, 0.5f, 0.3f));
+	InitPart("map/2.obj", count2->model, count2->vao, count2->vbo, glm::vec3(1.0f, 0.05f, 1.f));
+	InitPart("map/1.obj", count1->model, count1->vao, count1->vbo, glm::vec3(0.03f, 0.02f, 0.576f));
 
 	//장애물
 	std::cout << "장애물 생성중...." << std::endl;
@@ -651,7 +733,19 @@ void main(int argc, char** argv) {
 		std::cerr << "캐릭터 초기화 실패!" << std::endl;
 		return;
 	}
-	
+
+	//여기서 3,2,1받을 준비 시작함. 이렇게 쓰레드 분리해야 접속 대기 중에도 그림그려짐
+	CreateThread(NULL, 0, RecvThread, &Socket, 0, NULL);
+
+	//std::cerr << " 접속 기다리는 중~..." << std::endl;
+	//while (!recv_Start()) {
+	//	//std::cerr << " 안온대 ~..." << std::endl;
+	//}
+	//printf("[클라이언트] 3명 접속 성공!\n");
+
+
+
+
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -746,7 +840,7 @@ GLvoid drawScene() {
 
 	glm::mat4 projectionMatrix1 = glm::perspective(
 		glm::radians(45.0f),
-		(float)(window_Width ) / (float)window_Height, // 좌우 절반의 종횡비
+		(float)(window_Width) / (float)window_Height, // 좌우 절반의 종횡비
 		0.1f,
 		10000.0f
 	);
@@ -784,6 +878,19 @@ GLvoid drawScene() {
 	VerFan4->Draw(shaderProgramID, modelMatrixLocation);
 	VerFan5->Draw(shaderProgramID, modelMatrixLocation);
 	flogDoor->Draw(shaderProgramID, modelMatrixLocation);
+
+	//카운트다운 표시
+	if (count3_check) {
+		count3->Draw(shaderProgramID, modelMatrixLocation);
+	}
+	else if (count2_check) {
+		count2->Draw(shaderProgramID, modelMatrixLocation);
+	}
+	else if (count1_check) {
+		count1->Draw(shaderProgramID, modelMatrixLocation);
+	}
+
+
 	glutSwapBuffers();
 }
 
@@ -853,8 +960,9 @@ void MovingCharacter() {
 		P1->IsSwing = false;
 	}
 }
+
 GLvoid Timer(int value) {
-	
+
 	MovingCharacter();
 	AABB maps[] = { map1, map2, map3, map4, map5 };
 	P1->IsOnMap = false;
@@ -944,13 +1052,13 @@ GLvoid Timer(int value) {
 	UpdatePlayer();
 
 
-	EnterCriticalSection(&g_cs_client);
-	if (Bong1) Bong1->Position = g_bongObstacle.pos1;
-	else std::cout << "[Warn] Bong1 is NULL\n";
+	//EnterCriticalSection(&g_cs_client);
+	//if (Bong1) Bong1->Position = g_bongObstacle.pos1;
+	//else std::cout << "[Warn] Bong1 is NULL\n";
 
-	if (Bong2) Bong2->Position = g_bongObstacle.pos2;
-	else std::cout << "[Warn] Bong2 is NULL\n";
-	LeaveCriticalSection(&g_cs_client);
+	//if (Bong2) Bong2->Position = g_bongObstacle.pos2;
+	//else std::cout << "[Warn] Bong2 is NULL\n";
+	//LeaveCriticalSection(&g_cs_client);
 
 	if (Bong1) {
 		Bong1->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong1->Position);
@@ -1125,7 +1233,7 @@ GLvoid Timer(int value) {
 
 
 
-	
+
 
 	// 화면 갱신
 	glutPostRedisplay();

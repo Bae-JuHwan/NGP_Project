@@ -28,6 +28,7 @@ public:
 
 	void SetAABB(AABB seta) { CAABB = seta; }
 	void JumpBarDraw(GLuint shaderProgramID, GLint modelMatrixLocation);
+	void Draw(GLuint shaderProgramID, GLint modelMatrixLocation);
 };
 
 class Obstacle3 :public Obstacle
