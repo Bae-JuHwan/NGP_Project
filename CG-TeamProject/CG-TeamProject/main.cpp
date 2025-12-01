@@ -985,17 +985,17 @@ GLvoid Timer(int value) {
 	}
 
 
-	////전송 로직
-	//if (Socket != INVALID_SOCKET && P1 != nullptr) {
-	//	character myCharacter;
-	//	myCharacter.ID = P1->ID;
-	//	myCharacter.position = P1->Position;
-	//	myCharacter.direction = P1->Direction;
-	//	myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
-	//	myCharacter.isCollision = false;  // 필요시 나중에 수정
+	//전송 로직
+	if (Socket != INVALID_SOCKET && P1 != nullptr) {
+		character myCharacter;
+		myCharacter.ID = P1->ID;
+		myCharacter.position = P1->Position;
+		myCharacter.direction = P1->Direction;
+		myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
+		myCharacter.isCollision = false;  // 필요시 나중에 수정
 
-	//	C2S_Character(Socket, myCharacter);
-	//}
+		C2S_Character(Socket, myCharacter);
+	}
 
 
 	//다른 캐릭터들 정보를 받음
