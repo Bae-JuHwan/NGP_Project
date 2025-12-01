@@ -138,16 +138,14 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     //while (!IsAllPlayersReady());//3명 접속했는지 확인하고 맞으면 클라에게 보내기
     //// 3명 접속 완료
     S2C_isPlayerReady(client_sock,3);  // 3초 보내기
-    Sleep(3000);
     printf("333333333333333333333333333333333");
+    Sleep(3000);
     S2C_isPlayerReady(client_sock,2);  // 2
     printf("22222222222222222222222222222222222");
     Sleep(3000);
-
     S2C_isPlayerReady(client_sock,1);  // 1
-    Sleep(3000);
     printf("1  !!!!!!!!!!!!!!!!!!!!!!!!!");
-
+    Sleep(3000);
     S2C_isPlayerReady(client_sock, -1);
 
     //----------

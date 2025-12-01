@@ -614,9 +614,9 @@ void main(int argc, char** argv) {
 	InitializeCriticalSection(&g_cs_client);
 
 
-	count3 = new Obstacle(glm::vec3(0.0f, 0.0f, 0.0f));
-	count2 = new Obstacle(glm::vec3(0.0f, 0.0f, 0.0f));
-	count1 = new Obstacle(glm::vec3(0.0f, 0.0f, 0.0f));
+	count3 = new Obstacle(glm::vec3(0.0f, 2.0f, 0.0f));
+	count2 = new Obstacle(glm::vec3(0.0f, 2.0f, 0.0f));
+	count1 = new Obstacle(glm::vec3(0.0f, 2.0f, 0.0f));
 	InitPart("map/3.obj", count3->model, count3->vao, count3->vbo, glm::vec3(1.0f, 0.5f, 0.3f));
 	InitPart("map/2.obj", count2->model, count2->vao, count2->vbo, glm::vec3(1.0f, 0.05f, 1.f));
 	InitPart("map/1.obj", count1->model, count1->vao, count1->vbo, glm::vec3(0.03f, 0.02f, 0.576f));
