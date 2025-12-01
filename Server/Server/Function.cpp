@@ -13,22 +13,7 @@ bool IsAllPlayersReady()    //3명 모두 접속했니?
     return ready;
 }
 
-bool S2C_isPlayerReady(SOCKET sock, int num) {  // 카운트다운 전송함수
-    int data = num;
-
-    // 엔디안 변환
-    int send_data = htonl(data);
-
-    int retval = send(sock, (char*)&send_data, sizeof(send_data), 0);
-    if (retval == SOCKET_ERROR) {
-        err_display("send()");
-        return false;
-    }
-
-    return true;
-}
-
-void SendToAllClients(int data)
+void SendToAllClients(int data) //한번에 모든 클라소켓에 카운트다운 숫자 보내기
 {
     int send_data = htonl(data); // 엔디안 변환
     EnterCriticalSection(&g_cs);
@@ -45,7 +30,7 @@ void SendToAllClients(int data)
     LeaveCriticalSection(&g_cs);
 }
 
-DWORD WINAPI CountdownThread(LPVOID arg) // 쓰레드 함수
+DWORD WINAPI CountdownThread(LPVOID arg) // 카운트다운 쓰레드 함수
 {
     // 3초마다 3 → 2 → 1 보내기
     SendToAllClients(3);       // 모두에게 3 보내기
