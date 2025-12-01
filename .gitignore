@@ -40,7 +40,6 @@ CG-TeamProject/.vs/CG-TeamProject/v17/DocumentLayout.json
 stdafx*
 .vs/
 *.ipch
-*.obj
 *.pdb
 *.tlog
 *.ilk
