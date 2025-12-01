@@ -29,8 +29,6 @@ struct PacketHeader {
 };
 #pragma pack()
 
-
-
 #pragma pack(1)
 struct character {
 	int ID;
@@ -40,6 +38,8 @@ struct character {
 	bool isCollision;
 };
 #pragma pack()
+
+#define MAX_PLAYERS 3
 
 Player1* P1 = nullptr;
 Player1* P2 = nullptr;
@@ -124,31 +124,31 @@ bool recv_packet() {
 
 	// 1. 패킷 헤더 수신
 	PacketHeader header;
-	if (!recv(Socket, (char*)&header, sizeof(PacketHeader),0)) {
+	if (!recv_all(Socket, (char*)&header, sizeof(header))) {
 		printf("[에러] 패킷 헤더 수신 실패\n");
 		return false;
 	}
 
-	// 2.  패킷 타입에 따라 처리
+	// 2. 패킷 타입에 따라 처리
 	switch (header.type) {
 	case PACKET_CHARACTER: {
 		character received_char;
 
 		// 캐릭터 데이터 수신
-		if (!recv(Socket, (char*)&received_char, sizeof(character),0)) {
+		if (!recv_all(Socket, (char*)&received_char, sizeof(character))) {
 			printf("[에러] 캐릭터 데이터 수신 실패\n");
 			return false;
 		}
 
 		// 자기 자신이거나 유효하지 않은 ID면 무시
-		if (received_char.ID == P1->ID || received_char.ID < 0 || received_char.ID > 2) {
+		if (received_char.ID == P1->ID || received_char.ID < 0 || received_char.ID >= MAX_PLAYERS) {
 			break;
 		}
 
-		// 수신된 캐릭터 정보를 올바른 위치에 저장
+		// 수신된 캐릭터 정보를 저장
 		StoreOtherPlayer(received_char);
 
-		// 로그 출력
+		// 디버그용 로그 출력
 		recv_count++;
 		if (recv_count % 100 == 0) {
 			printf("\n[수신] 캐릭터 정보 수신 완료\n");
@@ -167,7 +167,7 @@ bool recv_packet() {
 		obstacle_Bong received_obs;
 
 		// 장애물 데이터 수신
-		if (!recv(Socket, (char*)&received_obs, sizeof(obstacle_Bong),0)) {
+		if (!recv_all(Socket, (char*)&received_obs, sizeof(obstacle_Bong))) {
 			printf("[에러] 장애물 데이터 수신 실패\n");
 			return false;
 		}
@@ -185,68 +185,69 @@ bool recv_packet() {
 	return true;
 }
 
-//번호 받고 캐릭터 번호에 따라 만들기
 bool InitCharByNum() {
 	// 1. 내 번호 받기
 	int data = 0;
-	int retval = recv(Socket, (char*)&data, sizeof(data), 0);
-	if (retval <= 0) {
+	if (!recv_all(Socket, (char*)&data, sizeof(data))) {
 		printf("서버에서 내 번호 받기 실패\n");
 		return false;
 	}
 	int order = ntohl(data); // 네트워크 엔디안 변환
-	glm::vec3 P1Color = glm::vec3(1.0f);
-	glm::vec3 P2Color = glm::vec3(1.0f);
-	glm::vec3 P3Color = glm::vec3(1.0f);
 
 	std::cout << order << "번 째 캐릭터 입니다." << std::endl;
-	glm::vec3 RedColor = glm::vec3(1.0f, 0.0f, 0.0f);
-	glm::vec3 YellowColor = glm::vec3(1.0f, 1.0f, 0.0f);
-	glm::vec3 BlueColor = glm::vec3(0.0f, 0.0f, 1.0f);
 
-	//순서에 따라 캐릭터 색상 설정
+	// 색상 정의
+	glm::vec3 colors[] = {
+		glm::vec3(1.0f, 0.0f, 0.0f), // Red
+		glm::vec3(1.0f, 1.0f, 0.0f), // Yellow
+		glm::vec3(0.0f, 0.0f, 1.0f)  // Blue
+	};
+
+	// P1, P2, P3 색상 초기화
+	glm::vec3 P1Color, P2Color, P3Color;
+
 	switch (order) {
 	case 0:
-	{
-		P1Color = YellowColor;
-		P2Color = RedColor;
-		P3Color = BlueColor;
+		P1Color = colors[1]; // Yellow
+		P2Color = colors[0]; // Red
+		P3Color = colors[2]; // Blue
 		break;
-	}
 	case 1:
-	{
-		P1Color = YellowColor;
-		P2Color = RedColor;
-		P3Color = BlueColor;
+		P1Color = colors[1]; // Yellow
+		P2Color = colors[0]; // Red
+		P3Color = colors[2]; // Blue
 		break;
-	}
 	case 2:
-	{
-		P1Color = RedColor;
-		P2Color = YellowColor;
-		P3Color = BlueColor;
+		P1Color = colors[0]; // Red
+		P2Color = colors[1]; // Yellow
+		P3Color = colors[2]; // Blue
 		break;
-	}
 	case 3:
-	{
-		P1Color = BlueColor;
-		P2Color = RedColor;
-		P3Color = YellowColor;
+		P1Color = colors[2]; // Blue
+		P2Color = colors[0]; // Red
+		P3Color = colors[1]; // Yellow
 		break;
-	}
 	default:
 		std::cerr << "경고: 서버에서 잘못된 order(" << order << ")를 보냄\n";
 		return false; // 초기화 중단
 	}
-	//컨트롤 하는 캐릭터
+
+	// 기존 객체가 있으면 삭제
+	if (P1) delete P1;
+	if (P2) delete P2;
+	if (P3) delete P3;
+
+	// 컨트롤 캐릭터
 	P1 = new Player1(P1Color);
-	P1->ID = order - 1;
-	//다른 캐릭터들
+	P1->ID = order;
+
+	// 다른 캐릭터들
 	P2 = new Player1(P2Color);
 	P3 = new Player1(P3Color);
 
 	return true;
 }
+
 // 네트워크 초기화
 bool InitNetworkConnection() {
 	WSADATA wsa;

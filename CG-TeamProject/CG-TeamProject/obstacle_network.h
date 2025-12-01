@@ -14,3 +14,4 @@ struct obstacle_Bong {
 extern obstacle_Bong g_bongObstacle;
 
 bool recv_BongObstacle(SOCKET sock);
+bool recv_all(SOCKET sock, char* buf, int size);
