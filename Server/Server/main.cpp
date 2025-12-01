@@ -135,28 +135,30 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     S2C_ClientOrder(client_sock, client_id);   //몇번째 클라인지 보내주기
     //이 부분 수정 필요할 것 같음------ while 돌릴예정.
 
-    while (!IsAllPlayersReady());//3명 접속했는지 확인하고 맞으면 클라에게 보내기
-    // 3명 접속 완료
+    //while (!IsAllPlayersReady());//3명 접속했는지 확인하고 맞으면 클라에게 보내기
+    //// 3명 접속 완료
     S2C_isPlayerReady(client_sock,3);  // 3초 보내기
-    Sleep(1000);
-
+    Sleep(3000);
+    printf("333333333333333333333333333333333");
     S2C_isPlayerReady(client_sock,2);  // 2
-    Sleep(1000);
+    printf("22222222222222222222222222222222222");
+    Sleep(3000);
 
     S2C_isPlayerReady(client_sock,1);  // 1
-    Sleep(1000);
+    Sleep(3000);
+    printf("1  !!!!!!!!!!!!!!!!!!!!!!!!!");
 
-
+    S2C_isPlayerReady(client_sock, -1);
 
     //----------
 
     // TODO
     int receive_count = 0;
     int send_count[MAX_CLIENTS]{};
-    while(g_clientCount < 3) {
-		printf("클라이언트 %d번 대기중... 현재 접속자 수: %d\n", client_id, g_clientCount);
-        Sleep(100); // 3명 접속 대기
-	}
+ //   while(g_clientCount < 3) {
+	//	printf("클라이언트 %d번 대기중... 현재 접속자 수: %d\n", client_id, g_clientCount);
+ //       Sleep(100); // 3명 접속 대기
+	//}
     while (true) {
         character received_char;
 

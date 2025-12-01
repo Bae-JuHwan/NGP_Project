@@ -27,6 +27,13 @@ struct character {
 Player1* P1 = nullptr;
 Player1* P2 = nullptr;
 Player1* P3 = nullptr;
+
+
+bool count3_check = false;
+bool count2_check = false;
+bool count1_check = false;
+
+
 // 다른 클라이언트들의 캐릭터 정보 저장
 #define MAX_OTHER_PLAYERS 2
 character otherPlayers[MAX_OTHER_PLAYERS];
@@ -330,8 +337,6 @@ void make_fragmentShaders();
 void InitMap();
 
 
-
-
 GLuint make_shaderProgram();
 GLvoid drawScene();
 GLvoid Reshape(int w, int h);
@@ -493,6 +498,78 @@ void DrawMapCheckBox(GLuint shaderProgramID, GLint modelMatrixLocation) {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
+
+void recv_CountNum() {
+	int recv_data = 0;             // 네트워크에서 받을 raw 데이터
+	int retval = recv(Socket, (char*)&recv_data, sizeof(recv_data), 0);
+
+	if (retval == SOCKET_ERROR) {
+		err_display("recv()");
+		return; // 통신 자체가 실패
+	}
+	// 엔디안 변환
+	int data = ntohl(recv_data);
+	switch (data) {
+	case 3:
+		count1_check = false;
+		count2_check = false;
+		count3_check = true;
+		break;
+	case 2:
+		count1_check = false;
+		count2_check = true;
+		count3_check = false;
+		break;
+	case 1:
+		count1_check = true;
+		count2_check = false;
+		count3_check = false;
+		break;
+	}
+	printf("카운트: %d\n", data);
+	return;
+}
+
+DWORD WINAPI RecvThread(LPVOID arg)
+{
+	SOCKET sock = *(SOCKET*)arg;
+	int recv_data = 0;             // 네트워크에서 받을 raw 데이터
+	// 엔디안 변환
+	while (true)
+	{
+		int retval = recv(sock, (char*)&recv_data, sizeof(recv_data), 0);
+		if (retval == SOCKET_ERROR) {
+			err_display("recv()");
+			return 0; // 통신 자체가 실패
+		}
+		int data = ntohl(recv_data);
+
+		switch (data) {
+		case 3:
+			count1_check = false;
+			count2_check = false;
+			count3_check = true;
+			break;
+		case 2:
+			count1_check = false;
+			count2_check = true;
+			count3_check = false;
+			break;
+		case 1:
+			count1_check = true;
+			count2_check = false;
+			count3_check = false;
+			break;
+		case -1:
+			printf("카운트 종료 신호 받음, 쓰레드 종료!\n");
+			return 0;  // 쓰레드 종료
+		}
+		printf("카운트: %d\n", data);
+	}
+
+	return 0;
+}
+
 BongGroup* Bong1 = nullptr;
 BongGroup* Bong2 = nullptr;
 HorizontalFan* HorFan1 = nullptr;
@@ -508,6 +585,9 @@ VerticalFan* VerFan3 = nullptr;
 VerticalFan* VerFan4 = nullptr;
 VerticalFan* VerFan5 = nullptr;
 Door* flogDoor = nullptr;
+Obstacle* count3 = nullptr;
+Obstacle* count2 = nullptr;
+Obstacle* count1 = nullptr;
 
 void main(int argc, char** argv) {
 	glutInit(&argc, argv);
@@ -532,6 +612,14 @@ void main(int argc, char** argv) {
 	InitCheckBoxMap5();
 
 	InitializeCriticalSection(&g_cs_client);
+
+
+	count3 = new Obstacle(glm::vec3(0.0f, 0.0f, 0.0f));
+	count2 = new Obstacle(glm::vec3(0.0f, 0.0f, 0.0f));
+	count1 = new Obstacle(glm::vec3(0.0f, 0.0f, 0.0f));
+	InitPart("map/3.obj", count3->model, count3->vao, count3->vbo, glm::vec3(1.0f, 0.5f, 0.3f));
+	InitPart("map/2.obj", count2->model, count2->vao, count2->vbo, glm::vec3(1.0f, 0.05f, 1.f));
+	InitPart("map/1.obj", count1->model, count1->vao, count1->vbo, glm::vec3(0.03f, 0.02f, 0.576f));
 
 	//장애물
 	std::cout << "장애물 생성중...." << std::endl;
@@ -637,12 +725,18 @@ void main(int argc, char** argv) {
 	}
 
 	std::cerr << " 접속 기다리는 중~..." << std::endl;
-	while (!recv_Start()) {
-		std::cerr << " 안온대 ~..." << std::endl;
-	}
-	printf("[클라이언트] 3명 접속 성공!\n");
+	//while (!recv_Start()) {
+	//	std::cerr << " 안온대 ~..." << std::endl;
+	//}
+	//printf("[클라이언트] 3명 접속 성공!\n");
+
 
 	//여기서 3,2,1받아서 그리기
+
+	CreateThread(NULL, 0, RecvThread, &Socket, 0, NULL);
+	/*recv_CountNum();
+	recv_CountNum();
+	recv_CountNum();*/
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -775,6 +869,19 @@ GLvoid drawScene() {
 	VerFan4->Draw(shaderProgramID, modelMatrixLocation);
 	VerFan5->Draw(shaderProgramID, modelMatrixLocation);
 	flogDoor->Draw(shaderProgramID, modelMatrixLocation);
+
+	//카운트다운 표시
+	if (count3_check) {
+		count3->Draw(shaderProgramID, modelMatrixLocation);
+	}
+	else if (count2_check) {
+		count1->Draw(shaderProgramID, modelMatrixLocation);
+	}
+	else if (count1_check) {
+		count1->Draw(shaderProgramID, modelMatrixLocation);
+	}
+
+
 	glutSwapBuffers();
 }
 
