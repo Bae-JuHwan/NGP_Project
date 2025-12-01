@@ -1,6 +1,6 @@
 #include"Common.h"
 #include "obstacle.h"
-#include <glm/gtc/matrix_transform.hpp>
+#include <gtc/matrix_transform.hpp>
 #include <gl/glew.h>
 #pragma comment(lib, "ws2_32.lib")
 
@@ -28,14 +28,22 @@ bool CheckCollision(const character& ch) {
 
 // 클라이언트로부터 캐릭터 정보 받기
 bool recv_character(SOCKET sock, character& ch) {
-    int retval = recv(sock, (char*)&ch, sizeof(character), 0);
-    if (retval == SOCKET_ERROR) {
-        err_display("recv() - recv_character");
-        return false;
-    }
-    if (retval == 0) {
-        printf("클라이언트 연결 종료\n");
-        return false;
+    int totalReceived = 0;
+    int remaining = sizeof(character);
+    char* buffer = (char*)&ch;
+
+    while (remaining > 0) {
+        int retval = recv(sock, buffer + totalReceived, remaining, 0);
+        if (retval == SOCKET_ERROR) {
+            err_display("recv() - recv_character");
+            return false;
+        }
+        if (retval == 0) {
+            printf("클라이언트 연결 종료\n");
+            return false;
+        }
+        totalReceived += retval;
+        remaining -= retval;
     }
     return true;
 }
@@ -48,7 +56,12 @@ bool S2C_Character(SOCKET sock, const character& char_info) {
         printf("[경고] 소켓이 유효하지 않습니다\n");
         return false;
     }
+    PacketHeader header;
+    header.type = PACKET_CHARACTER;
+    header.size = sizeof(character);
 
+    // 헤더 먼저 전송
+    send(sock, (char*)&header, sizeof(header), 0);
     // 클라이언트에게 캐릭터 정보 전송
     int retval = send(sock, (char*)&char_info, sizeof(character), 0);
 	characterSendCount++;
