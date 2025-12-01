@@ -695,19 +695,17 @@ void main(int argc, char** argv) {
 		return;
 	}
 
-	std::cerr << " 접속 기다리는 중~..." << std::endl;
+	//여기서 3,2,1받을 준비 시작함. 이렇게 쓰레드 분리해야 접속 대기 중에도 그림그려짐
+	CreateThread(NULL, 0, RecvThread, &Socket, 0, NULL);
+
+	//std::cerr << " 접속 기다리는 중~..." << std::endl;
 	//while (!recv_Start()) {
-	//	std::cerr << " 안온대 ~..." << std::endl;
+	//	//std::cerr << " 안온대 ~..." << std::endl;
 	//}
 	//printf("[클라이언트] 3명 접속 성공!\n");
 
 
-	//여기서 3,2,1받아서 그리기
 
-	CreateThread(NULL, 0, RecvThread, &Socket, 0, NULL);
-	/*recv_CountNum();
-	recv_CountNum();
-	recv_CountNum();*/
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);

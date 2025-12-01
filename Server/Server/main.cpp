@@ -103,7 +103,7 @@ bool IsAllPlayersReady()    //3명 모두 접속했니?
     return ready;
 }
 
-bool S2C_isPlayerReady(SOCKET sock,int num) {  // 플레이어 모두 접속 완료 됐는지 전송 함수 
+bool S2C_isPlayerReady(SOCKET sock,int num) {  // 카운트다운 전송함수
     int data = num;
 
     // 엔디안 변환
@@ -118,6 +118,39 @@ bool S2C_isPlayerReady(SOCKET sock,int num) {  // 플레이어 모두 접속 완료 됐는지
     return true;
 }
 
+void SendToAllClients(int data)
+{
+    int send_data = htonl(data); // 엔디안 변환
+    EnterCriticalSection(&g_cs);
+
+    for (int i = 0; i < g_clientCount; ++i) {
+        if (g_clients[i].isActive) {
+            int retval = send(g_clients[i].sock, (char*)&send_data, sizeof(send_data), 0);
+            if (retval == SOCKET_ERROR) {
+                err_display("send()");
+            }
+        }
+    }
+
+    LeaveCriticalSection(&g_cs);
+}
+
+DWORD WINAPI CountdownThread(LPVOID arg)
+{
+    // 3초마다 3 → 2 → 1 보내기
+    SendToAllClients(3);       // 모두에게 3 보내기
+    Sleep(10000);               // 1초 대기
+    SendToAllClients(2);       // 모두에게 2 보내기
+    Sleep(10000);               // 1초 대기
+    SendToAllClients(1);       // 모두에게 1 보내기
+    Sleep(10000);               // 1초 대기
+
+    // 끝나면 -1 보내서 클라이언트에서 쓰레드 종료
+    SendToAllClients(-1);
+
+    return 0;
+}
+bool g_countdown = true ;
 // 클라이언트 스레드 함수
 DWORD WINAPI ClientThread(LPVOID arg) {
     SOCKET client_sock = *(SOCKET*)arg;
@@ -135,28 +168,39 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     S2C_ClientOrder(client_sock, client_id);   //몇번째 클라인지 보내주기
     //이 부분 수정 필요할 것 같음------ while 돌릴예정.
 
+
     //while (!IsAllPlayersReady());//3명 접속했는지 확인하고 맞으면 클라에게 보내기
     //// 3명 접속 완료
-    S2C_isPlayerReady(client_sock,3);  // 3초 보내기
-    printf("333333333333333333333333333333333\n");
-    Sleep(3000);
-    S2C_isPlayerReady(client_sock,2);  // 2
-    printf("22222222222222222222222222222222222\n");
-    Sleep(3000);
-    S2C_isPlayerReady(client_sock,1);  // 1
-    printf("1  !!!!!!!!!!!!!!!!!!!!!!!!!\n");
-    Sleep(3000);
-    S2C_isPlayerReady(client_sock, -1);
-    printf("출발~~~~~");
-    //----------
+    //S2C_isPlayerReady(client_sock,3);  // 3초 보내기
+    //printf("333333333333333333333333333333333\n");
+    //Sleep(3000);
+    //S2C_isPlayerReady(client_sock,2);  // 2
+    //printf("22222222222222222222222222222222222\n");
+    //Sleep(3000);
+    //S2C_isPlayerReady(client_sock,1);  // 1
+    //printf("1  !!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    //Sleep(3000);
+    //S2C_isPlayerReady(client_sock, -1);
+    //printf("출발~~~~~");
+    ////----------
 
     // TODO
     int receive_count = 0;
     int send_count[MAX_CLIENTS]{};
- //   while(g_clientCount < 3) {
-	//	printf("클라이언트 %d번 대기중... 현재 접속자 수: %d\n", client_id, g_clientCount);
- //       Sleep(100); // 3명 접속 대기
-	//}
+    while(g_clientCount < 3) {
+		//printf("클라이언트 %d번 대기중... 현재 접속자 수: %d\n", client_id, g_clientCount);
+        Sleep(100); // 3명 접속 대기
+	}
+    
+    //아무 쓰레드 중 하나가 확인하고 카운트다운 시작하면. 전체로 보내줌. 그 후 닫아서 다른 쓰레드는 못보게 함
+    if (IsAllPlayersReady()&& g_countdown) {
+        EnterCriticalSection(&g_cs);
+        CountdownThread(nullptr);
+        g_countdown = false;
+        LeaveCriticalSection(&g_cs);
+    }
+
+
     while (true) {
         character received_char;
 
@@ -275,6 +319,7 @@ int main() {
 
     printf("서버가 포트 %d에서 대기 중...\n", SERVERPORT);
 
+   
     // 클라이언트 접속 루프 (메인 스레드에서 블록 가능)
     int clientCount = 0;
     while (clientCount < MAX_CLIENTS) {
@@ -295,6 +340,7 @@ int main() {
 
         printf("클라이언트 %d 접속 완료\n", id + 1);
     }
+
 
     // 서버 종료 처리 (무한 루프 대신 플래그 사용 가능)
     while (true) Sleep(1000);
