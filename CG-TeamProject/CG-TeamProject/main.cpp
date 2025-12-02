@@ -128,7 +128,7 @@ bool recv_packet() {
 
 	// 1. 패킷 헤더 수신
 	PacketHeader header;
-	if (!recv(Socket, (char*)&header, sizeof(PacketHeader),0)) {
+	if (!recv(Socket, (char*)&header, sizeof(PacketHeader), 0)) {
 		printf("[에러] 패킷 헤더 수신 실패\n");
 		return false;
 	}
@@ -139,7 +139,7 @@ bool recv_packet() {
 		character received_char;
 
 		// 캐릭터 데이터 수신
-		if (!recv(Socket, (char*)&received_char, sizeof(character),0)) {
+		if (!recv(Socket, (char*)&received_char, sizeof(character), 0)) {
 			printf("[에러] 캐릭터 데이터 수신 실패\n");
 			return false;
 		}
@@ -171,7 +171,7 @@ bool recv_packet() {
 		obstacle_Bong received_obs;
 
 		// 장애물 데이터 수신
-		if (!recv(Socket, (char*)&received_obs, sizeof(obstacle_Bong),0)) {
+		if (!recv(Socket, (char*)&received_obs, sizeof(obstacle_Bong), 0)) {
 			printf("[에러] 장애물 데이터 수신 실패\n");
 			return false;
 		}
@@ -385,6 +385,8 @@ GLvoid Timer(int value);
 int window_Width = 800;
 int window_Height = 600;
 
+bool movestart = false;
+
 // 맵
 void InitMap() {
 	InitPart("Map/bottom.obj", modelBottom, vaoBottom, vboBottom, glm::vec3(0.482f, 0.424f, 0.761f));
@@ -570,6 +572,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 			count1_check = false;
 			count2_check = false;
 			count3_check = false;
+			movestart = true;
 			//glutPostRedisplay();
 			return 0;  // 쓰레드 종료
 		default:
@@ -964,8 +967,9 @@ void MovingCharacter() {
 }
 
 GLvoid Timer(int value) {
-
-	MovingCharacter();
+	if (movestart) {
+		MovingCharacter();
+	}
 	AABB maps[] = { map1, map2, map3, map4, map5 };
 	P1->IsOnMap = false;
 	for (const auto& map : maps) {
@@ -1025,32 +1029,32 @@ GLvoid Timer(int value) {
 		}
 	}
 
+	if (movestart) {
+		//전송 로직
+		if (Socket != INVALID_SOCKET && P1 != nullptr) {
+			character myCharacter;
+			myCharacter.ID = P1->ID;
+			myCharacter.position = P1->Position;
+			myCharacter.direction = P1->Direction;
+			myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
+			myCharacter.isCollision = false;  // 필요시 나중에 수정
 
-	////전송 로직
-	//if (Socket != INVALID_SOCKET && P1 != nullptr) {
-	//	character myCharacter;
-	//	myCharacter.ID = P1->ID;
-	//	myCharacter.position = P1->Position;
-	//	myCharacter.direction = P1->Direction;
-	//	myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
-	//	myCharacter.isCollision = false;  // 필요시 나중에 수정
-
-	//	C2S_Character(Socket, myCharacter);
-	//}
+			C2S_Character(Socket, myCharacter);
+		}
 
 
-	//if (Socket != INVALID_SOCKET) {
-	//	int packetCount = 0;
-	//	const int MAX_PACKETS_PER_FRAME = 2;  // 한 프레임당 최대 처리 패킷 수
+		if (Socket != INVALID_SOCKET) {
+			int packetCount = 0;
+			const int MAX_PACKETS_PER_FRAME = 2;  // 한 프레임당 최대 처리 패킷 수
 
-	//	while (packetCount < MAX_PACKETS_PER_FRAME) {
-	//		if (!recv_packet()) {
-	//			break;  // 더 이상 받을 패킷 없음
-	//		}
-	//		packetCount++;
-	//	}
-	//}
-
+			while (packetCount < MAX_PACKETS_PER_FRAME) {
+				if (!recv_packet()) {
+					break;  // 더 이상 받을 패킷 없음
+				}
+				packetCount++;
+			}
+		}
+	}
 	UpdatePlayer();
 
 

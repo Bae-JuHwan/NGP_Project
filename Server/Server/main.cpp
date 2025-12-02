@@ -18,6 +18,13 @@ int g_clientCount = 0;
 // 캐릭터 정보 저장하기 위해서 클라이언트 정보 구조체 배열
 ClientInfo g_clients[MAX_CLIENTS];
 
+
+// 서버에서 클라이언트로 캐릭터 정보 전송
+int characterSendCount = 0;
+bool countEnd = false;  // 카운트다운 종료 후 게임 시작하는 플래그
+bool g_countdown = true;   //카운트다운 함수 한번만 실행하게 하는 용
+
+
 // 충돌 처리 함수 (아직 미구현)
 bool CheckCollision(const character& ch) {
     return false; // 임시 반환
@@ -45,8 +52,6 @@ bool recv_character(SOCKET sock, character& ch) {
     return true;
 }
 
-// 서버에서 클라이언트로 캐릭터 정보 전송
-int characterSendCount = 0;
 bool S2C_Character(SOCKET sock, const character& char_info) {
     // 소켓이 유효한지 확인
     if (sock == INVALID_SOCKET) {
@@ -101,8 +106,6 @@ int S2C_ClientOrder(SOCKET sock, int order) {   //클라에게 몇번째 클라인지 보내�
     return retval;
 }
 
-
-bool g_countdown = true ;
 // 클라이언트 스레드 함수
 DWORD WINAPI ClientThread(LPVOID arg) {
     SOCKET client_sock = *(SOCKET*)arg;
@@ -137,56 +140,56 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     }
 
 
-  //  while (true) {
-  //      character received_char;
+    while (countEnd) {
+        character received_char;
 
-  //      // 클라이언트로부터 캐릭터 정보 수신
-  //      if (!recv_character(client_sock, received_char)) {
-  //          break;  // 수신 실패 시 루프 종료
-  //      }
+        // 클라이언트로부터 캐릭터 정보 수신
+        if (!recv_character(client_sock, received_char)) {
+            break;  // 수신 실패 시 루프 종료
+        }
 
-  //      receive_count++;
+        receive_count++;
 
-  //      // 수신한 데이터 출력
-  //      if (receive_count % 100 == 0) {
-  //          printf("\n=== [클라이언트 %d] 수신 %d회 ===\n", g_clients[client_id - 1].id, receive_count);
-  //          printf("  Position: (%.2f, %.2f, %.2f)\n",
-  //              received_char.position.x, received_char.position.y, received_char.position.z);
-  //          printf("  Direction: (%.2f, %.2f, %.2f)\n",
-  //              received_char.direction.x, received_char.direction.y, received_char.direction.z);
-  //          printf("  ArmLegSwingAngle: %.2f\n", received_char.ArmLegSwingAngle);
-  //          printf("  isCollision: %s\n", received_char.isCollision ? "true" : "false");
-  //          printf("\n");
-  //      }
+        // 수신한 데이터 출력
+        if (receive_count % 100 == 0) {
+            printf("\n=== [클라이언트 %d] 수신 %d회 ===\n", g_clients[client_id - 1].id, receive_count);
+            printf("  Position: (%.2f, %.2f, %.2f)\n",
+                received_char.position.x, received_char.position.y, received_char.position.z);
+            printf("  Direction: (%.2f, %.2f, %.2f)\n",
+                received_char.direction.x, received_char.direction.y, received_char.direction.z);
+            printf("  ArmLegSwingAngle: %.2f\n", received_char.ArmLegSwingAngle);
+            printf("  isCollision: %s\n", received_char.isCollision ? "true" : "false");
+            printf("\n");
+        }
 
-  //      // 임계영역 진입 - 데이터 저장
-  //      EnterCriticalSection(&g_cs);
-  //      g_clients[client_id - 1].charInfo = received_char;
-  //      LeaveCriticalSection(&g_cs);
+        // 임계영역 진입 - 데이터 저장
+        EnterCriticalSection(&g_cs);
+        g_clients[client_id - 1].charInfo = received_char;
+        LeaveCriticalSection(&g_cs);
 
-  //      EnterCriticalSection(&g_cs);
-  //      // 다른 클라이언트들에게 캐릭터 정보 전송
-  //      for (int i = 0; i < MAX_CLIENTS; i++) {
-  //          if (i != client_id - 1 && g_clients[i].isActive) { // 자기 자신 제외
-  //              if (!S2C_Character(g_clients[i].sock, received_char)) {
-  //                  printf("클라이언트 %d번에게 캐릭터 정보 전송 실패\n", g_clients[i].id);
-  //              }
-  //              else {
-  //                  if (send_count[i] % 100 == 0) {
-  //                      printf("[서버] 클라이언트 %d 캐릭터 정보 전송 완료 송신 %d회 \n", g_clients[client_id - 1].id, send_count[i]);
-  //                      send_count[i]++;
-  //                  }
-  //              }
-  //          }
-  //      }
-  //      LeaveCriticalSection(&g_cs);
+        EnterCriticalSection(&g_cs);
+        // 다른 클라이언트들에게 캐릭터 정보 전송
+        for (int i = 0; i < MAX_CLIENTS; i++) {
+            if (i != client_id - 1 && g_clients[i].isActive) { // 자기 자신 제외
+                if (!S2C_Character(g_clients[i].sock, received_char)) {
+                    printf("클라이언트 %d번에게 캐릭터 정보 전송 실패\n", g_clients[i].id);
+                }
+                else {
+                    if (send_count[i] % 100 == 0) {
+                        printf("[서버] 클라이언트 %d 캐릭터 정보 전송 완료 송신 %d회 \n", g_clients[client_id - 1].id, send_count[i]);
+                        send_count[i]++;
+                    }
+                }
+            }
+        }
+        LeaveCriticalSection(&g_cs);
 
-		//// 장애물 위치 업데이트 및 전송
-  //      EnterCriticalSection(&g_cs);
-  //      UpdateBongObstacle(); // 장애물 위치 계산
-  //      S2C_BongObstacle(g_clients[client_id - 1].sock, g_bongObstacle);
-  //      LeaveCriticalSection(&g_cs);
-  //  }
+		// 장애물 위치 업데이트 및 전송
+        EnterCriticalSection(&g_cs);
+        UpdateBongObstacle(); // 장애물 위치 계산
+        S2C_BongObstacle(g_clients[client_id - 1].sock, g_bongObstacle);
+        LeaveCriticalSection(&g_cs);
+    }
 
     closesocket(client_sock);
     printf("클라이언트 %d번 연결 종료\n", client_id);

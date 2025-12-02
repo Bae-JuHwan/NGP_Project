@@ -42,6 +42,6 @@ DWORD WINAPI CountdownThread(LPVOID arg) // 카운트다운 쓰레드 함수
 
     // 끝나면 -1 보내서 클라이언트에서 쓰레드 종료
     SendToAllClients(-1);
-
+    countEnd = true;
     return 0;
 }
