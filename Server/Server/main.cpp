@@ -5,15 +5,12 @@
 #pragma comment(lib, "ws2_32.lib")
 
 #define SERVERPORT 9000
-
-/*  전달사항아닌 전달사항
-
-
-g_clientCount 이걸로만 판단하면 안될 것 같음. 들어왔다가 나갔을때 저 수가 줄어들게 해야할듯.
-그리고 재접 가능하게 할 것인지, 다 접속했을때 세명 다 레디 눌러야 시작하게 할 것인지>?
-접속하자마자 게임 시작은 약간 아쉬운 부분이 있을수도있을것같음. 그냥 의견임.
-
-*/
+#pragma pack(1)
+struct GamePacket_S2C {
+    character otherPlayers[2];    // 다른 플레이어 2명
+    obstacle_Bong bongObstacle;   // 장애물 정보
+};
+#pragma pack()
 
 CRITICAL_SECTION g_cs;  // 임계영역
 int g_clientCount = 0;
@@ -47,48 +44,30 @@ bool recv_character(SOCKET sock, character& ch) {
     }
     return true;
 }
+bool S2C_GameState(SOCKET sock, int clientId) {
+    GamePacket_S2C packet;
 
-// 서버에서 클라이언트로 캐릭터 정보 전송
-int characterSendCount = 0;
-bool S2C_Character(SOCKET sock, const character& char_info) {
-    // 소켓이 유효한지 확인
-    if (sock == INVALID_SOCKET) {
-        printf("[경고] 소켓이 유효하지 않습니다\n");
-        return false;
-    }
-    PacketHeader header;
-    header.type = PACKET_CHARACTER;
-    header.size = sizeof(character);
-
-    // 헤더 먼저 전송
-    send(sock, (char*)&header, sizeof(header), 0);
-    // 클라이언트에게 캐릭터 정보 전송
-    int retval = send(sock, (char*)&char_info, sizeof(character), 0);
-	characterSendCount++;
-    if(characterSendCount % 100 ==0)
-    {
-        printf("[서버] 캐릭터 정보 전송 완료 송신 %d회 \n", characterSendCount);
-		printf("캐릭터 ID: %d\n", char_info.ID);
-        printf("  Position: (%.2f, %.2f, %.2f)\n",
-            char_info.position.x, char_info.position.y, char_info.position.z);
-        printf("  Direction: (%.2f, %.2f, %.2f)\n",
-            char_info.direction.x, char_info.direction.y, char_info.direction.z);
-        printf("  ArmLegSwingAngle: %.2f\n", char_info.ArmLegSwingAngle);
-        printf("  isCollision: %s\n", char_info.isCollision ? "true" : "false");
-		printf("\n");
-	}
-    if (retval == SOCKET_ERROR) {
-        int err = WSAGetLastError();
-        printf("[에러] S2C_Character() 전송 실패 - 에러코드: %d\n", err);
-        return false;
+    // 해당 클라이언트를 제외한 다른 플레이어들 정보 채우기
+    int idx = 0;
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+        if (i != clientId - 1 && g_clients[i].isActive) {
+            packet.otherPlayers[idx++] = g_clients[i].charInfo;
+        }
     }
 
-    if (retval != sizeof(character)) {
-        printf("[경고] 전송된 데이터 크기 불일치 (예상: %zu, 실제: %d)\n", sizeof(character), retval);
+    // 장애물 정보
+    packet.bongObstacle = g_bongObstacle;
+
+    printf("봉 장애물 위치1 : x=%f, y=%f, z=%f\n", g_bongObstacle.pos1.x, g_bongObstacle.pos1.y, g_bongObstacle.pos1.z);
+    printf("봉 장애물 위치2 : x=%f, y=%f, z=%f\n", g_bongObstacle.pos2.x, g_bongObstacle.pos2.y, g_bongObstacle.pos2.z);
+    // 한 번에 전송
+    if (!send(sock, (char*)&packet, sizeof(GamePacket_S2C),0)) {
+        return false;
     }
 
     return true;
 }
+
 
 int S2C_ClientOrder(SOCKET sock, int order) {   //클라에게 몇번째 클라인지 보내주는 함수
     int retval;
@@ -184,30 +163,11 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         // 임계영역 진입 - 데이터 저장
         EnterCriticalSection(&g_cs);
         g_clients[client_id - 1].charInfo = received_char;
-        LeaveCriticalSection(&g_cs);
-
-        EnterCriticalSection(&g_cs);
-        // 다른 클라이언트들에게 캐릭터 정보 전송
-        for (int i = 0; i < MAX_CLIENTS; i++) {
-            if (i != client_id - 1 && g_clients[i].isActive) { // 자기 자신 제외
-                if (!S2C_Character(g_clients[i].sock, received_char)) {
-                    printf("클라이언트 %d번에게 캐릭터 정보 전송 실패\n", g_clients[i].id);
-                }
-                else {
-                    if (send_count[i] % 100 == 0) {
-                        printf("[서버] 클라이언트 %d 캐릭터 정보 전송 완료 송신 %d회 \n", g_clients[client_id - 1].id, send_count[i]);
-                        send_count[i]++;
-                    }
-                }
-            }
-        }
-        LeaveCriticalSection(&g_cs);
-
-		// 장애물 위치 업데이트 및 전송
-        EnterCriticalSection(&g_cs);
         UpdateBongObstacle(); // 장애물 위치 계산
-        S2C_BongObstacle(g_clients[client_id - 1].sock, g_bongObstacle);
+        // 게임 정보 전송
+        S2C_GameState(client_sock , client_id);
         LeaveCriticalSection(&g_cs);
+
     }
 
     closesocket(client_sock);
