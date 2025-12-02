@@ -1024,30 +1024,30 @@ GLvoid Timer(int value) {
 	}
 
 
-	//전송 로직
-	if (Socket != INVALID_SOCKET && P1 != nullptr) {
-		character myCharacter;
-		myCharacter.ID = P1->ID;
-		myCharacter.position = P1->Position;
-		myCharacter.direction = P1->Direction;
-		myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
-		myCharacter.isCollision = false;  // 필요시 나중에 수정
+	////전송 로직
+	//if (Socket != INVALID_SOCKET && P1 != nullptr) {
+	//	character myCharacter;
+	//	myCharacter.ID = P1->ID;
+	//	myCharacter.position = P1->Position;
+	//	myCharacter.direction = P1->Direction;
+	//	myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
+	//	myCharacter.isCollision = false;  // 필요시 나중에 수정
 
-		C2S_Character(Socket, myCharacter);
-	}
+	//	C2S_Character(Socket, myCharacter);
+	//}
 
 
-	if (Socket != INVALID_SOCKET) {
-		int packetCount = 0;
-		const int MAX_PACKETS_PER_FRAME = 2;  // 한 프레임당 최대 처리 패킷 수
+	//if (Socket != INVALID_SOCKET) {
+	//	int packetCount = 0;
+	//	const int MAX_PACKETS_PER_FRAME = 2;  // 한 프레임당 최대 처리 패킷 수
 
-		while (packetCount < MAX_PACKETS_PER_FRAME) {
-			if (!recv_packet()) {
-				break;  // 더 이상 받을 패킷 없음
-			}
-			packetCount++;
-		}
-	}
+	//	while (packetCount < MAX_PACKETS_PER_FRAME) {
+	//		if (!recv_packet()) {
+	//			break;  // 더 이상 받을 패킷 없음
+	//		}
+	//		packetCount++;
+	//	}
+	//}
 
 	UpdatePlayer();
 
