@@ -19,47 +19,66 @@ static int send_all(SOCKET s, const char* buf, int len)
 	return total;
 }
 
+void InitBongObstacle()
+{
+    g_bongObstacle.pos1 = glm::vec3(-1.0f, 1.0f, 0.0f);
+    g_bongObstacle.dir1 = glm::vec3(1.0f, 0.0f, 0.0f);
+
+    g_bongObstacle.pos2 = glm::vec3(1.0f, 1.0f, 0.0f);
+    g_bongObstacle.dir2 = glm::vec3(-1.0f, 0.0f, 0.0f);
+}
+
+
 bool S2C_BongObstacle(SOCKET sock, const obstacle_Bong& obs_info)
 {
-	if (sock == INVALID_SOCKET) {
-		printf("[경고] 소켓이 유효하지 않습니다\n");
-		return false;
-	}
+    if (sock == INVALID_SOCKET) {
+        printf("[경고] 소켓이 유효하지 않습니다\n");
+        return false;
+    }
 
-	//  패킷 헤더 생성
-	PacketHeader header;
-	header.type = PACKET_OBSTACLE;
-	header.size = sizeof(obstacle_Bong);
+    // ------------------------------
+    // glm::vec3 -> 네트워크 구조체 변환
+    // ------------------------------
+    obstacle_Bong_Net net{};
 
-	int hsent = send_all(sock, (const char*)&header, sizeof(header));
-	if (hsent == SOCKET_ERROR) {
-		err_display("send() - S2C_BongObstacle header");
-		return false;
-	}
-	if (hsent != sizeof(header)) {
-		printf("[경고] 봉 장애물 헤더 전송 크기 불일치 (예상:%zu 실제:%d)\n", sizeof(header), hsent);
-		return false;
-	}
+    memcpy(net.pos1, &obs_info.pos1, sizeof(float) * 3);
+    memcpy(net.dir1, &obs_info.dir1, sizeof(float) * 3);
+    memcpy(net.pos2, &obs_info.pos2, sizeof(float) * 3);
+    memcpy(net.dir2, &obs_info.dir2, sizeof(float) * 3);
 
-	// 본문 전송
-	int bsent = send_all(sock, (const char*)&obs_info, sizeof(obstacle_Bong));
-	if (bsent == SOCKET_ERROR) {
-		err_display("send() - S2C_BongObstacle body");
-		return false;
-	}
-	if (bsent != sizeof(obstacle_Bong)) {
-		printf("[경고] 봉 장애물 전송 크기 불일치 (예상:%zu 실제:%d)\n", sizeof(obstacle_Bong), bsent);
-		return false;
-	}
+    // 패킷 헤더 생성
+    PacketHeader header;
+    header.type = PACKET_OBSTACLE;
+    header.size = sizeof(obstacle_Bong_Net);
 
-	sendBongCount++;
-	if (sendBongCount % 100 == 0) {
-		printf("[서버] 봉 장애물 정보 전송 완료 송신 %d회 \n", sendBongCount);
-		printf("봉 장애물 위치1 : x=%f, y=%f, z=%f\n", obs_info.pos1.x, obs_info.pos1.y, obs_info.pos1.z);
-		printf("봉 장애물 위치2 : x=%f, y=%f, z=%f\n", obs_info.pos2.x, obs_info.pos2.y, obs_info.pos2.z);
-	}
+    // 헤더 전송
+    int hsent = send_all(sock, (const char*)&header, sizeof(header));
+    if (hsent == SOCKET_ERROR) {
+        err_display("send() - S2C_BongObstacle header");
+        return false;
+    }
 
-	return true;
+    // 본문 전송 (48 bytes)
+    int bsent = send_all(sock, (const char*)&net, sizeof(obstacle_Bong_Net));
+    if (bsent == SOCKET_ERROR) {
+        err_display("send() - S2C_BongObstacle body");
+        return false;
+    }
+
+    if (bsent != sizeof(obstacle_Bong_Net)) {
+        printf("[경고] 봉 장애물 전송 크기 불일치 (예상:%zu 실제:%d)\n",
+            sizeof(obstacle_Bong_Net), bsent);
+        return false;
+    }
+
+    sendBongCount++;
+    if (sendBongCount % 100 == 0) {
+        printf("[서버] 봉 장애물 정보 전송 완료 송신 %d회 \n", sendBongCount);
+        printf("봉 장애물 위치1 : x=%f, y=%f, z=%f\n", obs_info.pos1.x, obs_info.pos1.y, obs_info.pos1.z);
+        printf("봉 장애물 위치2 : x=%f, y=%f, z=%f\n", obs_info.pos2.x, obs_info.pos2.y, obs_info.pos2.z);
+    }
+
+    return true;
 }
 
 void UpdateBongObstacle()

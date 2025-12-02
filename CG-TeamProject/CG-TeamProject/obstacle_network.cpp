@@ -11,10 +11,10 @@ bool recv_BongObstacle(SOCKET sock)
         return false;
     }
 
-    obstacle_Bong obs_info;
+    obstacle_Bong_Net netData;
 
     // 서버로부터 장애물 정보 패킷 수신
-    if (!recv_all(sock, (char*)&obs_info, sizeof(obstacle_Bong))) {
+    if (!recv_all(sock, (char*)&netData, sizeof(obstacle_Bong_Net))) {
         int err = WSAGetLastError();
         if (err != WSAEWOULDBLOCK) {
             printf("[에러] recv_BongObstacle() 실패 - 에러코드: %d\n", err);
@@ -22,7 +22,14 @@ bool recv_BongObstacle(SOCKET sock)
         return false;
     }
 
-    // 수신된 장애물 정보를 전역 변수에 저장
+    obstacle_Bong obs_info;
+
+    obs_info.pos1 = glm::vec3(netData.pos1[0], netData.pos1[1], netData.pos1[2]);
+    obs_info.dir1 = glm::vec3(netData.dir1[0], netData.dir1[1], netData.dir1[2]);
+
+    obs_info.pos2 = glm::vec3(netData.pos2[0], netData.pos2[1], netData.pos2[2]);
+    obs_info.dir2 = glm::vec3(netData.dir2[0], netData.dir2[1], netData.dir2[2]);
+
     g_bongObstacle = obs_info;
 
     // 로그 출력

@@ -152,7 +152,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     LeaveCriticalSection(&g_cs);
 
     printf("클라이언트 %d번 접속 완료\n", client_id);
-    S2C_ClientOrder(client_sock, client_id);   //몇번째 클라인지 보내주기
+    //S2C_ClientOrder(client_sock, client_id);   //몇번째 클라인지 보내주기
     //이 부분 수정 필요할 것 같음------ while 돌릴예정.
 
     //S2C_isPlayerReady(client_sock);//3명 접속했는지 확인하고 맞으면 클라에게 보내기
@@ -209,11 +209,11 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         }
         LeaveCriticalSection(&g_cs);
 
-		//// 장애물 위치 업데이트 및 전송
-  //      EnterCriticalSection(&g_cs);
-  //      UpdateBongObstacle(); // 장애물 위치 계산
-  //      S2C_BongObstacle(g_clients[client_id - 1].sock, g_bongObstacle);
-  //      LeaveCriticalSection(&g_cs);
+		// 장애물 위치 업데이트 및 전송
+        EnterCriticalSection(&g_cs);
+        UpdateBongObstacle(); // 장애물 위치 계산
+        S2C_BongObstacle(g_clients[client_id - 1].sock, g_bongObstacle);
+        LeaveCriticalSection(&g_cs);
     }
 
     closesocket(client_sock);
@@ -221,19 +221,6 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     EnterCriticalSection(&g_cs);
     g_clientCount--;
     LeaveCriticalSection(&g_cs);
-    return 0;
-}
-
-// 장애물 전용 스레드
-DWORD WINAPI ObstacleThread(LPVOID arg) {
-    while (true) {
-        Sleep(16); // 60FPS
-        printf("장애물 스레드\n");
-        EnterCriticalSection(&g_cs);
-        UpdateBongObstacle(); // 장애물 위치 계산
-        Broadcast_BongObstacle(g_bongObstacle, g_clients); // 클라이언트에게 전송
-        LeaveCriticalSection(&g_cs);
-    }
     return 0;
 }
 
@@ -250,9 +237,7 @@ int main() {
     }
 
     InitializeCriticalSection(&g_cs);
-
-    HANDLE hThread = CreateThread(NULL, 0, ObstacleThread, NULL, 0, NULL);
-    if (hThread) CloseHandle(hThread);
+    InitBongObstacle();
 
     listen_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_sock == INVALID_SOCKET) {
@@ -299,10 +284,10 @@ int main() {
         g_clients[id].isActive = true;
         LeaveCriticalSection(&g_cs);
 
-        /*SOCKET* pSock = (SOCKET*)malloc(sizeof(SOCKET));
+        SOCKET* pSock = (SOCKET*)malloc(sizeof(SOCKET));
         *pSock = client_sock;
         HANDLE hThread = CreateThread(NULL, 0, ClientThread, (LPVOID)pSock, 0, NULL);
-        if (hThread) CloseHandle(hThread);*/
+        if (hThread) CloseHandle(hThread);
 
         printf("클라이언트 %d 접속 완료\n", id + 1);
     }

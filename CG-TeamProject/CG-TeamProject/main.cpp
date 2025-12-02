@@ -185,68 +185,68 @@ bool recv_packet() {
 	return true;
 }
 
-bool InitCharByNum() {
-	// 1. 내 번호 받기
-	int data = 0;
-	if (!recv_all(Socket, (char*)&data, sizeof(data))) {
-		printf("서버에서 내 번호 받기 실패\n");
-		return false;
-	}
-	int order = ntohl(data); // 네트워크 엔디안 변환
-
-	std::cout << order << "번 째 캐릭터 입니다." << std::endl;
-
-	// 색상 정의
-	glm::vec3 colors[] = {
-		glm::vec3(1.0f, 0.0f, 0.0f), // Red
-		glm::vec3(1.0f, 1.0f, 0.0f), // Yellow
-		glm::vec3(0.0f, 0.0f, 1.0f)  // Blue
-	};
-
-	// P1, P2, P3 색상 초기화
-	glm::vec3 P1Color, P2Color, P3Color;
-
-	switch (order) {
-	case 0:
-		P1Color = colors[1]; // Yellow
-		P2Color = colors[0]; // Red
-		P3Color = colors[2]; // Blue
-		break;
-	case 1:
-		P1Color = colors[1]; // Yellow
-		P2Color = colors[0]; // Red
-		P3Color = colors[2]; // Blue
-		break;
-	case 2:
-		P1Color = colors[0]; // Red
-		P2Color = colors[1]; // Yellow
-		P3Color = colors[2]; // Blue
-		break;
-	case 3:
-		P1Color = colors[2]; // Blue
-		P2Color = colors[0]; // Red
-		P3Color = colors[1]; // Yellow
-		break;
-	default:
-		std::cerr << "경고: 서버에서 잘못된 order(" << order << ")를 보냄\n";
-		return false; // 초기화 중단
-	}
-
-	// 기존 객체가 있으면 삭제
-	if (P1) delete P1;
-	if (P2) delete P2;
-	if (P3) delete P3;
-
-	// 컨트롤 캐릭터
-	P1 = new Player1(P1Color);
-	P1->ID = order;
-
-	// 다른 캐릭터들
-	P2 = new Player1(P2Color);
-	P3 = new Player1(P3Color);
-
-	return true;
-}
+//bool InitCharByNum() {
+//	// 1. 내 번호 받기
+//	int data = 0;
+//	if (!recv_all(Socket, (char*)&data, sizeof(data))) {
+//		printf("서버에서 내 번호 받기 실패\n");
+//		return false;
+//	}
+//	int order = ntohl(data); // 네트워크 엔디안 변환
+//
+//	std::cout << order << "번 째 캐릭터 입니다." << std::endl;
+//
+//	// 색상 정의
+//	glm::vec3 colors[] = {
+//		glm::vec3(1.0f, 0.0f, 0.0f), // Red
+//		glm::vec3(1.0f, 1.0f, 0.0f), // Yellow
+//		glm::vec3(0.0f, 0.0f, 1.0f)  // Blue
+//	};
+//
+//	// P1, P2, P3 색상 초기화
+//	glm::vec3 P1Color, P2Color, P3Color;
+//
+//	switch (order) {
+//	case 0:
+//		P1Color = colors[1]; // Yellow
+//		P2Color = colors[0]; // Red
+//		P3Color = colors[2]; // Blue
+//		break;
+//	case 1:
+//		P1Color = colors[1]; // Yellow
+//		P2Color = colors[0]; // Red
+//		P3Color = colors[2]; // Blue
+//		break;
+//	case 2:
+//		P1Color = colors[0]; // Red
+//		P2Color = colors[1]; // Yellow
+//		P3Color = colors[2]; // Blue
+//		break;
+//	case 3:
+//		P1Color = colors[2]; // Blue
+//		P2Color = colors[0]; // Red
+//		P3Color = colors[1]; // Yellow
+//		break;
+//	default:
+//		std::cerr << "경고: 서버에서 잘못된 order(" << order << ")를 보냄\n";
+//		return false; // 초기화 중단
+//	}
+//
+//	// 기존 객체가 있으면 삭제
+//	if (P1) delete P1;
+//	if (P2) delete P2;
+//	if (P3) delete P3;
+//
+//	// 컨트롤 캐릭터
+//	P1 = new Player1(P1Color);
+//	P1->ID = order;
+//
+//	// 다른 캐릭터들
+//	P2 = new Player1(P2Color);
+//	P3 = new Player1(P3Color);
+//
+//	return true;
+//}
 
 // 네트워크 초기화
 bool InitNetworkConnection() {
@@ -647,11 +647,11 @@ void main(int argc, char** argv) {
 
 
 	std::cout << "캐릭터 생성중...." << std::endl;
-	if (!InitCharByNum())
+	/*if (!InitCharByNum())
 	{
 		std::cerr << "캐릭터 초기화 실패!" << std::endl;
 		return;
-	}
+	}*/
 	
 
 	glutDisplayFunc(drawScene);
@@ -943,7 +943,6 @@ GLvoid Timer(int value) {
 	}
 
 	UpdatePlayer();
-
 
 	EnterCriticalSection(&g_cs_client);
 	if (Bong1) Bong1->Position = g_bongObstacle.pos1;
