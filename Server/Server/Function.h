@@ -2,7 +2,7 @@
 
 #include"Common.h"
 #include "obstacle.h"
-#include <glm/gtc/matrix_transform.hpp>
+#include"stdafx.h"
 #include <gl/glew.h>
 
 extern CRITICAL_SECTION g_cs;  // 임계영역

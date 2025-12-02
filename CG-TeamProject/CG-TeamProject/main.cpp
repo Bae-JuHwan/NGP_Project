@@ -549,6 +549,8 @@ Obstacle* count2 = nullptr;
 Obstacle* count1 = nullptr;
 
 void main(int argc, char** argv) {
+	SetConsoleOutputCP(CP_UTF8);
+	SetConsoleCP(CP_UTF8);
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(100, 100);
@@ -665,8 +667,8 @@ void main(int argc, char** argv) {
 	InitPart("frogDoor/rightdoorgroup.obj", flogDoor->RightD->model, flogDoor->RightD->vao, flogDoor->RightD->vbo, glm::vec3(1.0f, 0.078f, 0.576f));
 	flogDoor->LeftD->SetAABB(leftdoor1, leftdoor2, leftdoor3);
 	flogDoor->RightD->SetAABB(rightdoor1, rightdoor2, rightdoor3);
-
-
+	
+	printf("장애물 생성 완료!\n");
 	printf("[클라이언트] 서버 연결 시도...\n");
 	if (!InitNetworkConnection()) {
 		printf("[클라이언트] 서버 연결 실패! 게임을 종료합니다.\n");
@@ -986,195 +988,196 @@ GLvoid Timer(int value) {
 			C2S_Character(Socket, myCharacter);
 		}
 
-	S2C_ReceiveGameState(Socket);
-	
-	UpdatePlayer();
+		S2C_ReceiveGameState(Socket);
+
+		UpdatePlayer();
 
 
-	//EnterCriticalSection(&g_cs_client);
-	//if (Bong1) Bong1->Position = g_bongObstacle.pos1;
-	//else std::cout << "[Warn] Bong1 is NULL\n";
+		//EnterCriticalSection(&g_cs_client);
+		//if (Bong1) Bong1->Position = g_bongObstacle.pos1;
+		//else std::cout << "[Warn] Bong1 is NULL\n";
 
-	//if (Bong2) Bong2->Position = g_bongObstacle.pos2;
-	//else std::cout << "[Warn] Bong2 is NULL\n";
-	//LeaveCriticalSection(&g_cs_client);
+		//if (Bong2) Bong2->Position = g_bongObstacle.pos2;
+		//else std::cout << "[Warn] Bong2 is NULL\n";
+		//LeaveCriticalSection(&g_cs_client);
 
-	if (Bong1) {
-		Bong1->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong1->Position);
-	}
-	if (Bong2) {
-		Bong2->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong2->Position);
-	}
+		if (Bong1) {
+			Bong1->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong1->Position);
+		}
+		if (Bong2) {
+			Bong2->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong2->Position);
+		}
 
-	//Bong1->CAABB1.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
-	//Bong2->CAABB1.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
-	//Bong1->CAABB2.update(Bong1->Position, glm::vec3(-3.169f, 0.0f, -33.25f), glm::vec3(-1.169f, 3.6f, -31.25f));
-	//Bong2->CAABB2.update(Bong2->Position, glm::vec3(3.045f, 0.0f, -33.25f), glm::vec3(5.045f, 3.6f, -31.25f));
-	//Bong1->CAABB3.update(Bong1->Position, glm::vec3(9.27f, 0.0f, -33.25f), glm::vec3(11.27f, 3.6f, -31.25f));
-	//Bong2->CAABB3.update(Bong2->Position, glm::vec3(14.945f, 0.0f, -33.25f), glm::vec3(16.945f, 3.6f, -31.25f));
+		//Bong1->CAABB1.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
+		//Bong2->CAABB1.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
+		//Bong1->CAABB2.update(Bong1->Position, glm::vec3(-3.169f, 0.0f, -33.25f), glm::vec3(-1.169f, 3.6f, -31.25f));
+		//Bong2->CAABB2.update(Bong2->Position, glm::vec3(3.045f, 0.0f, -33.25f), glm::vec3(5.045f, 3.6f, -31.25f));
+		//Bong1->CAABB3.update(Bong1->Position, glm::vec3(9.27f, 0.0f, -33.25f), glm::vec3(11.27f, 3.6f, -31.25f));
+		//Bong2->CAABB3.update(Bong2->Position, glm::vec3(14.945f, 0.0f, -33.25f), glm::vec3(16.945f, 3.6f, -31.25f));
 
-	// 문짝 움직이기
-	flogDoor->LeftD->Position.x += flogDoor->LeftD->Direction.x * DoorMove;
-	if (flogDoor->LeftD->Position.x >= 0.0) {
-		flogDoor->LeftD->Direction.x = -1; // 왼쪽으로 이동
-	}
-	else if (flogDoor->LeftD->Position.x <= -MaxDoorMove) {
-		flogDoor->LeftD->Direction.x = 1;  // 오른쪽으로 이동
-	}
-	flogDoor->RightD->Position.x += flogDoor->RightD->Direction.x * DoorMove;
-	if (flogDoor->RightD->Position.x >= MaxDoorMove) {
-		flogDoor->RightD->Direction.x = -1;
-	}
-	else if (flogDoor->RightD->Position.x <= -0.0) {
-		flogDoor->RightD->Direction.x = 1;
-	}
-	// 문짝 AABB 업데이트
-	flogDoor->LeftD->CAABB1.update(flogDoor->LeftD->Position, glm::vec3(-8.475f, -0.76f, -159.129f), glm::vec3(-6.4f, 2.4f, -158.53f));
-	flogDoor->LeftD->CAABB2.update(flogDoor->LeftD->Position, glm::vec3(-2.168f, -0.76f, -159.129f), glm::vec3(-0.09f, 2.4f, -158.53f));
-	flogDoor->LeftD->CAABB3.update(flogDoor->LeftD->Position, glm::vec3(4.227f, -0.76f, -159.129f), glm::vec3(6.297f, 2.4f, -158.53f));
-	flogDoor->RightD->CAABB1.update(flogDoor->RightD->Position, glm::vec3(6.408f, -0.76f, -159.129f), glm::vec3(4.38f, 2.4f, -158.53f));
-	flogDoor->RightD->CAABB2.update(flogDoor->RightD->Position, glm::vec3(-0.1f, -0.76f, -159.129f), glm::vec3(1.926f, 2.4f, -158.53f));
-	flogDoor->RightD->CAABB3.update(flogDoor->RightD->Position, glm::vec3(6.294f, -0.76f, -159.129f), glm::vec3(8.322f, 2.4f, -158.53f));
-	//AABB leftDoors[] = { leftdoor1, leftdoor2, leftdoor3 };
-	//AABB rightDoors[] = { rightdoor1, rightdoor2, rightdoor3 };
+		// 문짝 움직이기
+		flogDoor->LeftD->Position.x += flogDoor->LeftD->Direction.x * DoorMove;
+		if (flogDoor->LeftD->Position.x >= 0.0) {
+			flogDoor->LeftD->Direction.x = -1; // 왼쪽으로 이동
+		}
+		else if (flogDoor->LeftD->Position.x <= -MaxDoorMove) {
+			flogDoor->LeftD->Direction.x = 1;  // 오른쪽으로 이동
+		}
+		flogDoor->RightD->Position.x += flogDoor->RightD->Direction.x * DoorMove;
+		if (flogDoor->RightD->Position.x >= MaxDoorMove) {
+			flogDoor->RightD->Direction.x = -1;
+		}
+		else if (flogDoor->RightD->Position.x <= -0.0) {
+			flogDoor->RightD->Direction.x = 1;
+		}
+		// 문짝 AABB 업데이트
+		flogDoor->LeftD->CAABB1.update(flogDoor->LeftD->Position, glm::vec3(-8.475f, -0.76f, -159.129f), glm::vec3(-6.4f, 2.4f, -158.53f));
+		flogDoor->LeftD->CAABB2.update(flogDoor->LeftD->Position, glm::vec3(-2.168f, -0.76f, -159.129f), glm::vec3(-0.09f, 2.4f, -158.53f));
+		flogDoor->LeftD->CAABB3.update(flogDoor->LeftD->Position, glm::vec3(4.227f, -0.76f, -159.129f), glm::vec3(6.297f, 2.4f, -158.53f));
+		flogDoor->RightD->CAABB1.update(flogDoor->RightD->Position, glm::vec3(6.408f, -0.76f, -159.129f), glm::vec3(4.38f, 2.4f, -158.53f));
+		flogDoor->RightD->CAABB2.update(flogDoor->RightD->Position, glm::vec3(-0.1f, -0.76f, -159.129f), glm::vec3(1.926f, 2.4f, -158.53f));
+		flogDoor->RightD->CAABB3.update(flogDoor->RightD->Position, glm::vec3(6.294f, -0.76f, -159.129f), glm::vec3(8.322f, 2.4f, -158.53f));
+		//AABB leftDoors[] = { leftdoor1, leftdoor2, leftdoor3 };
+		//AABB rightDoors[] = { rightdoor1, rightdoor2, rightdoor3 };
 
 
-	AABB outdoors[] = { outdoor1, outdoor2, outdoor3, outdoor4 };
-	for (const auto& outdoor : outdoors) {
-		if (checkCollision(P1->CAABB, outdoor)) {
-			float overlapX = std::min(P1->CAABB.max.x, outdoor.max.x) - std::max(P1->CAABB.min.x, outdoor.min.x);
-			float overlapZ = std::min(P1->CAABB.max.z, outdoor.max.z) - std::max(P1->CAABB.min.z, outdoor.min.z);
+		AABB outdoors[] = { outdoor1, outdoor2, outdoor3, outdoor4 };
+		for (const auto& outdoor : outdoors) {
+			if (checkCollision(P1->CAABB, outdoor)) {
+				float overlapX = std::min(P1->CAABB.max.x, outdoor.max.x) - std::max(P1->CAABB.min.x, outdoor.min.x);
+				float overlapZ = std::min(P1->CAABB.max.z, outdoor.max.z) - std::max(P1->CAABB.min.z, outdoor.min.z);
 
-			if (overlapX < overlapZ) {
-				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > outdoor.min.x) {
-					P1->Direction.x = 0.0f;
+				if (overlapX < overlapZ) {
+					if (P1->Direction.x > 0.0f && P1->CAABB.max.x > outdoor.min.x) {
+						P1->Direction.x = 0.0f;
+					}
+					else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < outdoor.max.x) {
+						P1->Direction.x = 0.0f;
+					}
 				}
-				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < outdoor.max.x) {
-					P1->Direction.x = 0.0f;
+				else {
+					if (P1->Direction.z > 0.0f && P1->CAABB.max.z > outdoor.min.z) {
+						P1->Direction.z = 0.0f;
+					}
+					else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < outdoor.max.z) {
+						P1->Direction.z = 0.0f;
+					}
 				}
 			}
-			else {
-				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > outdoor.min.z) {
-					P1->Direction.z = 0.0f;
-				}
-				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < outdoor.max.z) {
-					P1->Direction.z = 0.0f;
-				}
-			}
 		}
-	}
 
 
-	// 장애물 AABB 업데이트
-	HorFan1->CAABB.updateRotatedAABB(
-		glm::vec3(0.0f, -0.3f, -140.0f),  // 장애물의 중심 위치
-		glm::vec3(-6.1f, -0.3f, -0.49f), // 로컬 최소 오프셋
-		glm::vec3(6.1f, 4.4f, 0.49f),    // 로컬 최대 오프셋
-		obstacleRotation,                // 회전 각도
-		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
-	);
-
-	HorFan2->CAABB.updateRotatedAABB(
-		glm::vec3(7.0f, -0.3f, -115.0f),  // 장애물의 중심 위치
-		glm::vec3(-6.1f, -0.3f, -0.49f), // 로컬 최소 오프셋
-		glm::vec3(6.1f, 4.4f, 0.49f),    // 로컬 최대 오프셋
-		-obstacleRotation,                // 회전 각도
-		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
-	);
-
-	HorFan3->CAABB.updateRotatedAABB(
-		glm::vec3(-7.0f, -0.3f, -115.0f), // 장애물의 중심 위치
-		glm::vec3(-6.1f, -0.3f, -0.49f), // 로컬 최소 오프셋
-		glm::vec3(6.1f, 4.4f, 0.49f),    // 로컬 최대 오프셋
-		obstacleRotation,                // 회전 각도
-		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
-	);
-
-	HorizontalFan* horizontalFans[] = { HorFan1, HorFan2, HorFan3 };
-
-	for (int i = 0; i < 3; i++) {
-		if (i != 1) {
-			horizontalFans[i]->Pink->RotationAngle = obstacleRotation;
-			horizontalFans[i]->Purple->RotationAngle = obstacleRotation;
-		}
-		else {
-			horizontalFans[i]->Pink->RotationAngle = -obstacleRotation;
-			horizontalFans[i]->Purple->RotationAngle = -obstacleRotation;
-		}
-	}
-
-
-	AABB barbars[] = { Jumpbar1->CAABB, Jumpbar2->CAABB, Jumpbar3->CAABB };
-	Obstacle* Bars[] = { Jumpbar1, Jumpbar2, Jumpbar3 };
-	//AABB barcenters[] = { barcenter1, barcenter2, barcenter3 };
-
-
-	int i = 0;
-	for (const auto& bar : Bars) {
-		bar->RotationAngle += 2.0f;
-		if (bar->RotationAngle >= 360.0f) {
-			bar->RotationAngle -= 360.0f;
-		}
-		int val = (i % 2 == 0) ? 1 : -1;
-		if (val == -1)bar->RotationAngle = -(Jumpbar1->RotationAngle);
-		bar->CAABB.updateRotatedAABB(
-			-(bar->Position),  // 장애물의 중심 위치
-			glm::vec3(-0.3f, -0.36f, -0.5f), // 로컬 최소 오프셋
-			glm::vec3(0.3f, 0.04f, 0.5f),    // 로컬 최대 오프셋
-			bar->RotationAngle,            // 회전 각도
+		// 장애물 AABB 업데이트
+		HorFan1->CAABB.updateRotatedAABB(
+			glm::vec3(0.0f, -0.3f, -140.0f),  // 장애물의 중심 위치
+			glm::vec3(-6.1f, -0.3f, -0.49f), // 로컬 최소 오프셋
+			glm::vec3(6.1f, 4.4f, 0.49f),    // 로컬 최대 오프셋
+			obstacleRotation,                // 회전 각도
 			glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
 		);
-		i++;
-	}
 
+		HorFan2->CAABB.updateRotatedAABB(
+			glm::vec3(7.0f, -0.3f, -115.0f),  // 장애물의 중심 위치
+			glm::vec3(-6.1f, -0.3f, -0.49f), // 로컬 최소 오프셋
+			glm::vec3(6.1f, 4.4f, 0.49f),    // 로컬 최대 오프셋
+			-obstacleRotation,                // 회전 각도
+			glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
+		);
 
-	// 세로팬 -------------------------------------------------------------------------------------------
-	VerticalFan* verticalFans[] = { VerFan1,VerFan2,VerFan3,VerFan4,VerFan5 };
+		HorFan3->CAABB.updateRotatedAABB(
+			glm::vec3(-7.0f, -0.3f, -115.0f), // 장애물의 중심 위치
+			glm::vec3(-6.1f, -0.3f, -0.49f), // 로컬 최소 오프셋
+			glm::vec3(6.1f, 4.4f, 0.49f),    // 로컬 최대 오프셋
+			obstacleRotation,                // 회전 각도
+			glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
+		);
 
-	for (int i = 0; i < 5; i++) {
-		if (i < 3) {
-			verticalFans[i]->VFan->RotationAngle = obstacleRotation;
-		}
-		else {
-			verticalFans[i]->VFan->RotationAngle = -obstacleRotation;
-		}
-	}
+		HorizontalFan* horizontalFans[] = { HorFan1, HorFan2, HorFan3 };
 
-
-	// 바와 캐릭터1 충돌 처리
-	AABB bars[] = { leftBar1, leftBar2, leftBar3, leftBar4, leftBar5, middleBar1, middleBar2, middleBar3, middleBar4, middleBar5, rightBar1, rightBar2, rightBar3, rightBar4, rightBar5 };
-	for (const auto& bar : bars) {
-		if (checkCollision(P1->CAABB, bar)) {
-			float overlapbX = std::min(P1->CAABB.max.x, bar.max.x) - std::max(P1->CAABB.min.x, bar.min.x);
-			float overlapbZ = std::min(P1->CAABB.max.z, bar.max.z) - std::max(P1->CAABB.min.z, bar.min.z);
-
-			if (overlapbX < overlapbZ) {
-				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > bar.min.x) {
-					P1->Direction.x = 0.0f;
-				}
-				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < bar.max.x) {
-					P1->Direction.x = 0.0f;
-				}
+		for (int i = 0; i < 3; i++) {
+			if (i != 1) {
+				horizontalFans[i]->Pink->RotationAngle = obstacleRotation;
+				horizontalFans[i]->Purple->RotationAngle = obstacleRotation;
 			}
 			else {
-				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > bar.min.z) {
-					P1->Direction.z = 0.0f;
+				horizontalFans[i]->Pink->RotationAngle = -obstacleRotation;
+				horizontalFans[i]->Purple->RotationAngle = -obstacleRotation;
+			}
+		}
+
+
+		AABB barbars[] = { Jumpbar1->CAABB, Jumpbar2->CAABB, Jumpbar3->CAABB };
+		Obstacle* Bars[] = { Jumpbar1, Jumpbar2, Jumpbar3 };
+		//AABB barcenters[] = { barcenter1, barcenter2, barcenter3 };
+
+
+		int i = 0;
+		for (const auto& bar : Bars) {
+			bar->RotationAngle += 2.0f;
+			if (bar->RotationAngle >= 360.0f) {
+				bar->RotationAngle -= 360.0f;
+			}
+			int val = (i % 2 == 0) ? 1 : -1;
+			if (val == -1)bar->RotationAngle = -(Jumpbar1->RotationAngle);
+			bar->CAABB.updateRotatedAABB(
+				-(bar->Position),  // 장애물의 중심 위치
+				glm::vec3(-0.3f, -0.36f, -0.5f), // 로컬 최소 오프셋
+				glm::vec3(0.3f, 0.04f, 0.5f),    // 로컬 최대 오프셋
+				bar->RotationAngle,            // 회전 각도
+				glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
+			);
+			i++;
+		}
+
+
+		// 세로팬 -------------------------------------------------------------------------------------------
+		VerticalFan* verticalFans[] = { VerFan1,VerFan2,VerFan3,VerFan4,VerFan5 };
+
+		for (int i = 0; i < 5; i++) {
+			if (i < 3) {
+				verticalFans[i]->VFan->RotationAngle = obstacleRotation;
+			}
+			else {
+				verticalFans[i]->VFan->RotationAngle = -obstacleRotation;
+			}
+		}
+
+
+		// 바와 캐릭터1 충돌 처리
+		AABB bars[] = { leftBar1, leftBar2, leftBar3, leftBar4, leftBar5, middleBar1, middleBar2, middleBar3, middleBar4, middleBar5, rightBar1, rightBar2, rightBar3, rightBar4, rightBar5 };
+		for (const auto& bar : bars) {
+			if (checkCollision(P1->CAABB, bar)) {
+				float overlapbX = std::min(P1->CAABB.max.x, bar.max.x) - std::max(P1->CAABB.min.x, bar.min.x);
+				float overlapbZ = std::min(P1->CAABB.max.z, bar.max.z) - std::max(P1->CAABB.min.z, bar.min.z);
+
+				if (overlapbX < overlapbZ) {
+					if (P1->Direction.x > 0.0f && P1->CAABB.max.x > bar.min.x) {
+						P1->Direction.x = 0.0f;
+					}
+					else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < bar.max.x) {
+						P1->Direction.x = 0.0f;
+					}
 				}
-				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < bar.max.z) {
-					P1->Direction.z = 0.0f;
+				else {
+					if (P1->Direction.z > 0.0f && P1->CAABB.max.z > bar.min.z) {
+						P1->Direction.z = 0.0f;
+					}
+					else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < bar.max.z) {
+						P1->Direction.z = 0.0f;
+					}
 				}
 			}
 		}
+		// ^ 세로팬 -------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+		// 화면 갱신
+		glutPostRedisplay();
+		glutTimerFunc(16, Timer, 0);
 	}
-	// ^ 세로팬 -------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-	// 화면 갱신
-	glutPostRedisplay();
-	glutTimerFunc(16, Timer, 0);
 }
