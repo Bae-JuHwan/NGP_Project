@@ -49,6 +49,7 @@ struct ClientInfo {
     bool isActive;
 };
 
+
 // 캐릭터 정보 저장하기 위해서 클라이언트 정보 구조체 배열
 extern ClientInfo g_clients[MAX_CLIENTS];
 
