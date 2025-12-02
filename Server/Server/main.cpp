@@ -234,6 +234,7 @@ int main() {
     }
 
     InitializeCriticalSection(&g_cs);
+    InitBongObstacle();
 
     listen_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_sock == INVALID_SOCKET) {

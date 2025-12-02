@@ -20,3 +20,4 @@ extern obstacle_Bong g_bongObstacle;
 bool S2C_BongObstacle(SOCKET sock, const obstacle_Bong& obs_info);
 void UpdateBongObstacle();
 bool Broadcast_BongObstacle(const obstacle_Bong& obs_info , ClientInfo g_clients[MAX_CLIENTS]);
+void InitBongObstacle();

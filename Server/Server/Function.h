@@ -2,6 +2,7 @@
 
 #include"Common.h"
 #include "obstacle.h"
+#include "obstacle.h"
 #include "stdafx.h"
 #include <gl/glew.h>
 

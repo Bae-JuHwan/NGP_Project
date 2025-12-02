@@ -5,6 +5,15 @@
 obstacle_Bong g_bongObstacle;
 int sendBongCount = 0;
 
+void InitBongObstacle()
+{
+	g_bongObstacle.pos1 = glm::vec3(-1.0f, 1.0f, 0.0f);
+	g_bongObstacle.dir1 = glm::vec3(1.0f, 0.0f, 0.0f);
+
+	g_bongObstacle.pos2 = glm::vec3(1.0f, 1.0f, 0.0f);
+	g_bongObstacle.dir2 = glm::vec3(-1.0f, 0.0f, 0.0f);
+}
+
 bool S2C_BongObstacle(SOCKET sock, const obstacle_Bong& obs_info)
 {
 	if (sock == INVALID_SOCKET) {

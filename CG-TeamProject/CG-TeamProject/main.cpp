@@ -989,13 +989,13 @@ GLvoid Timer(int value) {
 	UpdatePlayer();
 
 
-	//EnterCriticalSection(&g_cs_client);
-	//if (Bong1) Bong1->Position = g_bongObstacle.pos1;
-	//else std::cout << "[Warn] Bong1 is NULL\n";
+	EnterCriticalSection(&g_cs_client);
+	if (Bong1) Bong1->Position = g_bongObstacle.pos1;
+	else std::cout << "[Warn] Bong1 is NULL\n";
 
-	//if (Bong2) Bong2->Position = g_bongObstacle.pos2;
-	//else std::cout << "[Warn] Bong2 is NULL\n";
-	//LeaveCriticalSection(&g_cs_client);
+	if (Bong2) Bong2->Position = g_bongObstacle.pos2;
+	else std::cout << "[Warn] Bong2 is NULL\n";
+	LeaveCriticalSection(&g_cs_client);
 
 	if (Bong1) {
 		Bong1->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong1->Position);
