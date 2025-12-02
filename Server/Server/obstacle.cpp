@@ -1,4 +1,5 @@
 ﻿#include "obstacle.h"
+#include "stdafx.h"
 #include "Common.h"
 // 원래꺼
 obstacle_Bong g_bongObstacle;
@@ -10,6 +11,19 @@ bool S2C_BongObstacle(SOCKET sock, const obstacle_Bong& obs_info)
 		printf("[경고] 소켓이 유효하지 않습니다\n");
 		return false;
 	}
+
+	//  패킷 헤더 생성
+	PacketHeader header;
+	header.type = PACKET_OBSTACLE;
+	header.size = sizeof(obstacle_Bong);
+
+	// 헤더 전송
+	if (!send(sock, (const char*)&header, sizeof(PacketHeader),0)) {
+		printf("[에러] 봉 장애물 헤더 전송 실패\n");
+		return false;
+	}
+
+
 
 	int retval = send(sock, (char*)&obs_info, sizeof(obstacle_Bong), 0);
 	sendBongCount++;

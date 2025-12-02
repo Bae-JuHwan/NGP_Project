@@ -14,6 +14,23 @@ CRITICAL_SECTION g_cs_client;
 char* SERVERIP = (char*)"127.0.0.1";
 #define SERVERPORT 9000
 SOCKET Socket = INVALID_SOCKET; //전역 변수로 소켓 선언
+
+// 패킷 타입 정의
+enum PacketType {
+	PACKET_CHARACTER = 1,
+	PACKET_OBSTACLE = 2
+};
+
+// 패킷 헤더 구조체
+#pragma pack(1)
+struct PacketHeader {
+	int type;      // 패킷 종류
+	int size;      // 데이터 크기
+};
+#pragma pack()
+
+
+
 #pragma pack(1)
 struct character {
 	int ID;
@@ -80,76 +97,98 @@ void UpdatePlayer() {
 	// AABB 업데이트
 	P3->CAABB.update(P3->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 }
+// 다른 플레이어 정보 저장 헬퍼 함수
+void StoreOtherPlayer(const character& received_char) {
+	if (P1->ID == 0) {
+		// 내가 0번이면: 1번→[0], 2번→[1]
+		otherPlayers[received_char.ID - 1] = received_char;
+	}
+	else if (P1->ID == 1) {
+		// 내가 1번이면: 0번→[0], 2번→[1]
+		if (received_char.ID == 0)
+			otherPlayers[0] = received_char;
+		else if (received_char.ID == 2)
+			otherPlayers[1] = received_char;
+	}
+	else {
+		// 내가 2번이면: 0번→[0], 1번→[1]
+		if (received_char.ID == 0)
+			otherPlayers[0] = received_char;
+		else if (received_char.ID == 1)
+			otherPlayers[1] = received_char;
+	}
+}
 //서버로부터 다른 캐릭터들 정보 받기
 int recv_count = 0;
-bool recv_character() {
+bool recv_packet() {
 	if (Socket == INVALID_SOCKET) {
 		printf("[경고] 소켓이 유효하지 않습니다\n");
 		return false;
 	}
 
-	for (int i = 0; i < MAX_OTHER_PLAYERS; ++i) {
-		int totalRecv = 0;
-		char* buf = (char*)&otherPlayers[i];
-		int bytesToRead = sizeof(character);
-
-		// 반복적으로 하나의 character를 모두 수신
-		while (totalRecv < bytesToRead) {
-			character received_char;
-			int retval = recv(Socket, (char*)&received_char, sizeof(received_char), 0);
-			if (retval == SOCKET_ERROR) {
-				int err = WSAGetLastError();
-				if (err != WSAEWOULDBLOCK) {
-					printf("[에러] recv_character() 실패 - 에러코드: %d\n", err);
-					return false;
-				}
-				return false;  // 데이터 없음
-			}
-			if (retval == 0) {
-				printf("[경고] 서버와의 연결이 종료되었습니다\n");
-				return false;
-			}
-
-			// 수신된 캐릭터 정보를 올바른 위치에 저장
-			if (received_char.ID == P1->ID || received_char.ID > 2) {
-				continue;
-			}
-			if (P1->ID == 0) {
-				otherPlayers[received_char.ID - 1] = received_char;
-			}
-			else if (P1->ID == 1) {
-				if (received_char.ID == 0)
-					otherPlayers[0] = received_char;
-				else if (received_char.ID == 2)
-					otherPlayers[1] = received_char;
-			}
-			else {
-				if (received_char.ID == 0)
-					otherPlayers[0] = received_char;
-				else if (received_char.ID == 1)
-					otherPlayers[1] = received_char;
-			}
-
-			totalRecv += retval;
-		}
+	// 1. 패킷 헤더 수신
+	PacketHeader header;
+	if (!recv(Socket, (char*)&header, sizeof(PacketHeader),0)) {
+		printf("[에러] 패킷 헤더 수신 실패\n");
+		return false;
 	}
-	UpdatePlayer();
-	recv_count++;
-	// 출력(옵션)
-	if (recv_count % 100 == 0) {
-		for (int i = 0; i < MAX_OTHER_PLAYERS; ++i) {
-			printf("\n[수신] 클라이언트 정보 수신 완료 (%d 바이트)\n", (int)sizeof(character));
-			std::cout << "받은 ID: " << otherPlayers[i].ID << std::endl;
+
+	// 2.  패킷 타입에 따라 처리
+	switch (header.type) {
+	case PACKET_CHARACTER: {
+		character received_char;
+
+		// 캐릭터 데이터 수신
+		if (!recv(Socket, (char*)&received_char, sizeof(character),0)) {
+			printf("[에러] 캐릭터 데이터 수신 실패\n");
+			return false;
+		}
+
+		// 자기 자신이거나 유효하지 않은 ID면 무시
+		if (received_char.ID == P1->ID || received_char.ID < 0 || received_char.ID > 2) {
+			break;
+		}
+
+		// 수신된 캐릭터 정보를 올바른 위치에 저장
+		StoreOtherPlayer(received_char);
+
+		// 로그 출력
+		recv_count++;
+		if (recv_count % 100 == 0) {
+			printf("\n[수신] 캐릭터 정보 수신 완료\n");
+			printf("  받은 ID: %d\n", received_char.ID);
 			printf("  Position: (%.2f, %.2f, %.2f)\n",
-				otherPlayers[i].position.x, otherPlayers[i].position.y, otherPlayers[i].position.z);
+				received_char.position.x, received_char.position.y, received_char.position.z);
 			printf("  Direction: (%.2f, %.2f, %.2f)\n",
-				otherPlayers[i].direction.x, otherPlayers[i].direction.y, otherPlayers[i].direction.z);
-			printf("  ArmLegSwingAngle: %.2f\n", otherPlayers[i].ArmLegSwingAngle);
-			printf("  isCollision: %s\n\n", otherPlayers[i].isCollision ? "true" : "false");
+				received_char.direction.x, received_char.direction.y, received_char.direction.z);
+			printf("  ArmLegSwingAngle: %.2f\n", received_char.ArmLegSwingAngle);
+			printf("  isCollision: %s\n\n", received_char.isCollision ? "true" : "false");
 		}
+		break;
 	}
+
+	case PACKET_OBSTACLE: {
+		obstacle_Bong received_obs;
+
+		// 장애물 데이터 수신
+		if (!recv(Socket, (char*)&received_obs, sizeof(obstacle_Bong),0)) {
+			printf("[에러] 장애물 데이터 수신 실패\n");
+			return false;
+		}
+
+		// 장애물 정보 저장
+		g_bongObstacle = received_obs;
+		break;
+	}
+
+	default:
+		printf("[경고] 알 수 없는 패킷 타입: %d\n", header.type);
+		return false;
+	}
+
 	return true;
 }
+
 //번호 받고 캐릭터 번호에 따라 만들기
 bool InitCharByNum() {
 	// 1. 내 번호 받기
@@ -987,34 +1026,33 @@ GLvoid Timer(int value) {
 	}
 
 
-	//전송 로직
-	if (Socket != INVALID_SOCKET && P1 != nullptr) {
-		character myCharacter;
-		myCharacter.ID = P1->ID;
-		myCharacter.position = P1->Position;
-		myCharacter.direction = P1->Direction;
-		myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
-		myCharacter.isCollision = false;  // 필요시 나중에 수정
+	////전송 로직
+	//if (Socket != INVALID_SOCKET && P1 != nullptr) {
+	//	character myCharacter;
+	//	myCharacter.ID = P1->ID;
+	//	myCharacter.position = P1->Position;
+	//	myCharacter.direction = P1->Direction;
+	//	myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
+	//	myCharacter.isCollision = false;  // 필요시 나중에 수정
 
-		C2S_Character(Socket, myCharacter);
-	}
-
-
-	//다른 캐릭터들 정보를 받음
-
-	//if (!recv_character()) {
-	//	std::cout << "recive failed" << std::endl;
+	//	C2S_Character(Socket, myCharacter);
 	//}
-
-
-
 
 
 	//if (Socket != INVALID_SOCKET) {
-	//	if (!recv_BongObstacle(Socket)) {
-	//		std::cout << "recv_Bong Error" << '\n';
+	//	int packetCount = 0;
+	//	const int MAX_PACKETS_PER_FRAME = 2;  // 한 프레임당 최대 처리 패킷 수
+
+	//	while (packetCount < MAX_PACKETS_PER_FRAME) {
+	//		if (!recv_packet()) {
+	//			break;  // 더 이상 받을 패킷 없음
+	//		}
+	//		packetCount++;
 	//	}
 	//}
+
+	UpdatePlayer();
+
 
 	//EnterCriticalSection(&g_cs_client);
 	//if (Bong1) Bong1->Position = g_bongObstacle.pos1;

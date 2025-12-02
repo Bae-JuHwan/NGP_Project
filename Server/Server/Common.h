@@ -16,6 +16,22 @@
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
 
 // 캐릭터 구조체
+// 패킷 타입 정의
+enum PacketType {
+    PACKET_CHARACTER = 1,
+    PACKET_OBSTACLE = 2
+};
+
+// 패킷 헤더 구조체
+#pragma pack(1)
+struct PacketHeader {
+    int type;      // 패킷 종류
+    int size;      // 데이터 크기
+};
+#pragma pack()
+
+
+// 캐릭터 구조체
 #pragma pack(1)
 struct character {
     int ID;
@@ -25,7 +41,6 @@ struct character {
     bool isCollision;
 };
 #pragma pack()
-
 // 클라이언트 정보 구조체 추가
 struct ClientInfo {
     SOCKET sock;
@@ -33,6 +48,7 @@ struct ClientInfo {
     character charInfo;
     bool isActive;
 };
+
 
 // 캐릭터 정보 저장하기 위해서 클라이언트 정보 구조체 배열
 extern ClientInfo g_clients[MAX_CLIENTS];
