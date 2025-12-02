@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctime>
@@ -15,19 +15,7 @@ char* SERVERIP = (char*)"127.0.0.1";
 #define SERVERPORT 9000
 SOCKET Socket = INVALID_SOCKET; //전역 변수로 소켓 선언
 
-// 패킷 타입 정의
-enum PacketType {
-	PACKET_CHARACTER = 1,
-	PACKET_OBSTACLE = 2
-};
 
-// 패킷 헤더 구조체
-#pragma pack(1)
-struct PacketHeader {
-	int type;      // 패킷 종류
-	int size;      // 데이터 크기
-};
-#pragma pack()
 
 
 
@@ -38,6 +26,13 @@ struct character {
 	glm::vec3 direction;
 	GLfloat ArmLegSwingAngle;
 	bool isCollision;
+};
+#pragma pack()
+
+#pragma pack(1)
+struct GamePacket_S2C {
+	character otherPlayers[2];    // 다른 플레이어 2명
+	obstacle_Bong bongObstacle;   // 장애물 정보
 };
 #pragma pack()
 
@@ -97,6 +92,22 @@ void UpdatePlayer() {
 	// AABB 업데이트
 	P3->CAABB.update(P3->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 }
+bool S2C_ReceiveGameState(SOCKET sock) {
+	GamePacket_S2C packet;
+
+	if (!recv(sock, (char*)&packet, sizeof(GamePacket_S2C),0)) {
+		return false;
+	}
+
+	// 다른 플레이어 정보 저장
+	otherPlayers[0] = packet.otherPlayers[0];
+	otherPlayers[1] = packet.otherPlayers[1];
+
+	// 장애물 정보 저장
+	g_bongObstacle = packet.bongObstacle;
+
+	return true;
+}
 // 다른 플레이어 정보 저장 헬퍼 함수
 void StoreOtherPlayer(const character& received_char) {
 	if (P1->ID == 0) {
@@ -120,74 +131,7 @@ void StoreOtherPlayer(const character& received_char) {
 }
 //서버로부터 다른 캐릭터들 정보 받기
 int recv_count = 0;
-bool recv_packet() {
-	if (Socket == INVALID_SOCKET) {
-		printf("[경고] 소켓이 유효하지 않습니다\n");
-		return false;
-	}
 
-	// 1. 패킷 헤더 수신
-	PacketHeader header;
-	if (!recv(Socket, (char*)&header, sizeof(PacketHeader), 0)) {
-		printf("[에러] 패킷 헤더 수신 실패\n");
-		return false;
-	}
-
-	// 2.  패킷 타입에 따라 처리
-	switch (header.type) {
-	case PACKET_CHARACTER: {
-		character received_char;
-
-		// 캐릭터 데이터 수신
-		if (!recv(Socket, (char*)&received_char, sizeof(character), 0)) {
-			printf("[에러] 캐릭터 데이터 수신 실패\n");
-			return false;
-		}
-
-		// 자기 자신이거나 유효하지 않은 ID면 무시
-		if (received_char.ID == P1->ID || received_char.ID < 0 || received_char.ID > 2) {
-			break;
-		}
-
-		// 수신된 캐릭터 정보를 올바른 위치에 저장
-		StoreOtherPlayer(received_char);
-
-		// 로그 출력
-		recv_count++;
-		if (recv_count % 100 == 0) {
-			printf("\n[수신] 캐릭터 정보 수신 완료\n");
-			printf("  받은 ID: %d\n", received_char.ID);
-			printf("  Position: (%.2f, %.2f, %.2f)\n",
-				received_char.position.x, received_char.position.y, received_char.position.z);
-			printf("  Direction: (%.2f, %.2f, %.2f)\n",
-				received_char.direction.x, received_char.direction.y, received_char.direction.z);
-			printf("  ArmLegSwingAngle: %.2f\n", received_char.ArmLegSwingAngle);
-			printf("  isCollision: %s\n\n", received_char.isCollision ? "true" : "false");
-		}
-		break;
-	}
-
-	case PACKET_OBSTACLE: {
-		obstacle_Bong received_obs;
-
-		// 장애물 데이터 수신
-		if (!recv(Socket, (char*)&received_obs, sizeof(obstacle_Bong), 0)) {
-			printf("[에러] 장애물 데이터 수신 실패\n");
-			return false;
-		}
-
-		// 장애물 정보 저장
-		g_bongObstacle = received_obs;
-		break;
-	}
-
-	default:
-		printf("[경고] 알 수 없는 패킷 타입: %d\n", header.type);
-		return false;
-	}
-
-	return true;
-}
 
 //번호 받고 캐릭터 번호에 따라 만들기
 bool InitCharByNum() {
@@ -1042,19 +986,8 @@ GLvoid Timer(int value) {
 			C2S_Character(Socket, myCharacter);
 		}
 
-
-		if (Socket != INVALID_SOCKET) {
-			int packetCount = 0;
-			const int MAX_PACKETS_PER_FRAME = 2;  // 한 프레임당 최대 처리 패킷 수
-
-			while (packetCount < MAX_PACKETS_PER_FRAME) {
-				if (!recv_packet()) {
-					break;  // 더 이상 받을 패킷 없음
-				}
-				packetCount++;
-			}
-		}
-	}
+	S2C_ReceiveGameState(Socket);
+	
 	UpdatePlayer();
 
 
