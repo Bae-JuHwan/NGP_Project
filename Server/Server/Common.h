@@ -41,6 +41,8 @@ struct character {
     bool isCollision;
 };
 #pragma pack()
+
+
 // 클라이언트 정보 구조체 추가
 struct ClientInfo {
     SOCKET sock;

@@ -188,6 +188,9 @@ bool recv_packet() {
 
 	return true;
 }
+ClientInitInfo p1{ 1, glm::vec3(-7.0f,0.0f,0.0f), glm::vec3(1.0f,0.0f,0.0f) };//1번 클라 시작위치, 색깔
+ClientInitInfo p2{ 2,glm::vec3(0.0f,0.0f,0.0f),glm::vec3(1.0f, 1.0f, 0.0f) };
+ClientInitInfo p3{ 3,glm::vec3(7.0f,0.0f,0.0f),glm::vec3(0.0f, 0.0f, 1.0f) };
 
 //번호 받고 캐릭터 번호에 따라 만들기
 bool InitCharByNum() {
@@ -199,43 +202,60 @@ bool InitCharByNum() {
 		return false;
 	}
 	int order = ntohl(data); // 네트워크 엔디안 변환
-	glm::vec3 P1Color = glm::vec3(1.0f);
-	glm::vec3 P2Color = glm::vec3(1.0f);
-	glm::vec3 P3Color = glm::vec3(1.0f);
+	//glm::vec3 P1Color = glm::vec3(1.0f);
+	//glm::vec3 P2Color = glm::vec3(1.0f);
+	//glm::vec3 P3Color = glm::vec3(1.0f);
 
 	std::cout << order << "번 째 캐릭터 입니다." << std::endl;
-	glm::vec3 RedColor = glm::vec3(1.0f, 0.0f, 0.0f);
-	glm::vec3 YellowColor = glm::vec3(1.0f, 1.0f, 0.0f);
-	glm::vec3 BlueColor = glm::vec3(0.0f, 0.0f, 1.0f);
+	//glm::vec3 RedColor = glm::vec3(1.0f, 0.0f, 0.0f);
+	//glm::vec3 YellowColor = glm::vec3(1.0f, 1.0f, 0.0f);
+	//glm::vec3 BlueColor = glm::vec3(0.0f, 0.0f, 1.0f);
 
 	//순서에 따라 캐릭터 색상 설정
 	switch (order) {
-	case 0:
-	{
-		P1Color = YellowColor;
-		P2Color = RedColor;
-		P3Color = BlueColor;
-		break;
-	}
+
 	case 1:
 	{
-		P1Color = YellowColor;
+		/*P1Color = YellowColor;
 		P2Color = RedColor;
 		P3Color = BlueColor;
+		glm::vec3 P = glm::vec3(-5.0f, 0.0f, 0.0f);*/
+		P1 = new Player1(p2.color);
+		P1->Position = p2.startPos;
+		P2 = new Player1(p1.color);
+		P2->Position = p1.startPos;
+		P3 = new Player1(p3.color);
+		P3->Position = p3.startPos;
 		break;
 	}
 	case 2:
 	{
-		P1Color = RedColor;
+	/*	P1Color = RedColor;
 		P2Color = YellowColor;
 		P3Color = BlueColor;
+		glm::vec3 P = glm::vec3(0.0f, 0.0f, 0.0f);*/
+		P1 = new Player1(p1.color);
+		P1->Position = p1.startPos;
+		P2 = new Player1(p2.color);
+		P2->Position = p2.startPos;
+		P3 = new Player1(p3.color);
+		P3->Position = p3.startPos;
+		
 		break;
 	}
 	case 3:
 	{
-		P1Color = BlueColor;
+		/*P1Color = BlueColor;
 		P2Color = RedColor;
 		P3Color = YellowColor;
+		glm::vec3 P = glm::vec3(5.0f, 0.0f, 0.0f);*/
+		P1 = new Player1(p3.color);
+		P1->Position = p3.startPos;
+		P2 = new Player1(p2.color);
+		P2->Position = p2.startPos;
+		P3 = new Player1(p1.color);
+		P3->Position = p1.startPos;
+	
 		break;
 	}
 	default:
@@ -243,11 +263,10 @@ bool InitCharByNum() {
 		return false; // 초기화 중단
 	}
 	//컨트롤 하는 캐릭터
-	P1 = new Player1(P1Color);
+	//P1 = new Player1(P1Color);
 	P1->ID = order - 1;
 	//다른 캐릭터들
-	P2 = new Player1(P2Color);
-	P3 = new Player1(P3Color);
+	
 
 	return true;
 }
