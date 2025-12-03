@@ -628,14 +628,6 @@ void main(int argc, char** argv) {
 
 	InitializeCriticalSection(&g_cs_client);
 
-
-	count3 = new Obstacle(glm::vec3(0.0f, 2.0f, 0.0f));
-	count2 = new Obstacle(glm::vec3(0.0f, 2.0f, 0.0f));
-	count1 = new Obstacle(glm::vec3(0.0f, 2.0f, 0.0f));
-	InitPart("map/3.obj", count3->model, count3->vao, count3->vbo, glm::vec3(1.0f, 0.5f, 0.3f));
-	InitPart("map/2.obj", count2->model, count2->vao, count2->vbo, glm::vec3(1.0f, 0.05f, 1.f));
-	InitPart("map/1.obj", count1->model, count1->vao, count1->vbo, glm::vec3(0.03f, 0.02f, 0.576f));
-
 	//장애물
 	std::cout << "장애물 생성중...." << std::endl;
 	Bong1 = new BongGroup(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
@@ -738,6 +730,16 @@ void main(int argc, char** argv) {
 		std::cerr << "캐릭터 초기화 실패!" << std::endl;
 		return;
 	}
+
+
+
+	count3 = new Obstacle(glm::vec3(P1->Position.x, 2.0f, 0.0f));
+	count2 = new Obstacle(glm::vec3(P1->Position.x, 2.0f, 0.0f));
+	count1 = new Obstacle(glm::vec3(P1->Position.x, 2.0f, 0.0f));
+	InitPart("map/3.obj", count3->model, count3->vao, count3->vbo, glm::vec3(1.0f, 0.5f, 0.3f));
+	InitPart("map/2.obj", count2->model, count2->vao, count2->vbo, glm::vec3(1.0f, 0.05f, 1.f));
+	InitPart("map/1.obj", count1->model, count1->vao, count1->vbo, glm::vec3(0.03f, 0.02f, 0.576f));
+
 
 	//여기서 3,2,1받을 준비 시작함. 이렇게 쓰레드 분리해야 접속 대기 중에도 그림그려짐
 	CreateThread(NULL, 0, RecvThread, &Socket, 0, NULL);
