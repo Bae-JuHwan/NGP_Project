@@ -202,24 +202,13 @@ bool InitCharByNum() {
 		return false;
 	}
 	int order = ntohl(data); // 네트워크 엔디안 변환
-	//glm::vec3 P1Color = glm::vec3(1.0f);
-	//glm::vec3 P2Color = glm::vec3(1.0f);
-	//glm::vec3 P3Color = glm::vec3(1.0f);
-
 	std::cout << order << "번 째 캐릭터 입니다." << std::endl;
-	//glm::vec3 RedColor = glm::vec3(1.0f, 0.0f, 0.0f);
-	//glm::vec3 YellowColor = glm::vec3(1.0f, 1.0f, 0.0f);
-	//glm::vec3 BlueColor = glm::vec3(0.0f, 0.0f, 1.0f);
 
 	//순서에 따라 캐릭터 색상 설정
 	switch (order) {
 
 	case 1:
 	{
-		/*P1Color = YellowColor;
-		P2Color = RedColor;
-		P3Color = BlueColor;
-		glm::vec3 P = glm::vec3(-5.0f, 0.0f, 0.0f);*/
 		P1 = new Player1(p2.color);
 		P1->Position = p2.startPos;
 		P2 = new Player1(p1.color);
@@ -230,10 +219,6 @@ bool InitCharByNum() {
 	}
 	case 2:
 	{
-	/*	P1Color = RedColor;
-		P2Color = YellowColor;
-		P3Color = BlueColor;
-		glm::vec3 P = glm::vec3(0.0f, 0.0f, 0.0f);*/
 		P1 = new Player1(p1.color);
 		P1->Position = p1.startPos;
 		P2 = new Player1(p2.color);
@@ -245,10 +230,6 @@ bool InitCharByNum() {
 	}
 	case 3:
 	{
-		/*P1Color = BlueColor;
-		P2Color = RedColor;
-		P3Color = YellowColor;
-		glm::vec3 P = glm::vec3(5.0f, 0.0f, 0.0f);*/
 		P1 = new Player1(p3.color);
 		P1->Position = p3.startPos;
 		P2 = new Player1(p2.color);
