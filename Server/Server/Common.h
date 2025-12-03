@@ -19,7 +19,8 @@
 // 패킷 타입 정의
 enum PacketType {
     PACKET_CHARACTER = 1,
-    PACKET_OBSTACLE = 2
+    PACKET_BONG_OBSTACLE = 2,
+    PACKET_DOOR_OBSTACLE = 3
 };
 
 // 패킷 헤더 구조체

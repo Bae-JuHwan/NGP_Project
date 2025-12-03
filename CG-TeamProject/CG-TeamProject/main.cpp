@@ -16,9 +16,6 @@ char* SERVERIP = (char*)"127.0.0.1";
 #define SERVERPORT 9000
 SOCKET Socket = INVALID_SOCKET; //전역 변수로 소켓 선언
 
-
-
-
 #pragma pack(1)
 struct character {
 	int ID;
@@ -32,13 +29,13 @@ struct character {
 #pragma pack(1)
 struct GamePacket_S2C {
 	character otherPlayers[2];    // 다른 플레이어 2명
-	obstacle_Bong bongObstacle;   // 장애물 정보
+	Bong_Obstacle bongObstacle;   // 장애물 정보
+	Door_Obstacle doorObstacle;   // 장애물 정보
 };
 #pragma pack()
 Player1* P1 = nullptr;
 Player1* P2 = nullptr;
 Player1* P3 = nullptr;
-
 
 std::atomic<bool> count1_check, count2_check, count3_check;
 
@@ -127,6 +124,7 @@ bool S2C_ReceiveGameState(SOCKET sock) {
 
 	// 장애물 정보 저장
 	g_bongObstacle = packet.bongObstacle;
+	g_doorObstacle = packet.doorObstacle;
 
 	return true;
 }
@@ -673,8 +671,6 @@ void main(int argc, char** argv) {
 		return;
 	}
 
-
-
 	count3 = new Obstacle(glm::vec3(P1->Position.x, 2.0f, 0.0f));
 	count2 = new Obstacle(glm::vec3(P1->Position.x, 2.0f, 0.0f));
 	count1 = new Obstacle(glm::vec3(P1->Position.x, 2.0f, 0.0f));
@@ -691,10 +687,6 @@ void main(int argc, char** argv) {
 	//	//std::cerr << " 안온대 ~..." << std::endl;
 	//}
 	//printf("[클라이언트] 3명 접속 성공!\n");
-
-
-
-
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -809,7 +801,7 @@ GLvoid drawScene() {
 
 	// p2 위치 동기화
 	P2->Draw(shaderProgramID, modelMatrixLocation);
-	// p3 ��ġ ����ȭ
+	// p3 위치 동기화
 	P3->Draw(shaderProgramID, modelMatrixLocation);
 
 
@@ -948,9 +940,6 @@ GLvoid Timer(int value) {
 	// AABB 업데이트
 	P1->CAABB.update(P1->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 
-
-
-
 	// 팔 흔들림 업데이트
 	if (P1->IsSwing) {
 		P1->ArmLegSwingAngle += P1->SwingDirection * 2.0f;
@@ -990,7 +979,6 @@ GLvoid Timer(int value) {
 	}
 	UpdatePlayer();
 
-
 	EnterCriticalSection(&g_cs_client);
 	if (Bong1) Bong1->Position = g_bongObstacle.pos1;
 	else std::cout << "[Warn] Bong1 is NULL\n";
@@ -1013,21 +1001,19 @@ GLvoid Timer(int value) {
 	//Bong1->CAABB3.update(Bong1->Position, glm::vec3(9.27f, 0.0f, -33.25f), glm::vec3(11.27f, 3.6f, -31.25f));
 	//Bong2->CAABB3.update(Bong2->Position, glm::vec3(14.945f, 0.0f, -33.25f), glm::vec3(16.945f, 3.6f, -31.25f));
 
-	// 문짝 움직이기
-	flogDoor->LeftD->Position.x += flogDoor->LeftD->Direction.x * DoorMove;
-	if (flogDoor->LeftD->Position.x >= 0.0) {
-		flogDoor->LeftD->Direction.x = -1; // 왼쪽으로 이동
-	}
-	else if (flogDoor->LeftD->Position.x <= -MaxDoorMove) {
-		flogDoor->LeftD->Direction.x = 1;  // 오른쪽으로 이동
-	}
-	flogDoor->RightD->Position.x += flogDoor->RightD->Direction.x * DoorMove;
-	if (flogDoor->RightD->Position.x >= MaxDoorMove) {
-		flogDoor->RightD->Direction.x = -1;
-	}
-	else if (flogDoor->RightD->Position.x <= -0.0) {
-		flogDoor->RightD->Direction.x = 1;
-	}
+	EnterCriticalSection(&g_cs_client);
+
+	flogDoor->LeftD->Position = g_doorObstacle.pos1;
+	flogDoor->LeftD->Direction = g_doorObstacle.dir1;
+
+	flogDoor->RightD->Position = g_doorObstacle.pos2;
+	flogDoor->RightD->Direction = g_doorObstacle.dir2;
+
+	LeaveCriticalSection(&g_cs_client);
+
+	flogDoor->LeftD->ModelMatrix = glm::translate(glm::mat4(1.0f), flogDoor->LeftD->Position);
+	flogDoor->RightD->ModelMatrix = glm::translate(glm::mat4(1.0f), flogDoor->RightD->Position);
+
 	// 문짝 AABB 업데이트
 	flogDoor->LeftD->CAABB1.update(flogDoor->LeftD->Position, glm::vec3(-8.475f, -0.76f, -159.129f), glm::vec3(-6.4f, 2.4f, -158.53f));
 	flogDoor->LeftD->CAABB2.update(flogDoor->LeftD->Position, glm::vec3(-2.168f, -0.76f, -159.129f), glm::vec3(-0.09f, 2.4f, -158.53f));
