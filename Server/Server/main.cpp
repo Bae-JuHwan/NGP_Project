@@ -121,19 +121,6 @@ bool S2C_Character(SOCKET sock, const character& char_info) {
     return true;
 }
 
-int S2C_ClientOrder(SOCKET sock, int order) {   //클라에게 몇번째 클라인지 보내주는 함수
-    int retval;
-    int data = htonl(order); // 엔디안 변환(필수)
-
-    retval = send(sock, (char*)&data, sizeof(data), 0);
-    if (retval == SOCKET_ERROR)
-    {
-        err_display("send()");
-        return -1;
-    }
-    printf("클라이언트 %d\n", order);
-    return retval;
-}
 
 // 클라이언트 스레드 함수
 DWORD WINAPI ClientThread(LPVOID arg) {

@@ -130,6 +130,9 @@ bool S2C_ReceiveGameState(SOCKET sock) {
 
 	return true;
 }
+ClientInitInfo p1{ 1, glm::vec3(-7.0f,0.0f,0.0f), glm::vec3(1.0f,0.0f,0.0f) };//1번 클라 시작위치, 색깔
+ClientInitInfo p2{ 2,glm::vec3(0.0f,0.0f,0.0f),glm::vec3(1.0f, 1.0f, 0.0f) };
+ClientInitInfo p3{ 3,glm::vec3(7.0f,0.0f,0.0f),glm::vec3(0.0f, 0.0f, 1.0f) };
 
 //번호 받고 캐릭터 번호에 따라 만들기
 bool InitCharByNum() {
@@ -141,43 +144,41 @@ bool InitCharByNum() {
 		return false;
 	}
 	int order = ntohl(data); // 네트워크 엔디안 변환
-	glm::vec3 P1Color = glm::vec3(1.0f);
-	glm::vec3 P2Color = glm::vec3(1.0f);
-	glm::vec3 P3Color = glm::vec3(1.0f);
-
 	std::cout << order << "번 째 캐릭터 입니다." << std::endl;
-	glm::vec3 RedColor = glm::vec3(1.0f, 0.0f, 0.0f);
-	glm::vec3 YellowColor = glm::vec3(1.0f, 1.0f, 0.0f);
-	glm::vec3 BlueColor = glm::vec3(0.0f, 0.0f, 1.0f);
 
 	//순서에 따라 캐릭터 색상 설정
 	switch (order) {
-	case 0:
-	{
-		P1Color = YellowColor;
-		P2Color = RedColor;
-		P3Color = BlueColor;
-		break;
-	}
+
 	case 1:
 	{
-		P1Color = YellowColor;
-		P2Color = RedColor;
-		P3Color = BlueColor;
+		P1 = new Player1(p2.color);
+		P1->Position = p2.startPos;
+		P2 = new Player1(p1.color);
+		P2->Position = p1.startPos;
+		P3 = new Player1(p3.color);
+		P3->Position = p3.startPos;
 		break;
 	}
 	case 2:
 	{
-		P1Color = RedColor;
-		P2Color = YellowColor;
-		P3Color = BlueColor;
+		P1 = new Player1(p1.color);
+		P1->Position = p1.startPos;
+		P2 = new Player1(p2.color);
+		P2->Position = p2.startPos;
+		P3 = new Player1(p3.color);
+		P3->Position = p3.startPos;
+		
 		break;
 	}
 	case 3:
 	{
-		P1Color = BlueColor;
-		P2Color = RedColor;
-		P3Color = YellowColor;
+		P1 = new Player1(p3.color);
+		P1->Position = p3.startPos;
+		P2 = new Player1(p2.color);
+		P2->Position = p2.startPos;
+		P3 = new Player1(p1.color);
+		P3->Position = p1.startPos;
+	
 		break;
 	}
 	default:
@@ -185,11 +186,10 @@ bool InitCharByNum() {
 		return false; // 초기화 중단
 	}
 	//컨트롤 하는 캐릭터
-	P1 = new Player1(P1Color);
+	//P1 = new Player1(P1Color);
 	P1->ID = order - 1;
 	//다른 캐릭터들
-	P2 = new Player1(P2Color);
-	P3 = new Player1(P3Color);
+	
 
 	return true;
 }
@@ -570,14 +570,6 @@ void main(int argc, char** argv) {
 
 	InitializeCriticalSection(&g_cs_client);
 
-
-	count3 = new Obstacle(glm::vec3(0.0f, 2.0f, 0.0f));
-	count2 = new Obstacle(glm::vec3(0.0f, 2.0f, 0.0f));
-	count1 = new Obstacle(glm::vec3(0.0f, 2.0f, 0.0f));
-	InitPart("map/3.obj", count3->model, count3->vao, count3->vbo, glm::vec3(1.0f, 0.5f, 0.3f));
-	InitPart("map/2.obj", count2->model, count2->vao, count2->vbo, glm::vec3(1.0f, 0.05f, 1.f));
-	InitPart("map/1.obj", count1->model, count1->vao, count1->vbo, glm::vec3(0.03f, 0.02f, 0.576f));
-
 	//장애물
 	std::cout << "장애물 생성중...." << std::endl;
 	Bong1 = new BongGroup(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.1f, 1.6f, 0.0f);
@@ -680,6 +672,16 @@ void main(int argc, char** argv) {
 		std::cerr << "캐릭터 초기화 실패!" << std::endl;
 		return;
 	}
+
+
+
+	count3 = new Obstacle(glm::vec3(P1->Position.x, 2.0f, 0.0f));
+	count2 = new Obstacle(glm::vec3(P1->Position.x, 2.0f, 0.0f));
+	count1 = new Obstacle(glm::vec3(P1->Position.x, 2.0f, 0.0f));
+	InitPart("map/3.obj", count3->model, count3->vao, count3->vbo, glm::vec3(1.0f, 0.5f, 0.3f));
+	InitPart("map/2.obj", count2->model, count2->vao, count2->vbo, glm::vec3(1.0f, 0.05f, 1.f));
+	InitPart("map/1.obj", count1->model, count1->vao, count1->vbo, glm::vec3(0.03f, 0.02f, 0.576f));
+
 
 	//여기서 3,2,1받을 준비 시작함. 이렇게 쓰레드 분리해야 접속 대기 중에도 그림그려짐
 	CreateThread(NULL, 0, RecvThread, &Socket, 0, NULL);

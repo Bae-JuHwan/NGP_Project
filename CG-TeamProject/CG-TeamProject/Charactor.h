@@ -2,6 +2,12 @@
 #include "stdafx.h"
 #include "헤더.h"
 
+struct ClientInitInfo {
+	int num;//몇번째 클라인지
+	glm::vec3 startPos;//시작 위치
+	glm::vec3 color;//색 지정
+};
+
 struct AABB {
 	glm::vec3 min; // 충돌박스의 최소 좌표 (x, y, z)
 	glm::vec3 max; // 충돌박스의 최대 좌표 (x, y, z)
