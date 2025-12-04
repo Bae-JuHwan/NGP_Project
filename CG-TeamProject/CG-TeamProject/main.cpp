@@ -22,6 +22,7 @@ struct character {
 	int ID;
 	glm::vec3 position;
 	glm::vec3 direction;
+	GLfloat RotationAngle;
 	GLfloat ArmLegSwingAngle;
 	bool isCollision;
 };
@@ -72,6 +73,7 @@ void C2S_Character(SOCKET sock, const character& char_info)
 void UpdatePlayer() {
 	P2->Position = otherPlayers[0].position;
 	P2->Direction = otherPlayers[0].direction;
+	P2->RotationAngle = otherPlayers[0].RotationAngle;
 	// 모델 매트릭스 업데이트
 	P2->ModelMatrix = glm::translate(glm::mat4(1.0f), P2->Position);
 	P2->ModelMatrix = glm::rotate(P2->ModelMatrix, glm::radians(P2->RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -82,6 +84,7 @@ void UpdatePlayer() {
 	//P3 업데이트
 	P3->Position = otherPlayers[1].position;
 	P3->Direction = otherPlayers[1].direction;
+	P3->RotationAngle = otherPlayers[1].RotationAngle;
 	// 모델 매트릭스 업데이트
 	P3->ModelMatrix = glm::translate(glm::mat4(1.0f), P3->Position);
 	P3->ModelMatrix = glm::rotate(P3->ModelMatrix, glm::radians(P3->RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -978,6 +981,7 @@ GLvoid Timer(int value) {
 			myCharacter.ID = P1->ID;
 			myCharacter.position = P1->Position;
 			myCharacter.direction = P1->Direction;
+			myCharacter.RotationAngle = P1->RotationAngle;
 			myCharacter.ArmLegSwingAngle = P1->ArmLegSwingAngle;
 			myCharacter.isCollision = false;  // 필요시 나중에 수정
 

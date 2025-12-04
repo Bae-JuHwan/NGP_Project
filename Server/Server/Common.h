@@ -38,6 +38,7 @@ struct character {
     int ID;
     glm::vec3 position;
     glm::vec3 direction;
+    GLfloat RotationAngle;
     GLfloat ArmLegSwingAngle;
     bool isCollision;
 };
