@@ -8,6 +8,7 @@
 #include "AABB.h"
 #include "Common.h"
 #include "obstacle_network.h"
+#include "collision.h"
 #include "stdafx.h"
 
 CRITICAL_SECTION g_cs_client;
@@ -86,6 +87,14 @@ void UpdatePlayer() {
 	P3->ModelMatrix = glm::rotate(P3->ModelMatrix, glm::radians(P3->RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
 	P3->ArmLegSwingAngle = otherPlayers[1].ArmLegSwingAngle;
 	// AABB 업데이트
+	P3->CAABB.update(P3->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
+
+	// 충돌처리
+	handleAllPlayerCollisions(P1, P2, P3);
+
+	//충돌처리 후 다시 업데이트
+	P1->CAABB.update(P1->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
+	P2->CAABB.update(P2->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 	P3->CAABB.update(P3->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 }
 

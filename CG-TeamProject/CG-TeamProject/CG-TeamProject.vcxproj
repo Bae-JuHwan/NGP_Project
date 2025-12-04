@@ -131,6 +131,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Charactor.cpp" />
+    <ClCompile Include="collision.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="obstacle_network.cpp" />
@@ -138,6 +139,7 @@
   <ItemGroup>
     <ClInclude Include="AABB.h" />
     <ClInclude Include="Charactor.h" />
+    <ClInclude Include="collision.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="obstacle_network.h" />
