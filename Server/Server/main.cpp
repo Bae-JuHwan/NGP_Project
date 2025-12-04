@@ -87,45 +87,7 @@ bool recv_character(SOCKET sock, character& ch) {
     return true;
 }
 
-bool S2C_Character(SOCKET sock, const character& char_info) {
-    // 소켓이 유효한지 확인
-    if (sock == INVALID_SOCKET) {
-        printf("[경고] 소켓이 유효하지 않습니다\n");
-        return false;
-    }
-    PacketHeader header;
-    header.type = PACKET_CHARACTER;
-    header.size = sizeof(character);
 
-    // 헤더 먼저 전송
-    send(sock, (char*)&header, sizeof(header), 0);
-    // 클라이언트에게 캐릭터 정보 전송
-    int retval = send(sock, (char*)&char_info, sizeof(character), 0);
-	characterSendCount++;
-    if(characterSendCount % 100 ==0)
-    {
-        printf("[서버] 캐릭터 정보 전송 완료 송신 %d회 \n", characterSendCount);
-		printf("캐릭터 ID: %d\n", char_info.ID);
-        printf("  Position: (%.2f, %.2f, %.2f)\n",
-            char_info.position.x, char_info.position.y, char_info.position.z);
-        printf("  Direction: (%.2f, %.2f, %.2f)\n",
-            char_info.direction.x, char_info.direction.y, char_info.direction.z);
-        printf("  ArmLegSwingAngle: %.2f\n", char_info.ArmLegSwingAngle);
-        printf("  isCollision: %s\n", char_info.isCollision ? "true" : "false");
-		printf("\n");
-	}
-    if (retval == SOCKET_ERROR) {
-        int err = WSAGetLastError();
-        printf("[에러] S2C_Character() 전송 실패 - 에러코드: %d\n", err);
-        return false;
-    }
-
-    if (retval != sizeof(character)) {
-        printf("[경고] 전송된 데이터 크기 불일치 (예상: %zu, 실제: %d)\n", sizeof(character), retval);
-    }
-
-    return true;
-}
 
 // 클라이언트 스레드 함수
 DWORD WINAPI ClientThread(LPVOID arg) {
