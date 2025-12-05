@@ -31,8 +31,8 @@ struct character {
 #pragma pack(1)
 struct GamePacket_S2C {
 	character otherPlayers[2];    // 다른 플레이어 2명
-	Bong_Obstacle bongObstacle;   // 장애물 정보
-	Door_Obstacle doorObstacle;   // 장애물 정보
+	Moving_Obstacle bongObstacle;   // 장애물 정보
+	Moving_Obstacle doorObstacle;   // 장애물 정보
 };
 #pragma pack()
 Player1* P1 = nullptr;

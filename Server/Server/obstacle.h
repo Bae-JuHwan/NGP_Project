@@ -7,7 +7,8 @@
 
 // 서버 -> 클라 첫번째 장애물(봉) 보내기 구조체
 #pragma pack(1)
-struct Bong_Obstacle {
+struct Moving_Obstacle {
+    int type;
     glm::vec3 pos1;
     glm::vec3 dir1;
     glm::vec3 pos2;
@@ -15,23 +16,14 @@ struct Bong_Obstacle {
 };
 #pragma pack()
 
-#pragma pack(1)
-struct Door_Obstacle {
-    glm::vec3 pos1;
-    glm::vec3 dir1;
-    glm::vec3 pos2;
-    glm::vec3 dir2;
+enum Moving_ObstacleType {
+    Bong_Obstacle,
+    Door_Obstacle
 };
-#pragma pack()
 
+extern Moving_Obstacle g_bongObstacle;
+extern Moving_Obstacle g_doorObstacle;
 
-extern Bong_Obstacle g_bongObstacle;
-extern Door_Obstacle g_doorObstacle;
-
-bool S2C_BongObstacle(SOCKET sock, const Bong_Obstacle& obs_info);
-bool S2C_DoorObstacle(SOCKET sock, const Door_Obstacle& obs_info);
-void UpdateBongObstacle();
-void UpdateDoorObstacle();
-//bool Broadcast_BongObstacle(const Moving_Obstacle& obs_info , ClientInfo g_clients[MAX_CLIENTS]);
-void InitBongObstacle();
-void InitDoorObstacle();
+bool S2C_MovingObstacle(SOCKET sock, const Moving_Obstacle& obs_info);
+void UpdateMovingObstacle();
+void InitMovingObstacle();

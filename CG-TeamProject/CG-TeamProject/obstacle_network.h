@@ -3,7 +3,8 @@
 #include"stdafx.h"
 
 #pragma pack(1)
-struct Bong_Obstacle {
+struct Moving_Obstacle {
+    int type;
     glm::vec3 pos1;
     glm::vec3 dir1;
     glm::vec3 pos2;
@@ -11,17 +12,7 @@ struct Bong_Obstacle {
 };
 #pragma pack()
 
-#pragma pack(1)
-struct Door_Obstacle {
-    glm::vec3 pos1;
-    glm::vec3 dir1;
-    glm::vec3 pos2;
-    glm::vec3 dir2;
-};
-#pragma pack()
+extern Moving_Obstacle g_bongObstacle;
+extern Moving_Obstacle g_doorObstacle;
 
-extern Bong_Obstacle g_bongObstacle;
-extern Door_Obstacle g_doorObstacle;
-
-bool recv_BongObstacle(SOCKET sock);
-bool recv_DoorObstacle(SOCKET sock);
+bool recv_MovingObstacle(SOCKET sock);

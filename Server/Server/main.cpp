@@ -14,8 +14,8 @@ g_clientCount 이걸로만 판단하면 안될 것 같음. 들어왔다가 나갔을때 저 수가 줄어들
 #pragma pack(1)
 struct GamePacket_S2C {
     character otherPlayers[2];    // 다른 플레이어 2명
-    Bong_Obstacle bongObstacle;   // 장애물 정보
-    Door_Obstacle doorObstacle;   // 장애물 정보
+    Moving_Obstacle bongObstacle;   // 장애물 정보
+    Moving_Obstacle doorObstacle;   // 장애물 정보
 };
 #pragma pack()
 
@@ -148,8 +148,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         // 임계영역 진입 - 데이터 저장
         EnterCriticalSection(&g_cs);
         g_clients[client_id - 1].charInfo = received_char;
-        UpdateBongObstacle();
-        UpdateDoorObstacle();
+        UpdateMovingObstacle();
 
         // 게임 상태 전송
         S2C_GameState(client_sock, client_id);
@@ -190,8 +189,7 @@ int main() {
     }
 
     InitializeCriticalSection(&g_cs);
-    InitBongObstacle();
-    InitDoorObstacle();
+    InitMovingObstacle();
 
     listen_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_sock == INVALID_SOCKET) {
