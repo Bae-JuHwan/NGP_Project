@@ -1007,12 +1007,22 @@ GLvoid Timer(int value) {
 		Bong2->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong2->Position);
 	}
 
-	//Bong1->CAABB1.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
-	//Bong2->CAABB1.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
-	//Bong1->CAABB2.update(Bong1->Position, glm::vec3(-3.169f, 0.0f, -33.25f), glm::vec3(-1.169f, 3.6f, -31.25f));
-	//Bong2->CAABB2.update(Bong2->Position, glm::vec3(3.045f, 0.0f, -33.25f), glm::vec3(5.045f, 3.6f, -31.25f));
-	//Bong1->CAABB3.update(Bong1->Position, glm::vec3(9.27f, 0.0f, -33.25f), glm::vec3(11.27f, 3.6f, -31.25f));
-	//Bong2->CAABB3.update(Bong2->Position, glm::vec3(14.945f, 0.0f, -33.25f), glm::vec3(16.945f, 3.6f, -31.25f));
+	Bong1->CAABB1.update(Bong1->Position, glm::vec3(-15.74f, 0.0f, -33.25f), glm::vec3(-13.74f, 3.6f, -31.25f));
+	Bong2->CAABB1.update(Bong2->Position, glm::vec3(-9.47f, 0.0f, -33.25f), glm::vec3(-7.47f, 3.6f, -31.25f));
+	Bong1->CAABB2.update(Bong1->Position, glm::vec3(-3.169f, 0.0f, -33.25f), glm::vec3(-1.169f, 3.6f, -31.25f));
+	Bong2->CAABB2.update(Bong2->Position, glm::vec3(3.045f, 0.0f, -33.25f), glm::vec3(5.045f, 3.6f, -31.25f));
+	Bong1->CAABB3.update(Bong1->Position, glm::vec3(9.27f, 0.0f, -33.25f), glm::vec3(11.27f, 3.6f, -31.25f));
+	Bong2->CAABB3.update(Bong2->Position, glm::vec3(14.945f, 0.0f, -33.25f), glm::vec3(16.945f, 3.6f, -31.25f));
+
+	// 장애물과의 충돌 처리
+	resolveCollision(P1, Bong1->CAABB1);
+	resolveCollision(P1, Bong1->CAABB2);
+	resolveCollision(P1, Bong1->CAABB3);
+	resolveCollision(P1, Bong2->CAABB1);
+	resolveCollision(P1, Bong2->CAABB2);
+	resolveCollision(P1, Bong2->CAABB3);
+
+
 
 	EnterCriticalSection(&g_cs_client);
 
@@ -1036,6 +1046,16 @@ GLvoid Timer(int value) {
 	flogDoor->RightD->CAABB3.update(flogDoor->RightD->Position, glm::vec3(6.294f, -0.76f, -159.129f), glm::vec3(8.322f, 2.4f, -158.53f));
 	//AABB leftDoors[] = { leftdoor1, leftdoor2, leftdoor3 };
 	//AABB rightDoors[] = { rightdoor1, rightdoor2, rightdoor3 };
+
+	// P1과 문짝 충돌 처리
+	resolveCollision(P1, flogDoor->LeftD->CAABB1);
+	resolveCollision(P1, flogDoor->LeftD->CAABB2);
+	resolveCollision(P1, flogDoor->LeftD->CAABB3);
+	resolveCollision(P1, flogDoor->RightD->CAABB1);
+	resolveCollision(P1, flogDoor->RightD->CAABB2);
+	resolveCollision(P1, flogDoor->RightD->CAABB3);
+
+
 
 
 	AABB outdoors[] = { outdoor1, outdoor2, outdoor3, outdoor4 };
