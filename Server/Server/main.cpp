@@ -16,6 +16,9 @@ struct GamePacket_S2C {
     character otherPlayers[2];    // 다른 플레이어 2명
     Moving_Obstacle bongObstacle;   // 장애물 정보
     Moving_Obstacle doorObstacle;   // 장애물 정보
+    Rotating_Obstacle jumpbarObstacle;
+    Rotating_Obstacle vFanObstacle;
+    Rotating_Obstacle hFanObstacle;
 };
 #pragma pack()
 
@@ -50,6 +53,9 @@ bool S2C_GameState(SOCKET sock, int clientId) {
     // 장애물 정보
     packet.bongObstacle = g_bongObstacle;
     packet.doorObstacle = g_doorObstacle;
+    packet.jumpbarObstacle = g_jumpbarObstacle;
+    packet.vFanObstacle = g_vFanObstacle;
+    packet.hFanObstacle = g_hFanObstacle;
 
     printf("봉 장애물 위치1 : x=%f, y=%f, z=%f\n", g_bongObstacle.pos1.x, g_bongObstacle.pos1.y, g_bongObstacle.pos1.z);
     printf("봉 장애물 위치2 : x=%f, y=%f, z=%f\n", g_bongObstacle.pos2.x, g_bongObstacle.pos2.y, g_bongObstacle.pos2.z);
@@ -149,6 +155,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         EnterCriticalSection(&g_cs);
         g_clients[client_id - 1].charInfo = received_char;
         UpdateMovingObstacle();
+        UpdateRotatingObstacle();
 
         // 게임 상태 전송
         S2C_GameState(client_sock, client_id);
@@ -162,19 +169,6 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     LeaveCriticalSection(&g_cs);
     return 0;
 }
-
-//// 장애물 전용 스레드
-//DWORD WINAPI ObstacleThread(LPVOID arg) {
-//    while (true) {
-//        Sleep(16); // 60FPS
-//        printf("장애물 스레드\n");
-//        EnterCriticalSection(&g_cs);
-//        UpdateMovingObstacle(); // 장애물 위치 계산
-//        Broadcast_BongObstacle(g_bongObstacle, g_clients); // 클라이언트에게 전송
-//        LeaveCriticalSection(&g_cs);
-//    }
-//    return 0;
-//}
 
 int main() {
     WSADATA wsa;
@@ -190,6 +184,7 @@ int main() {
 
     InitializeCriticalSection(&g_cs);
     InitMovingObstacle();
+    InitRotatingObstacle();
 
     listen_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_sock == INVALID_SOCKET) {

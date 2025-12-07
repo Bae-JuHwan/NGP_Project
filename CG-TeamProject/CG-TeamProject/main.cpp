@@ -33,6 +33,9 @@ struct GamePacket_S2C {
 	character otherPlayers[2];    // 다른 플레이어 2명
 	Moving_Obstacle bongObstacle;   // 장애물 정보
 	Moving_Obstacle doorObstacle;   // 장애물 정보
+	Rotating_Obstacle jumpbarObstacle;
+	Rotating_Obstacle vFanObstacle;
+	Rotating_Obstacle hFanObstacle;
 };
 #pragma pack()
 Player1* P1 = nullptr;
@@ -137,6 +140,9 @@ bool S2C_ReceiveGameState(SOCKET sock) {
 	// 장애물 정보 저장
 	g_bongObstacle = packet.bongObstacle;
 	g_doorObstacle = packet.doorObstacle;
+	g_jumpbarObstacle = packet.jumpbarObstacle;
+	g_verticalfanObstacle = packet.vFanObstacle;
+	g_horizontalfanObstacle = packet.hFanObstacle;
 
 	return true;
 }
@@ -992,13 +998,11 @@ GLvoid Timer(int value) {
 	}
 	UpdatePlayer();
 
-	EnterCriticalSection(&g_cs_client);
 	if (Bong1) Bong1->Position = g_bongObstacle.pos1;
 	else std::cout << "[Warn] Bong1 is NULL\n";
 
 	if (Bong2) Bong2->Position = g_bongObstacle.pos2;
 	else std::cout << "[Warn] Bong2 is NULL\n";
-	LeaveCriticalSection(&g_cs_client);
 
 	if (Bong1) {
 		Bong1->ModelMatrix = glm::translate(glm::mat4(1.0f), Bong1->Position);
@@ -1023,16 +1027,11 @@ GLvoid Timer(int value) {
 	resolveCollision(P1, Bong2->CAABB3);
 
 
-
-	EnterCriticalSection(&g_cs_client);
-
 	flogDoor->LeftD->Position = g_doorObstacle.pos1;
 	flogDoor->LeftD->Direction = g_doorObstacle.dir1;
 
 	flogDoor->RightD->Position = g_doorObstacle.pos2;
 	flogDoor->RightD->Direction = g_doorObstacle.dir2;
-
-	LeaveCriticalSection(&g_cs_client);
 
 	flogDoor->LeftD->ModelMatrix = glm::translate(glm::mat4(1.0f), flogDoor->LeftD->Position);
 	flogDoor->RightD->ModelMatrix = glm::translate(glm::mat4(1.0f), flogDoor->RightD->Position);
@@ -1112,53 +1111,51 @@ GLvoid Timer(int value) {
 	HorizontalFan* horizontalFans[] = { HorFan1, HorFan2, HorFan3 };
 
 	for (int i = 0; i < 3; i++) {
-		if (i != 1) {
-			horizontalFans[i]->Pink->RotationAngle = obstacleRotation;
-			horizontalFans[i]->Purple->RotationAngle = obstacleRotation;
+		if (i != 1) { // HorFan1, HorFan3
+			horizontalFans[i]->Pink->RotationAngle = g_horizontalfanObstacle.angle1;
+			horizontalFans[i]->Purple->RotationAngle = g_horizontalfanObstacle.angle1;
 		}
-		else {
-			horizontalFans[i]->Pink->RotationAngle = -obstacleRotation;
-			horizontalFans[i]->Purple->RotationAngle = -obstacleRotation;
+		else {        // HorFan2
+			horizontalFans[i]->Pink->RotationAngle = g_horizontalfanObstacle.angle2;
+			horizontalFans[i]->Purple->RotationAngle = g_horizontalfanObstacle.angle2;
 		}
 	}
-
 
 	AABB barbars[] = { Jumpbar1->CAABB, Jumpbar2->CAABB, Jumpbar3->CAABB };
 	Obstacle* Bars[] = { Jumpbar1, Jumpbar2, Jumpbar3 };
 	//AABB barcenters[] = { barcenter1, barcenter2, barcenter3 };
 
+	//int i = 0;
+	//for (const auto& bar : Bars) {
+	//	bar->RotationAngle += 2.0f;
+	//	if (bar->RotationAngle >= 360.0f) {
+	//		bar->RotationAngle -= 360.0f;
+	//	}
+	//	int val = (i % 2 == 0) ? 1 : -1;
+	//	if (val == -1)bar->RotationAngle = -(Jumpbar1->RotationAngle);
+	//	bar->CAABB.updateRotatedAABB(
+	//		-(bar->Position),  // 장애물의 중심 위치
+	//		glm::vec3(-0.3f, -0.36f, -0.5f), // 로컬 최소 오프셋
+	//		glm::vec3(0.3f, 0.04f, 0.5f),    // 로컬 최대 오프셋
+	//		bar->RotationAngle,            // 회전 각도
+	//		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
+	//	);
+	//	i++;
+	//}
 
-	int i = 0;
-	for (const auto& bar : Bars) {
-		bar->RotationAngle += 2.0f;
-		if (bar->RotationAngle >= 360.0f) {
-			bar->RotationAngle -= 360.0f;
-		}
-		int val = (i % 2 == 0) ? 1 : -1;
-		if (val == -1)bar->RotationAngle = -(Jumpbar1->RotationAngle);
-		bar->CAABB.updateRotatedAABB(
-			-(bar->Position),  // 장애물의 중심 위치
-			glm::vec3(-0.3f, -0.36f, -0.5f), // 로컬 최소 오프셋
-			glm::vec3(0.3f, 0.04f, 0.5f),    // 로컬 최대 오프셋
-			bar->RotationAngle,            // 회전 각도
-			glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
-		);
-		i++;
+	if (Jumpbar1) Jumpbar1->RotationAngle = g_jumpbarObstacle.angle1;
+	if (Jumpbar2) Jumpbar2->RotationAngle = g_jumpbarObstacle.angle2;
+	if (Jumpbar3) Jumpbar3->RotationAngle = g_jumpbarObstacle.angle1;
+
+	VerticalFan* verticalFans[] = { VerFan1, VerFan2, VerFan3, VerFan4, VerFan5 };
+
+	for (int i = 0; i < 5; i++)
+	{
+		if (i < 3)
+			verticalFans[i]->VFan->RotationAngle = g_verticalfanObstacle.angle1;
+		else
+			verticalFans[i]->VFan->RotationAngle = g_verticalfanObstacle.angle2;
 	}
-
-
-	// 세로팬 -------------------------------------------------------------------------------------------
-	VerticalFan* verticalFans[] = { VerFan1,VerFan2,VerFan3,VerFan4,VerFan5 };
-
-	for (int i = 0; i < 5; i++) {
-		if (i < 3) {
-			verticalFans[i]->VFan->RotationAngle = obstacleRotation;
-		}
-		else {
-			verticalFans[i]->VFan->RotationAngle = -obstacleRotation;
-		}
-	}
-
 
 	// 바와 캐릭터1 충돌 처리
 	AABB bars[] = { leftBar1, leftBar2, leftBar3, leftBar4, leftBar5, middleBar1, middleBar2, middleBar3, middleBar4, middleBar5, rightBar1, rightBar2, rightBar3, rightBar4, rightBar5 };
