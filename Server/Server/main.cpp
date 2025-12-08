@@ -147,6 +147,12 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         Sleep(100); // 3명 접속 대기
 	}
     
+    /*
+    z클라 1까진 ㄱㅊ, 클라 2접속부터 recv_character 받아. 그리고 그거 클라 1에게 보내. 
+    클라 3접속해.그리고 그거 클라 1한테 보내. (2는 위치상 안보여서 ㄱㅊ을듯ㅅ. 시작하면 짜피생김) 
+    클라1은 두번 받고 두번 다시 그려.
+    */
+
     //아무 쓰레드 중 하나가 확인하고 카운트다운 시작하면. 전체로 보내줌. 그 후 닫아서 다른 쓰레드는 못보게 함
     if (IsAllPlayersReady()&& g_countdown) {
         EnterCriticalSection(&g_cs);

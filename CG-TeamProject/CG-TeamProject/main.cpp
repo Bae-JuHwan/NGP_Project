@@ -130,7 +130,8 @@ bool S2C_ReceiveGameState(SOCKET sock) {
 
 	return true;
 }
-ClientInitInfo p1{ 1, glm::vec3(-7.0f,0.0f,0.0f), glm::vec3(1.0f,0.0f,0.0f) };//1번 클라 시작위치, 색깔
+
+ClientInitInfo p1{ 1,glm::vec3(-7.0f,0.0f,0.0f), glm::vec3(1.0f,0.0f,0.0f) };//1번 클라 시작위치, 색깔
 ClientInitInfo p2{ 2,glm::vec3(0.0f,0.0f,0.0f),glm::vec3(1.0f, 1.0f, 0.0f) };
 ClientInitInfo p3{ 3,glm::vec3(7.0f,0.0f,0.0f),glm::vec3(0.0f, 0.0f, 1.0f) };
 
@@ -190,31 +191,36 @@ bool InitCharByNum() {
 	P1->ID = order - 1;
 	//다른 캐릭터들
 	
+	//== 
+	/*
+	내 정보 한 번 보내. 그리고 받는 쓰레드 시작해. 
+	서버에선 받아. 그리고 2번 클라 부턴 다른 클라한테 뿌려. 
+	*/
 
 	return true;
 }
 
-bool recv_Start() {	//3명 다 접속했는지 확인하고 시작하기
-	int recv_data = 0;             // 네트워크에서 받을 raw 데이터
-	int retval = recv(Socket, (char*)&recv_data, sizeof(recv_data), 0);
-
-	if (retval == SOCKET_ERROR) {
-		err_display("recv()");
-		return false; // 통신 자체가 실패
-	}
-	if (retval == 0) {
-		printf("모두 접속하지 않음\n");
-		return false;
-	}
-
-	// 엔디안 변환
-	int data = ntohl(recv_data);
-
-	// data = 1 → true, 0 → false
-	bool ready = (data == 1);
-
-	return ready;
-}
+//bool recv_Start() {	//3명 다 접속했는지 확인하고 시작하기
+//	int recv_data = 0;             // 네트워크에서 받을 raw 데이터
+//	int retval = recv(Socket, (char*)&recv_data, sizeof(recv_data), 0);
+//
+//	if (retval == SOCKET_ERROR) {
+//		err_display("recv()");
+//		return false; // 통신 자체가 실패
+//	}
+//	if (retval == 0) {
+//		printf("모두 접속하지 않음\n");
+//		return false;
+//	}
+//
+//	// 엔디안 변환
+//	int data = ntohl(recv_data);
+//
+//	// data = 1 → true, 0 → false
+//	bool ready = (data == 1);
+//
+//	return ready;
+//}
 
 // 네트워크 초기화
 bool InitNetworkConnection() {
@@ -478,6 +484,25 @@ void DrawMapCheckBox(GLuint shaderProgramID, GLint modelMatrixLocation) {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
+DWORD WINAPI comePlayer(LPVOID arg) //접속할때마다 추가해주는 쓰레드.
+{
+	/*SOCKET sock = *(SOCKET*)arg;*/
+
+	//새로운 플레이어접속할동안 돌려.
+	S2C_ReceiveGameState(Socket);
+
+	//3명 다 왔으면 그만하고 나가. 
+	//int recv_data = 0;
+	//if (P1->ID < 2) {
+	//	int retval = recv(sock, (char*)&recv_data, sizeof(recv_data), 0);
+	//	if (retval == SOCKET_ERROR) {
+	//		err_display("recv()");
+	//		return 0; // 통신 자체가 실패
+	//	}
+	//	int data = ntohl(recv_data);
+	//	glutPostRedisplay();
+	//}
+}
 
 DWORD WINAPI RecvThread(LPVOID arg)
 {
@@ -683,6 +708,8 @@ void main(int argc, char** argv) {
 	InitPart("map/1.obj", count1->model, count1->vao, count1->vbo, glm::vec3(0.03f, 0.02f, 0.576f));
 
 
+
+	CreateThread(NULL, 0, comePlayer, &Socket, 0, NULL); //플레이어접속할때마다 그리기.
 	//여기서 3,2,1받을 준비 시작함. 이렇게 쓰레드 분리해야 접속 대기 중에도 그림그려짐
 	CreateThread(NULL, 0, RecvThread, &Socket, 0, NULL);
 
@@ -948,7 +975,7 @@ GLvoid Timer(int value) {
 	// AABB 업데이트
 	P1->CAABB.update(P1->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 
-
+	std::cout << "Character Position: (" << P1->Position.x << ", " << P1->Position.y << ", " << P1->Position.z << ")\n";
 
 
 	// 팔 흔들림 업데이트
