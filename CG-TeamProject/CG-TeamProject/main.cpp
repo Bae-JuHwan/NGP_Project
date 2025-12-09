@@ -420,7 +420,7 @@ GLvoid drawScene() {
 	GLint modelMatrixLocation = glGetUniformLocation(shaderProgramID, "modelTransform");
 
 	if (P1->Position.y < -75.0f) {
-		//P1->Position = P1->InitialPosition;
+		P1->Position = P1->InitialPosition;
 	}
 
 	DrawMap(shaderProgramID, modelMatrixLocation);
@@ -533,7 +533,7 @@ GLvoid Timer(int value) {
 	}
 	else if (!P1->IsOnMap) {
 		//character1Position.y -= realGravity;
-		//P1->Position = glm::vec3(0.0f, -P1->realGravity, 0.0f);
+		P1->Position += glm::vec3(0.0f, -P1->realGravity, 0.0f);
 	}
 
 	// 캐릭터1 모델 매트릭스 업데이트
@@ -992,7 +992,7 @@ GLvoid Timer(int value) {
 	//character1Position += P1.Direction;
 	P1->Position += P1->Direction;
 	//character2Position += character2Direction;
-
+	std::cout << "Character1 Position: (" << P1->Position.x << ", " << P1->Position.y << ", " << P1->Position.z << ")" << std::endl;
 	// 화면 갱신
 	glutPostRedisplay();
 	glutTimerFunc(16, Timer, 0);

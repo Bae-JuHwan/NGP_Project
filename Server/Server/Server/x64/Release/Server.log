@@ -1,0 +1,10 @@
+﻿  Function.cpp
+  common.cpp
+  main.cpp
+  obstacle.cpp
+  코드를 생성하고 있습니다.
+  11 of 19 functions (57.9%) were compiled, the rest were copied from previous compilation.
+    4 functions were new in current compilation
+    2 functions had inline decision re-evaluated but remain unchanged
+  코드를 생성했습니다.
+  Server.vcxproj -> C:\NGP_Project\Server\Server\x64\Release\Server.exe
