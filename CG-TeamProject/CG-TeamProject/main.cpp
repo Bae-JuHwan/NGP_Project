@@ -146,8 +146,8 @@ bool S2C_ReceiveGameState(SOCKET sock) {
 
 	return true;
 }
-ClientInitInfo p1{ 1, glm::vec3(-7.0f,0.0f,0.0f), glm::vec3(1.0f,0.0f,0.0f) };//1번 클라 시작위치, 색깔
-ClientInitInfo p2{ 2,glm::vec3(0.0f,0.0f,0.0f),glm::vec3(1.0f, 1.0f, 0.0f) };
+ClientInitInfo p1{ 1, glm::vec3(-7.0f,0.0f,0.0f), glm::vec3(1.0f, 0.0f, 0.0f) };
+ClientInitInfo p2{ 2,glm::vec3(0.0f,0.0f,0.0f),glm::vec3(1.0f, 1.0f, 0.0f) };//1번 클라 시작위치, 색깔
 ClientInitInfo p3{ 3,glm::vec3(7.0f,0.0f,0.0f),glm::vec3(0.0f, 0.0f, 1.0f) };
 
 //번호 받고 캐릭터 번호에 따라 만들기
@@ -168,6 +168,7 @@ bool InitCharByNum() {
 	case 1:
 	{
 		P1 = new Player1(p2.color);
+		P1->Position = p2.startPos;
 		P1->Position = p2.startPos;
 		P2 = new Player1(p1.color);
 		P2->Position = p1.startPos;
@@ -203,10 +204,21 @@ bool InitCharByNum() {
 	}
 	//컨트롤 하는 캐릭터
 	//P1 = new Player1(P1Color);
+	//초기 위치 저장
+	P1->InitialPosition = P1->Position;
+	P2->InitialPosition = P2->Position;
+	P3->InitialPosition = P3->Position;
+
 	P1->ID = order - 1;
 	//다른 캐릭터들
-	
+	std::cout << P1->Position.x << "," << P1->Position.y << "," << P1->Position.z << std::endl;
+	std::cout << P2->Position.x << "," << P2->Position.y << "," << P2->Position.z << std::endl;
 
+	/*
+	문제.
+	2번쨰 캐릭터가 생성되면서 첫번째 캐릭터의 위치가 바뀌는 현상 발생 한 것 같음. 아마도
+	
+	*/
 	return true;
 }
 
@@ -822,6 +834,10 @@ GLvoid drawScene() {
 	// p3 위치 동기화
 	P3->Draw(shaderProgramID, modelMatrixLocation);
 
+	/*std::cout << "1---" << P1->Position.x << "," << P1->Position.y << "," << P1->Position.z << std::endl;
+	std::cout << "2---" << P2->Position.x << "," << P2->Position.y << "," << P2->Position.z << std::endl;
+	std::cout <<"3---"<< P3->Position.x << "," << P3->Position.y << "," << P3->Position.z << std::endl;*/
+
 
 	HorFan1->Draw(shaderProgramID, modelMatrixLocation);
 	HorFan2->Draw(shaderProgramID, modelMatrixLocation);
@@ -945,7 +961,7 @@ GLvoid Timer(int value) {
 	}
 	else if (!P1->IsOnMap) {
 		//character1Position.y -= realGravity;
-		P1->Position = glm::vec3(0.0f, -P1->realGravity, 0.0f);
+		P1->Position += glm::vec3(0.0f, -P1->realGravity, 0.0f);
 	}
 	// 이동 처리
 	P1->Position += P1->Direction;
