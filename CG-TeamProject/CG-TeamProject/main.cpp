@@ -963,7 +963,7 @@ GLvoid Timer(int value) {
 	}
 	else if (!P1->IsOnMap) {
 		//character1Position.y -= realGravity;
-		P1->Position = glm::vec3(0.0f, -P1->realGravity, 0.0f);
+		P1->Position += glm::vec3(0.0f, -P1->realGravity, 0.0f);
 	}
 	// 이동 처리
 	P1->Position += P1->Direction;
