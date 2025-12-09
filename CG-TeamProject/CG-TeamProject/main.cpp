@@ -823,7 +823,6 @@ GLvoid drawScene() {
 	P3->Draw(shaderProgramID, modelMatrixLocation);
 
 
-	//상대 캐릭터도 받아서 그려야함.
 	HorFan1->Draw(shaderProgramID, modelMatrixLocation);
 	HorFan2->Draw(shaderProgramID, modelMatrixLocation);
 	HorFan3->Draw(shaderProgramID, modelMatrixLocation);
@@ -1056,30 +1055,9 @@ GLvoid Timer(int value) {
 
 
 
-
 	AABB outdoors[] = { outdoor1, outdoor2, outdoor3, outdoor4 };
 	for (const auto& outdoor : outdoors) {
-		if (checkCollision(P1->CAABB, outdoor)) {
-			float overlapX = std::min(P1->CAABB.max.x, outdoor.max.x) - std::max(P1->CAABB.min.x, outdoor.min.x);
-			float overlapZ = std::min(P1->CAABB.max.z, outdoor.max.z) - std::max(P1->CAABB.min.z, outdoor.min.z);
-
-			if (overlapX < overlapZ) {
-				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > outdoor.min.x) {
-					P1->Direction.x = 0.0f;
-				}
-				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < outdoor.max.x) {
-					P1->Direction.x = 0.0f;
-				}
-			}
-			else {
-				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > outdoor.min.z) {
-					P1->Direction.z = 0.0f;
-				}
-				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < outdoor.max.z) {
-					P1->Direction.z = 0.0f;
-				}
-			}
-		}
+		resolveCollision(P1, outdoor);
 	}
 
 
@@ -1107,6 +1085,10 @@ GLvoid Timer(int value) {
 		obstacleRotation,                // 회전 각도
 		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
 	);
+	resolveCollision(P1, HorFan1->CAABB);
+	resolveCollision(P1, HorFan2->CAABB);
+	resolveCollision(P1, HorFan3->CAABB);
+	
 
 	HorizontalFan* horizontalFans[] = { HorFan1, HorFan2, HorFan3 };
 
@@ -1123,65 +1105,90 @@ GLvoid Timer(int value) {
 
 	AABB barbars[] = { Jumpbar1->CAABB, Jumpbar2->CAABB, Jumpbar3->CAABB };
 	Obstacle* Bars[] = { Jumpbar1, Jumpbar2, Jumpbar3 };
-	//AABB barcenters[] = { barcenter1, barcenter2, barcenter3 };
-
-	//int i = 0;
-	//for (const auto& bar : Bars) {
-	//	bar->RotationAngle += 2.0f;
-	//	if (bar->RotationAngle >= 360.0f) {
-	//		bar->RotationAngle -= 360.0f;
-	//	}
-	//	int val = (i % 2 == 0) ? 1 : -1;
-	//	if (val == -1)bar->RotationAngle = -(Jumpbar1->RotationAngle);
-	//	bar->CAABB.updateRotatedAABB(
-	//		-(bar->Position),  // 장애물의 중심 위치
-	//		glm::vec3(-0.3f, -0.36f, -0.5f), // 로컬 최소 오프셋
-	//		glm::vec3(0.3f, 0.04f, 0.5f),    // 로컬 최대 오프셋
-	//		bar->RotationAngle,            // 회전 각도
-	//		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
-	//	);
-	//	i++;
-	//}
 
 	if (Jumpbar1) Jumpbar1->RotationAngle = g_jumpbarObstacle.angle1;
 	if (Jumpbar2) Jumpbar2->RotationAngle = g_jumpbarObstacle.angle2;
 	if (Jumpbar3) Jumpbar3->RotationAngle = g_jumpbarObstacle.angle1;
+
+
+	Jumpbar1->CAABB.updateRotatedAABB(
+		glm::vec3(9.5f, 0.0f, 94.93f),  // 장애물의 중심 위치
+		glm::vec3(-1.5f, 0.0f, -0.3f), // 로컬 최소 오프셋
+		glm::vec3(1.5f, 3.6f, 0.3f),    // 로컬 최대 오프셋
+		g_jumpbarObstacle.angle1,                // 회전 각도
+		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
+	);
+	Jumpbar1->CAABB.updateRotatedAABB(
+		glm::vec3(-0.6f, 0.0f, 94.93f),  // 장애물의 중심 위치
+		glm::vec3(-1.5f, 0.0f, -0.3f), // 로컬 최소 오프셋
+		glm::vec3(1.5f, 3.6f, 0.3f),    // 로컬 최대 오프셋
+		g_jumpbarObstacle.angle2,                // 회전 각도
+		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
+	);
+	Jumpbar1->CAABB.updateRotatedAABB(
+		glm::vec3(-10.5f, 0.0f, 94.93f),  // 장애물의 중심 위치
+		glm::vec3(-1.5f, 0.0f, -0.3f), // 로컬 최소 오프셋
+		glm::vec3(1.5f, 3.6f, 0.3f),    // 로컬 최대 오프셋
+		g_jumpbarObstacle.angle1,                // 회전 각도
+		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
+	);
+	resolveCollision(P1, Jumpbar1->CAABB);
+	resolveCollision(P1, Jumpbar2->CAABB);
+	resolveCollision(P1, Jumpbar3->CAABB);
 
 	VerticalFan* verticalFans[] = { VerFan1, VerFan2, VerFan3, VerFan4, VerFan5 };
 
 	for (int i = 0; i < 5; i++)
 	{
 		if (i < 3)
+		{
 			verticalFans[i]->VFan->RotationAngle = g_verticalfanObstacle.angle1;
+		}
+			
 		else
 			verticalFans[i]->VFan->RotationAngle = g_verticalfanObstacle.angle2;
 	}
-
-	// 바와 캐릭터1 충돌 처리
-	AABB bars[] = { leftBar1, leftBar2, leftBar3, leftBar4, leftBar5, middleBar1, middleBar2, middleBar3, middleBar4, middleBar5, rightBar1, rightBar2, rightBar3, rightBar4, rightBar5 };
-	for (const auto& bar : bars) {
-		if (checkCollision(P1->CAABB, bar)) {
-			float overlapbX = std::min(P1->CAABB.max.x, bar.max.x) - std::max(P1->CAABB.min.x, bar.min.x);
-			float overlapbZ = std::min(P1->CAABB.max.z, bar.max.z) - std::max(P1->CAABB.min.z, bar.min.z);
-
-			if (overlapbX < overlapbZ) {
-				if (P1->Direction.x > 0.0f && P1->CAABB.max.x > bar.min.x) {
-					P1->Direction.x = 0.0f;
-				}
-				else if (P1->Direction.x < 0.0f && P1->CAABB.min.x < bar.max.x) {
-					P1->Direction.x = 0.0f;
-				}
-			}
-			else {
-				if (P1->Direction.z > 0.0f && P1->CAABB.max.z > bar.min.z) {
-					P1->Direction.z = 0.0f;
-				}
-				else if (P1->Direction.z < 0.0f && P1->CAABB.min.z < bar.max.z) {
-					P1->Direction.z = 0.0f;
-				}
-			}
-		}
-	}
+	VerFan1->CAABB.updateRotatedAABB(
+		glm::vec3(0.0f, 3.0f, -60.0f),  // 장애물의 중심 위치
+		glm::vec3(-3.5f, -0.5f, -0.5f), // 로컬 최소 오프셋
+		glm::vec3(3.5f, 3.5f, 0.5f),    // 로컬 최대 오프셋
+		g_verticalfanObstacle.angle1,                // 회전 각도
+		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
+	);
+	VerFan2->CAABB.updateRotatedAABB(
+		glm::vec3(-15.0f, 3.0f, -60.0f),  // 장애물의 중심 위치
+		glm::vec3(-3.5f, -0.5f, -0.5f), // 로컬 최소 오프셋
+		glm::vec3(3.5f, 3.5f, 0.5f),    // 로컬 최대 오프셋
+		g_verticalfanObstacle.angle1,                // 회전 각도
+		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
+	);
+	VerFan3->CAABB.updateRotatedAABB(
+		glm::vec3(15.0f, 3.0f, -60.0f),  // 장애물의 중심 위치
+		glm::vec3(-3.5f, -0.5f, -0.5f), // 로컬 최소 오프셋
+		glm::vec3(3.5f, 3.5f, 0.5f),    // 로컬 최대 오프셋
+		g_verticalfanObstacle.angle1,                // 회전 각도
+		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
+	);
+	VerFan4->CAABB.updateRotatedAABB(
+		glm::vec3(-7.5f, 3.0f, -60.0f),  // 장애물의 중심 위치
+		glm::vec3(-3.5f, -0.5f, -0.5f), // 로컬 최소 오프셋
+		glm::vec3(3.5f, 3.5f, 0.5f),    // 로컬 최대 오프셋
+		g_verticalfanObstacle.angle2,                // 회전 각도
+		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
+	);
+	VerFan5->CAABB.updateRotatedAABB(
+		glm::vec3(7.5f, 3.0f, -60.0f),  // 장애물의 중심 위치
+		glm::vec3(-3.5f, -0.5f, -0.5f), // 로컬 최소 오프셋
+		glm::vec3(3.5f, 3.5f, 0.5f),    // 로컬 최대 오프셋
+		g_verticalfanObstacle.angle2,                // 회전 각도
+		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
+	);
+	resolveCollision(P1, VerFan1->CAABB);
+	resolveCollision(P1, VerFan2->CAABB);
+	resolveCollision(P1, VerFan3->CAABB);
+	resolveCollision(P1, VerFan4->CAABB);
+	resolveCollision(P1, VerFan5->CAABB);
+	
 	// ^ 세로팬 -------------------------------------------------------------------------------------------
 
 

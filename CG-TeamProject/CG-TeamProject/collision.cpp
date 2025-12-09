@@ -111,3 +111,75 @@ void resolveCollision(Player1* p, const AABB& obstacleBox) {
     // 위치가 변경되었으므로 AABB 즉시 갱신
     p->CAABB.update(p->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 }
+
+void resolveRotatedCollision(Player1* p, glm::vec3 obsPos, glm::vec3 obsSize, float rotationAngle, glm::vec3 rotationAxis) {
+    if (p == nullptr) return;
+
+    //  플레이어의 중심 위치 계산 
+    glm::vec3 playerCenter = (p->CAABB.min + p->CAABB.max) * 0.5f;
+    glm::vec3 playerSize = (p->CAABB.max - p->CAABB.min) * 0.5f; // 플레이어의 반너비(Half Extents)
+
+    // 2월드 좌표 -> 장애물 로컬 좌표 변환 행렬 생성
+    glm::mat4 worldToLocal = glm::mat4(1.0f);
+    worldToLocal = glm::rotate(worldToLocal, glm::radians(-rotationAngle), rotationAxis);
+    worldToLocal = glm::translate(worldToLocal, -obsPos);
+
+    // 3. 플레이어 중심을 장애물 로컬 공간으로 변환
+    glm::vec4 localPC4 = worldToLocal * glm::vec4(playerCenter, 1.0f);
+    glm::vec3 localPlayerCenter = glm::vec3(localPC4);
+
+    // 4로컬 공간에서의 AABB 충돌 검사
+
+
+    // 두 AABB 사이의 거리 벡터
+    glm::vec3 difference = localPlayerCenter; // 장애물 중심이 (0,0,0)이므로
+    glm::vec3 clamped = glm::clamp(difference, -obsSize, obsSize);
+    glm::vec3 closest = clamped; // 장애물 표면상에서 플레이어와 가장 가까운 점
+
+    difference = closest - localPlayerCenter;
+
+
+
+    glm::vec3 minDist = -obsSize - playerSize;
+    glm::vec3 maxDist = obsSize + playerSize;
+
+    // 로컬 공간에서의 겹침 정도 계산
+    float overlapX = std::min(maxDist.x, localPlayerCenter.x + playerSize.x) - std::max(minDist.x, localPlayerCenter.x - playerSize.x);
+    float overlapY = std::min(maxDist.y, localPlayerCenter.y + playerSize.y) - std::max(minDist.y, localPlayerCenter.y - playerSize.y);
+    float overlapZ = std::min(maxDist.z, localPlayerCenter.z + playerSize.z) - std::max(minDist.z, localPlayerCenter.z - playerSize.z);
+
+    // 충돌이 없으면 리턴
+    if (overlapX <= 0 || overlapY <= 0 || overlapZ <= 0) return;
+
+    //  충돌 해결
+
+    glm::vec3 separation(0.0f);
+
+    if (overlapX < overlapZ) {
+        if (localPlayerCenter.x > 0) separation.x = overlapX;
+        else separation.x = -overlapX;
+    }
+    else {
+        if (localPlayerCenter.z > 0) separation.z = overlapZ;
+        else separation.z = -overlapZ;
+    }
+
+    //  로컬 분리 벡터를 다시 월드 좌표로 변환
+    glm::mat4 localToWorld = glm::mat4(1.0f);
+    localToWorld = glm::translate(localToWorld, obsPos);
+    localToWorld = glm::rotate(localToWorld, glm::radians(rotationAngle), rotationAxis);
+
+    // 벡터이므로 회전만 적용 (평행이동 제외) -> 0.0f
+    glm::mat4 rotationOnly = glm::rotate(glm::mat4(1.0f), glm::radians(rotationAngle), rotationAxis);
+    glm::vec3 worldSeparation = glm::vec3(rotationOnly * glm::vec4(separation, 0.0f));
+
+    // 플레이어 밀어내기
+    p->Position += worldSeparation;
+
+    // 속도/방향 제거 (미끄러짐 방지)
+    // 여기서는 간단하게 멈추지만, 필요하면 미끄러지게 투영 벡터 계산 가능
+    p->Direction = glm::vec3(0.0f);
+
+    // AABB 갱신
+    p->CAABB.update(p->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
+}

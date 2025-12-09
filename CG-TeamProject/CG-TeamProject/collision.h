@@ -18,3 +18,6 @@ void handleAllPlayerCollisions(Player1* P1, Player1* P2, Player1* P3);
 // 장애물과 플레이어	
 bool checkCollision(Player1* p, const AABB& obstacleBox);
 void resolveCollision(Player1* p, const AABB& obstacleBox);
+
+
+void resolveRotatedCollision(Player1* p, glm::vec3 obsPos, glm::vec3 obsSize, float rotationAngle, glm::vec3 rotationAxis);
