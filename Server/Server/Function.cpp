@@ -59,3 +59,4 @@ DWORD WINAPI CountdownThread(LPVOID arg) // 카운트다운 쓰레드 함수
 	countEnd = true;
 	return 0;
 }
+

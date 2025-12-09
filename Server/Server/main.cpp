@@ -19,6 +19,7 @@ struct GamePacket_S2C {
     Rotating_Obstacle jumpbarObstacle;
     Rotating_Obstacle vFanObstacle;
     Rotating_Obstacle hFanObstacle;
+    int whoFinished{ -1 };              // 결승한 플레이어 ID (-1 이면 아직 결승 안함)
 };
 #pragma pack()
 
@@ -35,10 +36,13 @@ bool countEnd = false;  // 카운트다운 종료 후 게임 시작하는 플래그
 bool g_countdown = true;   //카운트다운 함수 한번만 실행하게 하는 용
 
 
+int Winner{ -1 };   // 우승자 ID 저장용
+
 // 충돌 처리 함수 (아직 미구현)
 bool CheckCollision(const character& ch) {
     return false; // 임시 반환
 }
+
 bool S2C_GameState(SOCKET sock, int clientId) {
     GamePacket_S2C packet;
 
@@ -56,6 +60,8 @@ bool S2C_GameState(SOCKET sock, int clientId) {
     packet.jumpbarObstacle = g_jumpbarObstacle;
     packet.vFanObstacle = g_vFanObstacle;
     packet.hFanObstacle = g_hFanObstacle;
+
+	packet.whoFinished = Winner; // 결승한 플레이어 ID
 
     printf("봉 장애물 위치1 : x=%f, y=%f, z=%f\n", g_bongObstacle.pos1.x, g_bongObstacle.pos1.y, g_bongObstacle.pos1.z);
     printf("봉 장애물 위치2 : x=%f, y=%f, z=%f\n", g_bongObstacle.pos2.x, g_bongObstacle.pos2.y, g_bongObstacle.pos2.z);
@@ -154,6 +160,10 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         // 임계영역 진입 - 데이터 저장
         EnterCriticalSection(&g_cs);
         g_clients[client_id - 1].charInfo = received_char;
+        if (received_char.position.z <= -217.0f&&Winner==-1)   // 누가 결승점 도착??
+        {
+            Winner = client_id ;
+        }
         UpdateMovingObstacle();
         UpdateRotatingObstacle();
 

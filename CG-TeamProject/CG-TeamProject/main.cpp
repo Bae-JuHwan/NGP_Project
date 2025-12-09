@@ -36,6 +36,7 @@ struct GamePacket_S2C {
 	Rotating_Obstacle jumpbarObstacle;
 	Rotating_Obstacle vFanObstacle;
 	Rotating_Obstacle hFanObstacle;
+	int whoFinished{ -1 };              // 결승한 플레이어 ID (-1 이면 아직 결승 안함)
 };
 #pragma pack()
 Player1* P1 = nullptr;
@@ -143,6 +144,10 @@ bool S2C_ReceiveGameState(SOCKET sock) {
 	g_jumpbarObstacle = packet.jumpbarObstacle;
 	g_verticalfanObstacle = packet.vFanObstacle;
 	g_horizontalfanObstacle = packet.hFanObstacle;
+	if(packet.whoFinished != -1) {
+		std::cout << packet.whoFinished << "번 플레이어가 이겼습니다!" << std::endl;
+		//여기에 이제 와일문으로 오브젝트 띄우는거 넣으면 될듯
+	}
 
 	return true;
 }
