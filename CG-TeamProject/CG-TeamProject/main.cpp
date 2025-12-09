@@ -799,7 +799,7 @@ GLvoid drawScene() {
 
 	glm::mat4 projectionMatrix1 = glm::perspective(
 		glm::radians(45.0f),
-		(float)(window_Width) / (float)window_Height, // 좌우 절반의 종횡비
+		(float)(window_Width) / (float)window_Height,
 		0.1f,
 		10000.0f
 	);
