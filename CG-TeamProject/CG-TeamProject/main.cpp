@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+﻿#define _CRT_SECURE_NO_WARNINGS
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctime>
@@ -1060,28 +1060,30 @@ GLvoid Timer(int value) {
 		resolveCollision(P1, outdoor);
 	}
 
+
+	// 장애물 AABB 업데이트
 	HorFan1->CAABB.updateRotatedAABB(
-		HorFan1->Position,              // <- 실제 객체 위치 사용
-		glm::vec3(-6.1f, -0.3f, -0.49f),
-		glm::vec3(6.1f, 4.4f, 0.49f),
-		HorFan1->RotationAngle,        // <- 객체의 회전값 사용
-		glm::vec3(0.0f, 1.0f, 0.0f)
+		glm::vec3(0.0f, -0.3f, -140.0f),  // 장애물의 중심 위치
+		glm::vec3(-6.1f, -0.3f, -0.49f), // 로컬 최소 오프셋
+		glm::vec3(6.1f, 4.4f, 0.49f),    // 로컬 최대 오프셋
+		obstacleRotation,                // 회전 각도
+		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
 	);
 
 	HorFan2->CAABB.updateRotatedAABB(
-		HorFan2->Position,
-		glm::vec3(-6.1f, -0.3f, -0.49f),
-		glm::vec3(6.1f, 4.4f, 0.49f),
-		HorFan2->RotationAngle,
-		glm::vec3(0.0f, 1.0f, 0.0f)
+		glm::vec3(7.0f, -0.3f, -115.0f),  // 장애물의 중심 위치
+		glm::vec3(-6.1f, -0.3f, -0.49f), // 로컬 최소 오프셋
+		glm::vec3(6.1f, 4.4f, 0.49f),    // 로컬 최대 오프셋
+		-obstacleRotation,                // 회전 각도
+		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
 	);
 
 	HorFan3->CAABB.updateRotatedAABB(
-		HorFan3->Position,
-		glm::vec3(-6.1f, -0.3f, -0.49f),
-		glm::vec3(6.1f, 4.4f, 0.49f),
-		HorFan3->RotationAngle,
-		glm::vec3(0.0f, 1.0f, 0.0f)
+		glm::vec3(-7.0f, -0.3f, -115.0f), // 장애물의 중심 위치
+		glm::vec3(-6.1f, -0.3f, -0.49f), // 로컬 최소 오프셋
+		glm::vec3(6.1f, 4.4f, 0.49f),    // 로컬 최대 오프셋
+		obstacleRotation,                // 회전 각도
+		glm::vec3(0.0f, 1.0f, 0.0f)      // 회전 축
 	);
 	resolveCollision(P1, HorFan1->CAABB);
 	resolveCollision(P1, HorFan2->CAABB);
@@ -1089,49 +1091,24 @@ GLvoid Timer(int value) {
 	
 
 	HorizontalFan* horizontalFans[] = { HorFan1, HorFan2, HorFan3 };
-	for (int i = 0; i < 3; ++i) {
-		if (i != 1) {
+
+	for (int i = 0; i < 3; i++) {
+		if (i != 1) { // HorFan1, HorFan3
 			horizontalFans[i]->Pink->RotationAngle = g_horizontalfanObstacle.angle1;
 			horizontalFans[i]->Purple->RotationAngle = g_horizontalfanObstacle.angle1;
-			horizontalFans[i]->RotationAngle = g_horizontalfanObstacle.angle1; // 전체 fan의 RotationAngle도 동기화
 		}
-		else {
+		else {        // HorFan2
 			horizontalFans[i]->Pink->RotationAngle = g_horizontalfanObstacle.angle2;
 			horizontalFans[i]->Purple->RotationAngle = g_horizontalfanObstacle.angle2;
-			horizontalFans[i]->RotationAngle = g_horizontalfanObstacle.angle2;
 		}
 	}
 
-	if (Jumpbar1) {
-		Jumpbar1->RotationAngle = g_jumpbarObstacle.angle1;
-		Jumpbar1->CAABB.updateRotatedAABB(
-			Jumpbar1->Position,
-			glm::vec3(-0.3f, -0.36f, -0.5f),
-			glm::vec3(0.3f, 0.04f, 0.5f),
-			Jumpbar1->RotationAngle,
-			glm::vec3(0.0f, 1.0f, 0.0f)
-		);
-	}
-	if (Jumpbar2) {
-		Jumpbar2->RotationAngle = g_jumpbarObstacle.angle2;
-		Jumpbar2->CAABB.updateRotatedAABB(
-			Jumpbar2->Position,
-			glm::vec3(-0.3f, -0.36f, -0.5f),
-			glm::vec3(0.3f, 0.04f, 0.5f),
-			Jumpbar2->RotationAngle,
-			glm::vec3(0.0f, 1.0f, 0.0f)
-		);
-	}
-	if (Jumpbar3) {
-		Jumpbar3->RotationAngle = g_jumpbarObstacle.angle1;
-		Jumpbar3->CAABB.updateRotatedAABB(
-			Jumpbar3->Position,
-			glm::vec3(-0.3f, -0.36f, -0.5f),
-			glm::vec3(0.3f, 0.04f, 0.5f),
-			Jumpbar3->RotationAngle,
-			glm::vec3(0.0f, 1.0f, 0.0f)
-		);
-	}
+	AABB barbars[] = { Jumpbar1->CAABB, Jumpbar2->CAABB, Jumpbar3->CAABB };
+	Obstacle* Bars[] = { Jumpbar1, Jumpbar2, Jumpbar3 };
+
+	if (Jumpbar1) Jumpbar1->RotationAngle = g_jumpbarObstacle.angle1;
+	if (Jumpbar2) Jumpbar2->RotationAngle = g_jumpbarObstacle.angle2;
+	if (Jumpbar3) Jumpbar3->RotationAngle = g_jumpbarObstacle.angle1;
 
 
 	Jumpbar1->CAABB.updateRotatedAABB(
@@ -1161,21 +1138,8 @@ GLvoid Timer(int value) {
 
 	VerticalFan* verticalFans[] = { VerFan1, VerFan2, VerFan3, VerFan4, VerFan5 };
 
-	// 모든 vertical fan들이 공유하는 로컬 오프셋
-	glm::vec3 vLocalMin(-2.33f, -3.39f, -0.46f);
-	glm::vec3 vLocalMax(2.33f, 3.39f, 0.46f);
-
-	glm::vec3 fanCenters[] = {
-		glm::vec3(-15.0f, 3.0f, -60.0f),
-		glm::vec3(-7.5f,  3.0f, -60.0f),
-		glm::vec3(0.0f,  3.0f, -60.0f),
-		glm::vec3(7.5f,  3.0f, -60.0f),
-		glm::vec3(15.0f,  3.0f, -60.0f)
-	};
-
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 5; i++)
 	{
-		// 회전 각도
 		if (i < 3)
 		{
 			verticalFans[i]->VFan->RotationAngle = g_verticalfanObstacle.angle1;
@@ -1183,15 +1147,6 @@ GLvoid Timer(int value) {
 			
 		else
 			verticalFans[i]->VFan->RotationAngle = g_verticalfanObstacle.angle2;
-
-		// AABB 업데이트
-		verticalFans[i]->CAABB.updateRotatedAABB(
-			fanCenters[i],                    // 중심 위치
-			vLocalMin,                        // 로컬 최소
-			vLocalMax,                        // 로컬 최대
-			verticalFans[i]->VFan->RotationAngle, // 회전
-			glm::vec3(0.0f, 1.0f, 0.0f)       // Y축 회전
-		);
 	}
 	VerFan1->CAABB.updateRotatedAABB(
 		glm::vec3(0.0f, 3.0f, -60.0f),  // 장애물의 중심 위치
