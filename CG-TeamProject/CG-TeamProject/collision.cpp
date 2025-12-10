@@ -54,11 +54,14 @@ void resolveCollision(Player1* p1, Player1* p2) {
     }
 }
 
+extern bool movestart;
 // 모든 플레이어 간 충돌 처리
 void handleAllPlayerCollisions(Player1* P1, Player1* P2, Player1* P3) {
-    resolveCollision(P1, P2);
-    resolveCollision(P1, P3);
-    resolveCollision(P2, P3);
+    if (movestart) {
+        resolveCollision(P1, P2);
+        resolveCollision(P1, P3);
+        resolveCollision(P2, P3);
+    }
 }
 
 // 플레이어와 장애물 간 충돌 검사
