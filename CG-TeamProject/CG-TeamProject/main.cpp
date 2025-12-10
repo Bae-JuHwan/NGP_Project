@@ -49,6 +49,7 @@ std::atomic<bool> count1_check, count2_check, count3_check;
 #define MAX_OTHER_PLAYERS 2
 character otherPlayers[MAX_OTHER_PLAYERS];
 bool otherPlayersActive[MAX_OTHER_PLAYERS] = { false, false };
+int whowinner = -1;	// 누가 이겼니
 
 // 캐릭터 정보를 서버에 전송하는 함수
 int sendCharacterCount = 0;
@@ -144,9 +145,10 @@ bool S2C_ReceiveGameState(SOCKET sock) {
 	g_jumpbarObstacle = packet.jumpbarObstacle;
 	g_verticalfanObstacle = packet.vFanObstacle;
 	g_horizontalfanObstacle = packet.hFanObstacle;
-	if(packet.whoFinished != -1) {
+	if (packet.whoFinished != -1) {
 		std::cout << packet.whoFinished << "번 플레이어가 이겼습니다!" << std::endl;
 		//여기에 이제 와일문으로 오브젝트 띄우는거 넣으면 될듯
+		whowinner = packet.whoFinished;
 	}
 
 	return true;
@@ -189,7 +191,7 @@ bool InitCharByNum() {
 		P2->Position = p2.startPos;
 		P3 = new Player1(p3.color);
 		P3->Position = p3.startPos;
-		
+
 		break;
 	}
 	case 3:
@@ -200,7 +202,7 @@ bool InitCharByNum() {
 		P2->Position = p2.startPos;
 		P3 = new Player1(p1.color);
 		P3->Position = p1.startPos;
-	
+
 		break;
 	}
 	default:
@@ -222,7 +224,7 @@ bool InitCharByNum() {
 	/*
 	문제.
 	2번쨰 캐릭터가 생성되면서 첫번째 캐릭터의 위치가 바뀌는 현상 발생 한 것 같음. 아마도
-	
+
 	*/
 	return true;
 }
@@ -578,6 +580,9 @@ Door* flogDoor = nullptr;
 Obstacle* count3 = nullptr;
 Obstacle* count2 = nullptr;
 Obstacle* count1 = nullptr;
+Obstacle* win1 = nullptr;
+Obstacle* win2 = nullptr;
+Obstacle* win3 = nullptr;
 
 void main(int argc, char** argv) {
 	glutInit(&argc, argv);
@@ -712,6 +717,13 @@ void main(int argc, char** argv) {
 	InitPart("map/3.obj", count3->model, count3->vao, count3->vbo, glm::vec3(1.0f, 0.5f, 0.3f));
 	InitPart("map/2.obj", count2->model, count2->vao, count2->vbo, glm::vec3(1.0f, 0.05f, 1.f));
 	InitPart("map/1.obj", count1->model, count1->vao, count1->vbo, glm::vec3(0.03f, 0.02f, 0.576f));
+
+	win3 = new Obstacle(glm::vec3(P1->Position.x, 2.0f, 0.0f));
+	win2 = new Obstacle(glm::vec3(P1->Position.x, 2.0f, 0.0f));
+	win1 = new Obstacle(glm::vec3(P1->Position.x, 2.0f, 0.0f));
+	InitPart("map/p3-win.obj", win3->model, win3->vao, win3->vbo, glm::vec3(1.0f, 0.5f, 0.3f));
+	InitPart("map/p2-win.obj", win2->model, win2->vao, win2->vbo, glm::vec3(1.0f, 0.05f, 1.f));
+	InitPart("map/p1-win.obj", win1->model, win1->vao, win1->vbo, glm::vec3(0.03f, 0.02f, 0.576f));
 
 
 	//여기서 3,2,1받을 준비 시작함. 이렇게 쓰레드 분리해야 접속 대기 중에도 그림그려짐
@@ -869,7 +881,24 @@ GLvoid drawScene() {
 		count1->Draw(shaderProgramID, modelMatrixLocation);
 	}
 
-
+	//승자 표시
+	if (whowinner != -1) {
+		switch (whowinner) {
+			case 1:
+				win1->Position = glm::vec3(P1->Position.x, P1->Position.y+ 2.0f, P1->Position.z);
+				win1->Draw(shaderProgramID, modelMatrixLocation,0.08f);
+				break;
+			case 2:
+				win2->Position = glm::vec3(P1->Position.x, P1->Position.y + 2.0f, P1->Position.z );
+				win2->Draw(shaderProgramID, modelMatrixLocation,0.08f);
+				break;
+			case 3:	
+				win3->Position = glm::vec3(P1->Position.x, P1->Position.y + 2.0f, P1->Position.z );
+				win3->Draw(shaderProgramID, modelMatrixLocation,0.08f);
+				break;
+		}
+	}
+	
 	glutSwapBuffers();
 }
 
@@ -1109,7 +1138,7 @@ GLvoid Timer(int value) {
 	resolveCollision(P1, HorFan1->CAABB);
 	resolveCollision(P1, HorFan2->CAABB);
 	resolveCollision(P1, HorFan3->CAABB);
-	
+
 
 	HorizontalFan* horizontalFans[] = { HorFan1, HorFan2, HorFan3 };
 
@@ -1165,7 +1194,7 @@ GLvoid Timer(int value) {
 		{
 			verticalFans[i]->VFan->RotationAngle = g_verticalfanObstacle.angle1;
 		}
-			
+
 		else
 			verticalFans[i]->VFan->RotationAngle = g_verticalfanObstacle.angle2;
 	}
@@ -1209,7 +1238,7 @@ GLvoid Timer(int value) {
 	resolveCollision(P1, VerFan3->CAABB);
 	resolveCollision(P1, VerFan4->CAABB);
 	resolveCollision(P1, VerFan5->CAABB);
-	
+
 	// ^ 세로팬 -------------------------------------------------------------------------------------------
 
 

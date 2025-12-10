@@ -18,12 +18,12 @@ void Obstacle::JumpBarDraw(GLuint shaderProgramID, GLint modelMatrixLocation)
 	glBindVertexArray(0);
 }
 
-void Obstacle::Draw(GLuint shaderProgramID, GLint modelMatrixLocation)
+void Obstacle::Draw(GLuint shaderProgramID, GLint modelMatrixLocation, float sc)
 {
 	glm::mat4 ModelMatrix = glm::mat4(1.0f);
 	ModelMatrix = glm::translate(ModelMatrix, Position);
 	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(70.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	ModelMatrix = glm::scale(ModelMatrix, glm::vec3(0.2f,0.2f,0.2f));  // 필요하면 스케일
+	ModelMatrix = glm::scale(ModelMatrix, glm::vec3(sc,sc,sc));  // 필요하면 스케일
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(ModelMatrix));
 
 
