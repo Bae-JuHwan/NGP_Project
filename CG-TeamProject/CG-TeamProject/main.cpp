@@ -13,7 +13,7 @@
 
 CRITICAL_SECTION g_cs_client;
 
-char* SERVERIP = (char*)"127.0.0.1";
+char* SERVERIP = (char*)"192.168.233.30";
 #define SERVERPORT 9000
 SOCKET Socket = INVALID_SOCKET; //전역 변수로 소켓 선언
 
@@ -76,24 +76,33 @@ void C2S_Character(SOCKET sock, const character& char_info)
 }
 // 캐릭터 정보 업데이트
 void UpdatePlayer() {
+	// [수정] 데이터 읽기 전 락 획득 (스레드 충돌 방지)
+	EnterCriticalSection(&g_cs_client);
+	
+	// 로컬 변수로 복사해서 사용하는 것이 락 시간을 줄이는 데 좋지만, 
+	// 여기서는 간단히 락 안에서 처리합니다.
 	P2->Position = otherPlayers[0].position;
 	P2->Direction = otherPlayers[0].direction;
 	P2->RotationAngle = otherPlayers[0].RotationAngle;
-	// 모델 매트릭스 업데이트
-	P2->ModelMatrix = glm::translate(glm::mat4(1.0f), P2->Position);
-	P2->ModelMatrix = glm::rotate(P2->ModelMatrix, glm::radians(P2->RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
 	P2->ArmLegSwingAngle = otherPlayers[0].ArmLegSwingAngle;
-	// AABB 업데이트
-	P2->CAABB.update(P2->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 
-	//P3 업데이트
 	P3->Position = otherPlayers[1].position;
 	P3->Direction = otherPlayers[1].direction;
 	P3->RotationAngle = otherPlayers[1].RotationAngle;
+	P3->ArmLegSwingAngle = otherPlayers[1].ArmLegSwingAngle;
+
+	LeaveCriticalSection(&g_cs_client);
+	// [수정 끝]
+
+	// 모델 매트릭스 업데이트
+	P2->ModelMatrix = glm::translate(glm::mat4(1.0f), P2->Position);
+	P2->ModelMatrix = glm::rotate(P2->ModelMatrix, glm::radians(P2->RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+	// AABB 업데이트
+	P2->CAABB.update(P2->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
+
 	// 모델 매트릭스 업데이트
 	P3->ModelMatrix = glm::translate(glm::mat4(1.0f), P3->Position);
 	P3->ModelMatrix = glm::rotate(P3->ModelMatrix, glm::radians(P3->RotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
-	P3->ArmLegSwingAngle = otherPlayers[1].ArmLegSwingAngle;
 	// AABB 업데이트
 	P3->CAABB.update(P3->Position, glm::vec3(-0.7f, 0.0f, -0.72f), glm::vec3(0.7f, 1.84f, 0.63f));
 
@@ -128,31 +137,9 @@ void StoreOtherPlayer(const character& received_char) {
 	}
 }
 
-bool S2C_ReceiveGameState(SOCKET sock) {
-	GamePacket_S2C packet;
+// [삭제됨] S2C_ReceiveGameState 함수는 이제 쓰레드 내부 로직으로 대체되었습니다.
+// 메인 루프에서 호출하지 않으므로 삭제하거나 주석 처리합니다.
 
-	if (!recv(sock, (char*)&packet, sizeof(GamePacket_S2C), 0)) {
-		return false;
-	}
-
-	// 다른 플레이어 정보 저장
-	otherPlayers[0] = packet.otherPlayers[0];
-	otherPlayers[1] = packet.otherPlayers[1];
-
-	// 장애물 정보 저장
-	g_bongObstacle = packet.bongObstacle;
-	g_doorObstacle = packet.doorObstacle;
-	g_jumpbarObstacle = packet.jumpbarObstacle;
-	g_verticalfanObstacle = packet.vFanObstacle;
-	g_horizontalfanObstacle = packet.hFanObstacle;
-	if (packet.whoFinished != -1) {
-		std::cout << packet.whoFinished << "번 플레이어가 이겼습니다!" << std::endl;
-		//여기에 이제 와일문으로 오브젝트 띄우는거 넣으면 될듯
-		whowinner = packet.whoFinished;
-	}
-
-	return true;
-}
 ClientInitInfo p1{ 1, glm::vec3(-7.0f,0.0f,0.0f), glm::vec3(1.0f, 0.0f, 0.0f) };
 ClientInitInfo p2{ 2,glm::vec3(0.0f,0.0f,0.0f),glm::vec3(1.0f, 1.0f, 0.0f) };//1번 클라 시작위치, 색깔
 ClientInitInfo p3{ 3,glm::vec3(7.0f,0.0f,0.0f),glm::vec3(0.0f, 0.0f, 1.0f) };
@@ -518,12 +505,13 @@ DWORD WINAPI RecvThread(LPVOID arg)
 {
 	SOCKET sock = *(SOCKET*)arg;
 	int recv_data = 0;             // 네트워크에서 받을 raw 데이터
-	// 엔디안 변환
+	
+	// [수정] 1단계: 카운트다운 수신 루프
 	while (true)
 	{
 		int retval = recv(sock, (char*)&recv_data, sizeof(recv_data), 0);
-		if (retval == SOCKET_ERROR) {
-			err_display("recv()");
+		if (retval == SOCKET_ERROR || retval == 0) {
+			err_display("recv() - Countdown");
 			return 0; // 통신 자체가 실패
 		}
 		int data = ntohl(recv_data);
@@ -545,18 +533,55 @@ DWORD WINAPI RecvThread(LPVOID arg)
 			count3_check = false;
 			break;
 		case -1:
-			printf("카운트 종료 신호 받음, 쓰레드 종료!\n");
+			printf("카운트 종료 신호 받음, 게임 시작!\n");
 			count1_check = false;
 			count2_check = false;
 			count3_check = false;
 			movestart = true;
-			//glutPostRedisplay();
-			return 0;  // 쓰레드 종료
+			// 카운트다운 루프 탈출 -> 아래의 게임 상태 수신 로프로 이동
+			goto GAME_LOOP_START; 
 		default:
-			return 0;
+			break;
 		}
 		printf("카운트: %d\n", data);
-		//glutPostRedisplay();
+		glutPostRedisplay();
+	}
+
+GAME_LOOP_START:
+	// [수정] 2단계: 게임 상태 수신 루프 (블로킹 recv 사용)
+	// 이 루프는 별도 스레드에서 돌기 때문에 메인 화면을 멈추지 않습니다.
+	GamePacket_S2C packet;
+	while (true)
+	{
+		int retval = recv(sock, (char*)&packet, sizeof(GamePacket_S2C), 0);
+		if (retval == SOCKET_ERROR || retval == 0) {
+			printf("서버 연결 종료됨\n");
+			break;
+		}
+
+		// 전역 변수 갱신 시 충돌 방지를 위해 락 사용
+		EnterCriticalSection(&g_cs_client);
+
+		// 다른 플레이어 정보 저장
+		otherPlayers[0] = packet.otherPlayers[0];
+		otherPlayers[1] = packet.otherPlayers[1];
+
+		// 장애물 정보 저장
+		g_bongObstacle = packet.bongObstacle;
+		g_doorObstacle = packet.doorObstacle;
+		g_jumpbarObstacle = packet.jumpbarObstacle;
+		g_verticalfanObstacle = packet.vFanObstacle;
+		g_horizontalfanObstacle = packet.hFanObstacle;
+		
+		if (packet.whoFinished != -1) {
+			whowinner = packet.whoFinished;
+			std::cout << packet.whoFinished << "번 플레이어가 이겼습니다!" << std::endl;
+		}
+
+		LeaveCriticalSection(&g_cs_client);
+
+		// 화면 갱신 요청 (부드러운 움직임을 위해)
+		glutPostRedisplay();
 	}
 
 	return 0;
@@ -1043,10 +1068,15 @@ GLvoid Timer(int value) {
 			C2S_Character(Socket, myCharacter);
 		}
 
-		S2C_ReceiveGameState(Socket);
+		// [수정] 메인 루프에서 블로킹 recv 호출 제거
+		// S2C_ReceiveGameState(Socket); 
+		// 이제 RecvThread가 데이터를 받아 전역 변수를 갱신합니다.
 	}
 	UpdatePlayer();
 
+	// [참고] 아래 장애물 위치 갱신도 엄밀히는 락이 필요하지만, 
+	// 단순 vec3 복사이므로 큰 문제는 없을 것입니다.
+	// 완벽을 기하려면 EnterCriticalSection(&g_cs_client); ... LeaveCriticalSection(&g_cs_client); 로 감싸주세요.
 	if (Bong1) Bong1->Position = g_bongObstacle.pos1;
 	else std::cout << "[Warn] Bong1 is NULL\n";
 
@@ -1240,10 +1270,6 @@ GLvoid Timer(int value) {
 	resolveCollision(P1, VerFan5->CAABB);
 
 	// ^ 세로팬 -------------------------------------------------------------------------------------------
-
-
-
-
 
 
 
