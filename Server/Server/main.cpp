@@ -129,7 +129,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     //아무 쓰레드 중 하나가 확인하고 카운트다운 시작하면. 전체로 보내줌. 그 후 닫아서 다른 쓰레드는 못보게 함
     if (IsAllPlayersReady()&& g_countdown) {
         EnterCriticalSection(&g_cs);
-        CountdownThread(nullptr);
+        CountdownF();
         g_countdown = false;
         LeaveCriticalSection(&g_cs);
     }
