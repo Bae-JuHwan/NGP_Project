@@ -44,7 +44,7 @@ void SendToAllClients(int data) //한번에 모든 클라소켓에 카운트다운 숫자 보내기
 	LeaveCriticalSection(&g_cs);
 }
 
-void CountdownF() // 카운트다운 쓰레드 함수
+void CountdownF() // 카운트다운 함수
 {
 	// 3초마다 3 → 2 → 1 보내기
 	SendToAllClients(3);       // 모두에게 3 보내기
@@ -54,7 +54,7 @@ void CountdownF() // 카운트다운 쓰레드 함수
 	SendToAllClients(1);       // 모두에게 1 보내기
 	Sleep(3000);               // 1초 대기
 
-	// 끝나면 -1 보내서 클라이언트에서 쓰레드 종료
+	// 끝나면 -1 보내서 클라이언트에서 종료
 	SendToAllClients(-1);
 	countEnd = true;
 	return ;
