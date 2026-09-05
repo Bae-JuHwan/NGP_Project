@@ -13,7 +13,7 @@
 
 CRITICAL_SECTION g_cs_client;
 
-char* SERVERIP = (char*)"192.168.233.30";
+char* SERVERIP = (char*)"127.0.0.1";
 #define SERVERPORT 9000
 SOCKET Socket = INVALID_SOCKET; //전역 변수로 소켓 선언
 

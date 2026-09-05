@@ -37,6 +37,8 @@ CG-TeamProject/CG-TeamProject/x64/Debug/CG-TeamProject.log
 CG-TeamProject/.vs/CG-TeamProject/v17/.suo
 CG-TeamProject/.vs/CG-TeamProject/v17/DocumentLayout.json
 stdafx*
+!CG-TeamProject/CG-TeamProject/stdafx.h
+!Server/Server/stdafx.h
 .vs/
 *.ipch
 *.pdb

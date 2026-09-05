@@ -83,15 +83,15 @@
     <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/bin/x64\freeglut.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/bin/x64\glfw3.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/bin/x64\glew32.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/bin/x64\glewinfo.exe" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/bin/x64\visualinfo.exe" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/bin/x64\glewinfo.exe" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" Condition="Exists('$(MSBuildThisFileDirectory)../..//build/native/bin/x64\glewinfo.exe')" />
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/bin/x64\visualinfo.exe" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" Condition="Exists('$(MSBuildThisFileDirectory)../..//build/native/bin/x64\visualinfo.exe')" />
   </Target>
   <Target Name="nupengl_core_redist_AfterBuild_Win32" Label="Win32" Condition="'$(Platform.ToLower())' == 'win32'" AfterTargets="nupengl_core_redist_AfterBuild">
     <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/bin/Win32\freeglut.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/bin/Win32\glfw3.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/bin/Win32\glew32.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/bin/Win32\glewinfo.exe" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/bin/Win32\visualinfo.exe" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/bin/Win32\glewinfo.exe" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" Condition="Exists('$(MSBuildThisFileDirectory)../..//build/native/bin/Win32\glewinfo.exe')" />
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/bin/Win32\visualinfo.exe" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" Condition="Exists('$(MSBuildThisFileDirectory)../..//build/native/bin/Win32\visualinfo.exe')" />
   </Target>
   <UsingTask TaskName="nupengl_core_redist_Contains" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" TaskFactory="CodeTaskFactory">
     <ParameterGroup>
